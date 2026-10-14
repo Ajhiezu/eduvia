@@ -47,10 +47,10 @@
         x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-        class="relative w-full {{ $maxWidthClass }} bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all text-left z-10"
+        class="relative w-full {{ $maxWidthClass }} max-h-[calc(100dvh-2rem)] flex flex-col my-auto bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all text-left z-10"
     >
         @if ($title)
-            <div class="px-6 py-4.5 border-b border-slate-100 flex items-center justify-between">
+            <div class="px-4 sm:px-6 py-3.5 sm:py-4.5 border-b border-slate-100 flex items-center justify-between shrink-0">
                 <h3 class="text-base font-bold text-slate-900 leading-snug">{{ $title }}</h3>
                 <button
                     type="button"
@@ -65,12 +65,12 @@
             </div>
         @endif
 
-        <div class="p-6 text-sm text-slate-600 leading-relaxed">
+        <div class="p-4 sm:p-6 text-sm text-slate-600 leading-relaxed overflow-y-auto flex-1 min-h-0">
             {{ $slot }}
         </div>
 
         @if (isset($footer))
-            <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2.5">
+            <div class="px-4 sm:px-6 py-3 sm:py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2.5 shrink-0 flex-wrap">
                 {{ $footer }}
             </div>
         @endif

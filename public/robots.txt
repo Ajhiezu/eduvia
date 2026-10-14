@@ -1,2 +1,14 @@
 User-agent: *
-Disallow:
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /password
+Disallow: /email
+Disallow: /attendance-sessions
+Disallow: /learning-materials
+Disallow: /assignments
+Disallow: /student
+Disallow: /admin
+Allow: /
+Allow: /s/
+Allow: /ppdb

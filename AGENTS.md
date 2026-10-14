@@ -144,5 +144,14 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - Run the narrowest set of tests that covers the change. Pass a file path or `--filter=testName` to `php artisan test --compact`.
 - Rerun a test after each change to it.
 - Run `vendor/bin/phpunit` to call the test runner directly. It accepts the same file path and `--filter=testName` arguments.
-
 </laravel-boost-guidelines>
+
+# EDUVIA BRAND IDENTITY & UI/UX MEMORY GUIDELINES
+
+Dokumen `docs/UI_UX_DESIGN_MEMORY.md` merupakan **Single Source of Truth (SSOT)** untuk seluruh identitas visual dan antarmuka aplikasi **Eduvia (E-Learning & School Management)**.
+Setiap perubahan antarmuka atau penambahan fitur baru harus mematuhi aturan berikut:
+- **Official Brand Colors:** Primary Red `#E11D2E`, Dark Text `#1F2937`, Light Gray `#F3F4F6`, White `#FFFFFF`.
+- **Aksentuasi Terukur:** Gunakan warna merah secara selektif untuk tombol primer (`.btn-primary` / `<x-button variant="primary">`), active navigation, dan highlight penting. Hindari mewarnai seluruh background layar atau sidebar menjadi merah pekat.
+- **Official Logo Assets:** Gunakan aset asli yang telah diverifikasi di `public/images/brand/` (`eduvia-logo-horizontal-transparent.png`, `eduvia-logo-vertical-transparent.png`, `eduvia-icon-mark-transparent.png`, `favicon.ico`). Dilarang menggambar ulang atau mengganti logo dengan emoji/teks biasa.
+- **Tipografi:** Plus Jakarta Sans & Inter.
+- **Zero Backend Changes:** Standardisasi tampilan berfokus 100% pada Frontend (Blade Views, CSS Tokens, Alpine.js, Assets). Jangan mengubah skema basis data, model, route, atau business logic backend yang sudah lulus uji.

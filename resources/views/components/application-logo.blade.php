@@ -1,38 +1,58 @@
 @props([
-    'size' => 'md', // sm, md, lg
-    'withText' => true,
-    'subtext' => 'E-Learning Platform'
+    'variant' => 'horizontal', // horizontal, vertical, icon, app-icon, app-icon-dark
+    'size' => 'md', // xs, sm, md, lg, xl
+    'alt' => 'Eduvia — Learn · Grow · Build Your Future',
+    'subtext' => null, // backward compatibility
+    'withText' => true, // backward compatibility
 ])
 
 @php
-    $dimensions = match ($size) {
-        'sm' => ['icon' => 'w-7 h-7', 'text' => 'text-lg', 'sub' => 'text-[10px]'],
-        'lg' => ['icon' => 'w-12 h-12', 'text' => 'text-2xl', 'sub' => 'text-xs'],
-        default => ['icon' => 'w-9 h-9', 'text' => 'text-xl', 'sub' => 'text-[11px]'],
+    $src = match ($variant) {
+        'vertical' => asset('images/brand/eduvia-logo-vertical-transparent.png'),
+        'icon' => asset('images/brand/eduvia-icon-mark-transparent.png'),
+        'app-icon' => asset('images/brand/eduvia-app-icon-light.png'),
+        'app-icon-dark' => asset('images/brand/eduvia-app-icon-dark.png'),
+        default => asset('images/brand/eduvia-logo-horizontal-transparent.png'),
+    };
+
+    $sizeClasses = match ($variant) {
+        'vertical' => match ($size) {
+            'xs' => 'h-10 w-auto',
+            'sm' => 'h-14 w-auto',
+            'lg' => 'h-24 w-auto',
+            'xl' => 'h-32 w-auto',
+            default => 'h-20 w-auto',
+        },
+        'app-icon', 'app-icon-dark' => match ($size) {
+            'xs' => 'w-6 h-6 rounded-lg shadow-2xs',
+            'sm' => 'w-8 h-8 rounded-xl shadow-xs',
+            'lg' => 'w-14 h-14 rounded-2xl shadow-md',
+            'xl' => 'w-20 h-20 rounded-3xl shadow-lg',
+            default => 'w-10 h-10 rounded-xl shadow-xs',
+        },
+        'icon' => match ($size) {
+            'xs' => 'h-6 w-auto',
+            'sm' => 'h-8 w-auto',
+            'lg' => 'h-12 w-auto',
+            'xl' => 'h-16 w-auto',
+            default => 'h-10 w-auto',
+        },
+        default => match ($size) {
+            'xs' => 'h-6 w-auto',
+            'sm' => 'h-8 w-auto',
+            'lg' => 'h-12 w-auto',
+            'xl' => 'h-16 w-auto',
+            default => 'h-9 sm:h-10 w-auto',
+        },
     };
 @endphp
 
-<div {{ $attributes->merge(['class' => 'inline-flex items-center gap-2.5 select-none']) }}>
-    <!-- Brand Icon -->
-    <div class="relative flex items-center justify-center {{ $dimensions['icon'] }} rounded-xl bg-gradient-to-br from-brand-600 to-brand-900 text-white shadow-md shadow-brand-500/20 ring-1 ring-white/20">
-        <svg class="w-3/5 h-3/5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <!-- Academic Mortarboard / Book -->
-            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-        </svg>
-        <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-accent-500 ring-2 ring-white"></span>
-    </div>
-
-    @if ($withText)
-        <div class="flex flex-col text-left">
-            <span class="font-extrabold tracking-tight {{ $dimensions['text'] }} text-slate-900 leading-tight">
-                Edu<span class="text-brand-600">via</span>
-            </span>
-            @if ($subtext)
-                <span class="{{ $dimensions['sub'] }} font-medium text-slate-500 tracking-wider uppercase leading-none">
-                    {{ $subtext }}
-                </span>
-            @endif
-        </div>
-    @endif
+<div {{ $attributes->merge(['class' => 'inline-flex items-center shrink-0 select-none']) }}>
+    <img
+        src="{{ $src }}"
+        alt="{{ $alt }}"
+        class="{{ $sizeClasses }} max-h-full object-contain block shrink-0"
+        loading="eager"
+        decoding="async"
+    />
 </div>

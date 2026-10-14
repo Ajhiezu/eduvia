@@ -45,7 +45,7 @@
             {{ $required ? 'required' : '' }}
             {{ $disabled ? 'disabled' : '' }}
             {{ $attributes->merge([
-                'class' => 'w-full rounded-xl border bg-white text-slate-900 placeholder:text-slate-400 text-sm transition-colors py-2.5 '
+                'class' => 'w-full rounded-xl border bg-white text-slate-900 placeholder:text-slate-400 text-base sm:text-sm transition-colors py-2.5 '
                     . (isset($prefixIcon) ? 'pl-10 ' : 'pl-3.5 ')
                     . (isset($suffixIcon) ? 'pr-10 ' : 'pr-3.5 ')
                     . ($hasError

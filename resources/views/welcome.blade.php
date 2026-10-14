@@ -6,17 +6,17 @@
     <div class="py-12 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex-1 flex flex-col justify-center">
         <!-- Hero Section -->
         <div class="text-center max-w-3xl mx-auto mb-16">
-            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-50 border border-brand-200 text-brand-700 text-xs font-semibold mb-6 shadow-2xs">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-50 border border-brand-200 text-brand-700 text-xs font-semibold mb-6 shadow-2xs">
                 <span class="w-2 h-2 rounded-full bg-brand-600 animate-pulse"></span>
-                <span>Fase 0: Project Foundation & Architecture Selesai</span>
+                <span>Learn · Grow · Build Your Future · Fase 0 Foundation</span>
             </div>
 
             <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15]">
-                Fondasi E-Learning Modern untuk Sekolah Indonesia
+                Sistem E-Learning & Manajemen Sekolah Modern
             </h1>
 
             <p class="mt-6 text-base sm:text-lg text-slate-600 leading-relaxed">
-                Dirancang khusus untuk mendukung kontinuitas pendidikan dari jenjang <strong class="text-slate-800">SD, SMP, SMA, hingga SMK</strong> dengan arsitektur bersih, keamanan tinggi, dan antarmuka berstandar institusi akademik.
+                Platform pendidikan terintegrasi untuk proses belajar mengajar dari jenjang <strong class="text-slate-900">SD, SMP, SMA, hingga SMK</strong> dengan arsitektur bersih, keamanan andal, dan antarmuka berstandar institusi akademik.
             </p>
 
             <!-- Education Level Badges -->

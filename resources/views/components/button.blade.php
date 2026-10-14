@@ -9,22 +9,22 @@
 ])
 
 @php
-    $baseStyles = "inline-flex items-center justify-center font-semibold transition-all duration-150 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none select-none";
+    $baseStyles = "inline-flex items-center justify-center font-semibold transition-all duration-150 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none select-none touch-manipulation";
 
     $sizes = match ($size) {
         'sm' => "text-xs px-3 py-1.5 gap-1.5",
-        'lg' => "text-base px-6 py-3.5 gap-2.5",
-        default => "text-sm px-4 py-2.5 gap-2",
+        'lg' => "text-base px-5 py-3 gap-2.5",
+        default => "text-sm px-4 py-2 gap-2",
     };
 
     $variants = match ($variant) {
-        'secondary' => "bg-slate-100 text-slate-800 hover:bg-slate-200 focus-visible:ring-slate-400 border border-slate-200",
-        'outline' => "bg-white text-slate-700 hover:bg-slate-50 border border-slate-300 hover:border-slate-400 focus-visible:ring-brand-500 shadow-xs",
-        'ghost' => "bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus-visible:ring-slate-400",
-        'danger' => "bg-rose-600 text-white hover:bg-rose-700 focus-visible:ring-rose-500 shadow-sm shadow-rose-600/20",
-        'success' => "bg-emerald-600 text-white hover:bg-emerald-700 focus-visible:ring-emerald-500 shadow-sm shadow-emerald-600/20",
-        'accent' => "bg-accent-500 text-slate-950 hover:bg-accent-400 focus-visible:ring-accent-500 shadow-sm shadow-accent-500/20",
-        default => "bg-brand-600 text-white hover:bg-brand-700 focus-visible:ring-brand-500 shadow-sm shadow-brand-600/20",
+        'secondary' => "bg-zinc-100 text-zinc-800 hover:bg-zinc-200 focus-visible:ring-zinc-400 border border-zinc-200",
+        'outline' => "bg-white text-zinc-700 hover:bg-zinc-50 border border-zinc-300 hover:border-zinc-400 focus-visible:ring-brand-500 shadow-xs",
+        'ghost' => "bg-transparent text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:ring-zinc-400",
+        'danger' => "bg-rose-600 text-white hover:bg-rose-700 focus-visible:ring-rose-500 shadow-xs",
+        'success' => "bg-emerald-600 text-white hover:bg-emerald-700 focus-visible:ring-emerald-500 shadow-xs",
+        'accent' => "bg-accent-500 text-zinc-950 hover:bg-accent-400 focus-visible:ring-accent-500 shadow-xs",
+        default => "bg-brand-600 text-white hover:bg-brand-700 focus-visible:ring-brand-500 shadow-xs",
     };
 
     $classes = "{$baseStyles} {$sizes} {$variants}";

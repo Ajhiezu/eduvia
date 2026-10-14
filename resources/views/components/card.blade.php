@@ -6,24 +6,24 @@
 ])
 
 <div {{ $attributes->merge([
-    'class' => 'bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden transition-all duration-200 '
-        . ($hover ? 'hover:shadow-md hover:border-brand-200 hover:-translate-y-0.5 ' : '')
+    'class' => 'bg-white rounded-xl border border-zinc-200 overflow-hidden transition-all duration-150 '
+        . ($hover ? 'hover:border-zinc-300 hover:shadow-xs ' : '')
 ]) }}>
     @if ($title || isset($action) || isset($header))
-        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between gap-4">
+        <div class="px-4 sm:px-5 py-3.5 sm:py-4 border-b border-zinc-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
             @if (isset($header))
                 {{ $header }}
             @else
-                <div>
+                <div class="min-w-0">
                     @if ($title)
-                        <h3 class="font-bold text-slate-900 text-base leading-snug">{{ $title }}</h3>
+                        <h3 class="font-bold text-zinc-900 text-base leading-snug">{{ $title }}</h3>
                     @endif
                     @if ($subtitle)
-                        <p class="text-xs text-slate-500 mt-0.5">{{ $subtitle }}</p>
+                        <p class="text-xs text-zinc-500 mt-0.5">{{ $subtitle }}</p>
                     @endif
                 </div>
                 @if (isset($action))
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 flex-wrap shrink-0">
                         {{ $action }}
                     </div>
                 @endif
@@ -31,12 +31,12 @@
         </div>
     @endif
 
-    <div class="{{ $padding ? 'p-5 sm:p-6' : '' }}">
+    <div class="{{ $padding ? 'p-3.5 sm:p-6' : '' }}">
         {{ $slot }}
     </div>
 
     @if (isset($footer))
-        <div class="px-5 py-3.5 bg-slate-50/70 border-t border-slate-100 text-xs text-slate-600 flex items-center justify-between">
+        <div class="px-4 sm:px-5 py-3 sm:py-3.5 bg-zinc-50/80 border-t border-zinc-100 text-xs text-zinc-600 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
             {{ $footer }}
         </div>
     @endif

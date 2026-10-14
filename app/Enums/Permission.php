@@ -37,6 +37,10 @@ enum Permission: string
     case REPORT_VIEW_OWN = 'report:view-own';
     case REPORT_MANAGE = 'report:manage';
 
+    // School Public Website & CMS
+    case WEBSITE_MANAGE = 'website:manage';
+    case WEBSITE_VIEW = 'website:view';
+
     /**
      * Map default permissions by role.
      *
@@ -56,6 +60,8 @@ enum Permission: string
                 self::CLASSES_VIEW,
                 self::LEARNING_VIEW,
                 self::REPORT_MANAGE,
+                self::WEBSITE_MANAGE,
+                self::WEBSITE_VIEW,
             ],
             UserRole::TEACHER => [
                 self::CLASSES_VIEW,
@@ -65,6 +71,11 @@ enum Permission: string
                 self::ASSIGNMENT_GRADE,
                 self::EXAM_MANAGE,
                 self::REPORT_MANAGE,
+            ],
+            UserRole::STAFF => [
+                self::SCHOOL_VIEW,
+                self::USERS_VIEW,
+                self::CLASSES_VIEW,
             ],
             UserRole::STUDENT => [
                 self::CLASSES_VIEW,

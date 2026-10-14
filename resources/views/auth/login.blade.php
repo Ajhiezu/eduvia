@@ -9,7 +9,7 @@
             <!-- Card Container -->
             <x-card padding class="shadow-xl border-slate-200">
                 <div class="text-center mb-6">
-                    <x-application-logo size="lg" class="justify-center mb-3" />
+                    <x-application-logo variant="vertical" size="md" class="justify-center mb-4" />
                     <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">
                         Masuk ke Akun Anda
                     </h2>
@@ -94,7 +94,7 @@
                         Akun Uji Coba Cepat (Fase 0 Foundation)
                     </p>
 
-                    <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                         <button
                             type="button"
                             onclick="fillDemo('superadmin@eduvia.test', 'Password123!')"

@@ -7,66 +7,122 @@
 @theme {
     --font-sans: "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-    /* Eduvia Educational Trust Palette */
-    --color-brand-50: #eff6ff;
-    --color-brand-100: #dbeafe;
-    --color-brand-200: #bfdbfe;
-    --color-brand-300: #93c5fd;
-    --color-brand-400: #60a5fa;
-    --color-brand-500: #3b82f6;
-    --color-brand-600: #2563eb;
-    --color-brand-700: #1d4ed8;
-    --color-brand-800: #1e40af;
-    --color-brand-900: #1e3a8a;
-    --color-brand-950: #172554;
+    /* Official Eduvia Brand Red Palette */
+    --color-brand-50: #fef2f2;
+    --color-brand-100: #fee2e2;
+    --color-brand-200: #fecaca;
+    --color-brand-300: #fca5a5;
+    --color-brand-400: #f87171;
+    --color-brand-500: #ef4444;
+    --color-brand-600: #e11d2e; /* Official Eduvia Primary Red */
+    --color-brand-700: #c81423; /* Official Primary Red Hover */
+    --color-brand-800: #9e0e1b; /* Official Deep Accent Red */
+    --color-brand-900: #7f1d1d;
+    --color-brand-950: #450a0a;
 
-    /* Achievement / Gold Accent Palette */
+    /* Official Neutral Palette */
+    --color-dark-text: #1f2937;  /* Official Dark Text */
+    --color-light-gray: #f3f4f6; /* Official Light Gray */
+
+    /* Achievement / Accent Gold (Selective 1-5% for Medals & Stars) */
     --color-accent-50: #fffbeb;
     --color-accent-100: #fef3c7;
     --color-accent-400: #fbbf24;
     --color-accent-500: #f59e0b;
     --color-accent-600: #d97706;
 
-    /* Academic Surface Tokens */
-    --color-surface-bg: #f8fafc;
+    /* Academic Surface Tokens — Metis Refined Neutral (Zinc) */
+    --color-surface-bg: #fafafa;
     --color-surface-card: #ffffff;
-    --color-surface-border: #e2e8f0;
-    --color-surface-subtle: #f1f5f9;
+    --color-surface-border: #e4e4e7; /* 1px hairline border */
+    --color-surface-subtle: #f4f4f5;
 }
 
-/* Custom Base Tweaks for Educational Platform */
-html {
-    scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+/* Custom Base Tweaks for Metis Layout */
+@layer base {
+    html {
+        scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+    }
+
+    body {
+        background-color: var(--color-surface-bg);
+        color: var(--color-dark-text, #18181b);
+        font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+        min-width: 320px;
+    }
 }
 
-body {
-    background-color: var(--color-surface-bg);
-    color: #0f172a;
+/* Smooth momentum scrolling for responsive tables & scrollable strips */
+.overflow-x-auto, [data-scrollable] {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
 }
 
-/* Focus rings with accessible high-contrast Eduvia blue */
+/* Accessible focus ring using official Eduvia Red */
 :focus-visible {
     outline: 2px solid var(--color-brand-600);
     outline-offset: 2px;
 }
 
-/* Scrollbar aesthetic styling */
+/* Metis Refined Scrollbar */
 ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #f1f5f9;
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: #d4d4d8;
     border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    background: #a1a1aa;
+}
+
+/* Metis Signature Navigation Item */
+.metis-nav-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5625rem 0.8125rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #52525b; /* zinc-600 */
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.metis-nav-item:hover {
+    background-color: #f4f4f5; /* zinc-100 */
+    color: #18181b; /* zinc-900 */
+}
+
+.metis-nav-item.active {
+    background-color: #f4f4f5; /* zinc-100 */
+    color: #18181b; /* zinc-900 */
+    font-weight: 600;
+}
+
+.metis-nav-item.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.3125rem;
+    bottom: 0.3125rem;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background-color: var(--color-brand-600); /* Official Eduvia Primary Red Accent */
+}
+
+.metis-nav-item.active svg {
+    color: var(--color-brand-600);
 }

@@ -30,46 +30,99 @@
             </div>
         </div>
 
-        <!-- 1. Color Tokens & Theme System -->
+        <!-- 1. Official Brand Identity & Assets -->
         <section class="space-y-4">
             <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <span class="w-1.5 h-4 rounded-full bg-brand-600"></span>
-                <span>1. Design Tokens — Color Palette & Hierarchy</span>
+                <span>1. Official Brand Identity & Assets (`x-application-logo`)</span>
             </h2>
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 text-xs">
-                <div class="p-3 rounded-xl bg-brand-600 text-white shadow-xs">
-                    <div class="font-bold">Brand Primary</div>
-                    <div class="text-[10px] opacity-80 mt-1 font-mono">#2563EB (600)</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Horizontal Logo -->
+                <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col items-center justify-between text-center min-h-[160px]">
+                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">Logo Horizontal (Header/Desktop)</div>
+                    <div class="my-auto">
+                        <x-application-logo variant="horizontal" size="md" />
+                    </div>
+                    <span class="text-[10px] text-slate-400 mt-3 font-mono">variant="horizontal"</span>
                 </div>
-                <div class="p-3 rounded-xl bg-brand-800 text-white shadow-xs">
-                    <div class="font-bold">Brand Deep Navy</div>
-                    <div class="text-[10px] opacity-80 mt-1 font-mono">#1E40AF (800)</div>
+
+                <!-- Vertical Logo -->
+                <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col items-center justify-between text-center min-h-[160px]">
+                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">Logo Vertical (Auth/Centered)</div>
+                    <div class="my-auto">
+                        <x-application-logo variant="vertical" size="sm" />
+                    </div>
+                    <span class="text-[10px] text-slate-400 mt-3 font-mono">variant="vertical"</span>
                 </div>
-                <div class="p-3 rounded-xl bg-accent-500 text-slate-950 shadow-xs">
-                    <div class="font-bold">Gold Accent</div>
-                    <div class="text-[10px] opacity-80 mt-1 font-mono">#F59E0B (500)</div>
+
+                <!-- Icon Mark -->
+                <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col items-center justify-between text-center min-h-[160px]">
+                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">Icon Mark (Favicon/Badges)</div>
+                    <div class="my-auto">
+                        <x-application-logo variant="icon" size="md" />
+                    </div>
+                    <span class="text-[10px] text-slate-400 mt-3 font-mono">variant="icon"</span>
                 </div>
-                <div class="p-3 rounded-xl bg-emerald-600 text-white shadow-xs">
-                    <div class="font-bold">Success Green</div>
-                    <div class="text-[10px] opacity-80 mt-1 font-mono">#10B981 (600)</div>
-                </div>
-                <div class="p-3 rounded-xl bg-rose-600 text-white shadow-xs">
-                    <div class="font-bold">Danger Rose</div>
-                    <div class="text-[10px] opacity-80 mt-1 font-mono">#E11D48 (600)</div>
-                </div>
-                <div class="p-3 rounded-xl bg-slate-900 text-white shadow-xs">
-                    <div class="font-bold">Neutral Text</div>
-                    <div class="text-[10px] opacity-80 mt-1 font-mono">#0F172A (Slate)</div>
+
+                <!-- App Icons (Light & Dark) -->
+                <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col items-center justify-between text-center min-h-[160px]">
+                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">App Icon (Light & Dark)</div>
+                    <div class="my-auto flex items-center gap-4">
+                        <x-application-logo variant="app-icon" size="sm" />
+                        <x-application-logo variant="app-icon-dark" size="sm" />
+                    </div>
+                    <span class="text-[10px] text-slate-400 mt-3 font-mono">variant="app-icon(-dark)"</span>
                 </div>
             </div>
         </section>
 
-        <!-- 2. Buttons -->
+        <!-- 2. Official Color Tokens & Hierarchy -->
         <section class="space-y-4">
             <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <span class="w-1.5 h-4 rounded-full bg-brand-600"></span>
-                <span>2. Reusable Buttons (`x-button`)</span>
+                <span>2. Official Color Tokens — Brand Palette & Hierarchy</span>
+            </h2>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 text-xs">
+                <div class="p-3.5 rounded-xl bg-brand-600 text-white shadow-xs">
+                    <div class="font-bold">Primary Red</div>
+                    <div class="text-[10px] opacity-90 mt-1 font-mono">#E11D2E</div>
+                    <div class="text-[9px] opacity-75 mt-0.5">CTA & Aktif</div>
+                </div>
+                <div class="p-3.5 rounded-xl bg-brand-700 text-white shadow-xs">
+                    <div class="font-bold">Primary Hover</div>
+                    <div class="text-[10px] opacity-90 mt-1 font-mono">#C81423</div>
+                    <div class="text-[9px] opacity-75 mt-0.5">Hover States</div>
+                </div>
+                <div class="p-3.5 rounded-xl bg-brand-50 text-brand-900 border border-brand-200 shadow-xs">
+                    <div class="font-bold">Primary Tint</div>
+                    <div class="text-[10px] opacity-90 mt-1 font-mono">#FEF2F2</div>
+                    <div class="text-[9px] opacity-75 mt-0.5">Active Surface</div>
+                </div>
+                <div class="p-3.5 rounded-xl bg-slate-800 text-white shadow-xs">
+                    <div class="font-bold">Dark Text</div>
+                    <div class="text-[10px] opacity-90 mt-1 font-mono">#1F2937</div>
+                    <div class="text-[9px] opacity-75 mt-0.5">Teks Utama</div>
+                </div>
+                <div class="p-3.5 rounded-xl bg-slate-100 text-slate-800 border border-slate-200 shadow-xs">
+                    <div class="font-bold">Light Gray</div>
+                    <div class="text-[10px] opacity-90 mt-1 font-mono">#F3F4F6</div>
+                    <div class="text-[9px] opacity-75 mt-0.5">Background</div>
+                </div>
+                <div class="p-3.5 rounded-xl bg-white text-slate-800 border border-slate-200 shadow-xs">
+                    <div class="font-bold">Pure White</div>
+                    <div class="text-[10px] opacity-90 mt-1 font-mono">#FFFFFF</div>
+                    <div class="text-[9px] opacity-75 mt-0.5">Main Canvas</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Buttons -->
+        <section class="space-y-4">
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <span class="w-1.5 h-4 rounded-full bg-brand-600"></span>
+                <span>3. Reusable Buttons (`x-button`)</span>
             </h2>
 
             <x-card padding>
@@ -101,11 +154,11 @@
             </x-card>
         </section>
 
-        <!-- 3. Form Controls & Validation -->
+        <!-- 4. Form Controls & Validation -->
         <section class="space-y-4">
             <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <span class="w-1.5 h-4 rounded-full bg-brand-600"></span>
-                <span>3. Form Controls (`x-input`, `x-select`, `x-textarea`)</span>
+                <span>4. Form Controls (`x-input`, `x-select`, `x-textarea`)</span>
             </h2>
 
             <x-card padding>
@@ -171,11 +224,11 @@
             </x-card>
         </section>
 
-        <!-- 4. Badges & Status Chips -->
+        <!-- 5. Badges & Status Chips -->
         <section class="space-y-4">
             <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <span class="w-1.5 h-4 rounded-full bg-brand-600"></span>
-                <span>4. Status Badges (`x-badge`)</span>
+                <span>5. Status Badges (`x-badge`)</span>
             </h2>
 
             <x-card padding>
@@ -198,11 +251,11 @@
             </x-card>
         </section>
 
-        <!-- 5. Alerts & Feedback -->
+        <!-- 6. Alerts & Feedback -->
         <section class="space-y-4">
             <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <span class="w-1.5 h-4 rounded-full bg-brand-600"></span>
-                <span>5. Feedback Alerts (`x-alert`)</span>
+                <span>6. Feedback Alerts (`x-alert`)</span>
             </h2>
 
             <div class="space-y-3">
@@ -224,11 +277,11 @@
             </div>
         </section>
 
-        <!-- 6. Interactive Modal Dialog -->
+        <!-- 7. Interactive Modal Dialog -->
         <section class="space-y-4">
             <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <span class="w-1.5 h-4 rounded-full bg-brand-600"></span>
-                <span>6. Dialog Modal Interaktif (`x-modal`)</span>
+                <span>7. Dialog Modal Interaktif (`x-modal`)</span>
             </h2>
 
             <x-card padding>
@@ -327,11 +380,11 @@
             </x-modal>
         </section>
 
-        <!-- 7. Data Tables & Pagination -->
+        <!-- 8. Data Tables & Pagination -->
         <section class="space-y-4">
             <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <span class="w-1.5 h-4 rounded-full bg-brand-600"></span>
-                <span>7. Data Table & Pagination (`x-table`, `x-pagination`)</span>
+                <span>8. Data Table & Pagination (`x-table`, `x-pagination`)</span>
             </h2>
 
             <x-table>
@@ -381,11 +434,11 @@
             </x-table>
         </section>
 
-        <!-- 8. Empty States & Loading Skeletons -->
+        <!-- 9. Empty States & Loading Skeletons -->
         <section class="space-y-4">
             <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <span class="w-1.5 h-4 rounded-full bg-brand-600"></span>
-                <span>8. Empty State & Skeleton Loading (`x-empty-state`, `x-skeleton`)</span>
+                <span>9. Empty State & Skeleton Loading (`x-empty-state`, `x-skeleton`)</span>
             </h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -408,11 +461,11 @@
             </div>
         </section>
 
-        <!-- 9. Responsive Testing Viewport Guide -->
+        <!-- 10. Responsive Testing Viewport Guide -->
         <section class="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-4">
             <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <span class="w-1.5 h-4 rounded-full bg-brand-600"></span>
-                <span>9. Matriks Pengujian Responsif (Responsive Matrix)</span>
+                <span>10. Matriks Pengujian Responsif (Responsive Matrix)</span>
             </h2>
 
             <p class="text-xs text-slate-600 leading-relaxed">

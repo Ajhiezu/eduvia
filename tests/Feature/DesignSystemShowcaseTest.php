@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Enums\UserRole;
+use App\Models\User;
 use Tests\TestCase;
 
 class DesignSystemShowcaseTest extends TestCase
@@ -22,5 +24,29 @@ class DesignSystemShowcaseTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Eduvia');
         $response->assertSee('SD, SMP, SMA, hingga SMK');
+        $response->assertSee('Learn · Grow · Build Your Future');
+    }
+
+    public function test_authenticated_user_can_view_dashboard_with_brand_layout(): void
+    {
+        $user = User::factory()->create([
+            'role' => UserRole::SUPER_ADMIN,
+        ]);
+
+        $response = $this->actingAs($user)->get(route('dashboard'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Eduvia');
+        $response->assertSee('Dashboard');
+        $response->assertSee($user->name);
+    }
+
+    public function test_official_brand_assets_exist(): void
+    {
+        $this->assertFileExists(public_path('images/brand/eduvia-logo-horizontal-transparent.png'));
+        $this->assertFileExists(public_path('images/brand/eduvia-logo-vertical-transparent.png'));
+        $this->assertFileExists(public_path('images/brand/eduvia-icon-mark-transparent.png'));
+        $this->assertFileExists(public_path('favicon.ico'));
+        $this->assertFileExists(public_path('favicon.png'));
     }
 }

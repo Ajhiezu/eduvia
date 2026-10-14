@@ -33,7 +33,7 @@
             {{ $required ? 'required' : '' }}
             {{ $disabled ? 'disabled' : '' }}
             {{ $attributes->merge([
-                'class' => 'w-full rounded-xl border bg-white text-slate-900 text-sm transition-colors py-2.5 px-3.5 pr-10 appearance-none '
+                'class' => 'w-full rounded-xl border bg-white text-slate-900 text-base sm:text-sm transition-colors py-2.5 px-3.5 pr-10 appearance-none '
                     . ($hasError
                         ? 'border-rose-300 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
                         : 'border-slate-300 hover:border-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100')

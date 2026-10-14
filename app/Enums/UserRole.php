@@ -7,6 +7,7 @@ enum UserRole: string
     case SUPER_ADMIN = 'super_admin';
     case SCHOOL_ADMIN = 'school_admin';
     case TEACHER = 'teacher';
+    case STAFF = 'staff';
     case STUDENT = 'student';
     case PARENT = 'parent';
 
@@ -19,6 +20,7 @@ enum UserRole: string
             self::SUPER_ADMIN => 'Administrator Utama (Super Admin)',
             self::SCHOOL_ADMIN => 'Admin Sekolah',
             self::TEACHER => 'Guru / Tenaga Pendidik',
+            self::STAFF => 'Staf / Tenaga Kependidikan',
             self::STUDENT => 'Siswa / Peserta Didik',
             self::PARENT => 'Orang Tua / Wali Murid',
         };
@@ -33,6 +35,7 @@ enum UserRole: string
             self::SUPER_ADMIN => 'danger',
             self::SCHOOL_ADMIN => 'primary',
             self::TEACHER => 'success',
+            self::STAFF => 'info',
             self::STUDENT => 'warning',
             self::PARENT => 'neutral',
         };
@@ -43,6 +46,6 @@ enum UserRole: string
      */
     public function isStaff(): bool
     {
-        return in_array($this, [self::SUPER_ADMIN, self::SCHOOL_ADMIN, self::TEACHER], true);
+        return in_array($this, [self::SUPER_ADMIN, self::SCHOOL_ADMIN, self::TEACHER, self::STAFF], true);
     }
 }

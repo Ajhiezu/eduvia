@@ -53,8 +53,8 @@
 
                 <!-- Right Column: Description & Explore Pill CTA Button -->
                 <div class="lg:col-span-5 flex flex-col justify-between space-y-6">
-                    <p class="text-sm sm:text-base text-zinc-600 leading-relaxed">
-                        {{ $setting->hero_subheadline ?: 'Our school provides dynamic environment that empowers students to new heights. Membina generasi unggul dengan kurikulum terpadu dan teknologi modern.' }}
+                    <p class="text-sm sm:text-base text-zinc-600 leading-relaxed font-sans">
+                        {{ $setting->hero_subheadline ?: 'Membina generasi pembelajar berkarakter luhur, berdaya saing global, dan adaptif terhadap masa depan melalui kurikulum terpadu serta ekosistem pendidikan yang holistik.' }}
                     </p>
 
                     <div class="flex items-center gap-3">
@@ -98,13 +98,13 @@
 
                 <!-- Floating Bottom Caption Badge -->
                 <div class="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 flex flex-wrap items-center gap-2">
-                    <div class="backdrop-blur-md bg-white/90 text-zinc-900 px-4 py-2 rounded-2xl text-xs font-bold shadow-md flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-[#E11D2E]"></span>
+                    <div class="backdrop-blur-md bg-white/95 text-zinc-900 px-4 py-2 rounded-2xl text-xs font-bold shadow-md flex items-center gap-2 border border-zinc-200/50">
+                        <span class="w-2 h-2 rounded-full bg-[#161F2E]"></span>
                         <span>{{ $school->name }} &bull; Jenjang {{ strtoupper(implode(' / ', $school->educational_levels ?? ['SMA'])) }}</span>
                     </div>
 
                     @if ($activeAdmissionPeriod)
-                        <a href="{{ route('ppdb.register', ['period' => $activeAdmissionPeriod->code]) }}" class="backdrop-blur-md bg-[#E11D2E] text-white hover:bg-rose-700 px-4 py-2 rounded-2xl text-xs font-bold shadow-md transition-colors flex items-center gap-1.5">
+                        <a href="{{ route('ppdb.register', ['period' => $activeAdmissionPeriod->code]) }}" class="backdrop-blur-md bg-[#161F2E] text-white hover:bg-black px-4 py-2 rounded-2xl text-xs font-semibold shadow-md transition-colors flex items-center gap-1.5">
                             <span>Daftar PPDB {{ date('Y') }}</span>
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </a>
@@ -118,7 +118,7 @@
     <!-- ====================================================================== -->
     <!-- 2. ABOUT & MISSION SECTION (Asymmetric Composition)                    -->
     <!-- ====================================================================== -->
-    <section class="py-16 sm:py-24 bg-white border-b border-zinc-200/80 relative">
+    <section id="about" class="py-16 sm:py-24 bg-white border-b border-zinc-200/80 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-16 sm:mb-20">
@@ -131,23 +131,23 @@
                     </div>
 
                     <div>
-                        <span class="text-[11px] font-bold tracking-widest uppercase text-zinc-400 block mb-6">
+                        <span class="text-[11px] font-bold tracking-widest uppercase text-zinc-400 block mb-6 font-sans">
                             ABOUT
                         </span>
                         <h2 class="text-3xl sm:text-4xl lg:text-[42px] font-serif font-normal leading-[1.15] text-white">
-                            Unleash students <br>
+                            Unleash students’ <br>
                             possibilities with us
                         </h2>
                         @if (!empty($setting->principal_name))
-                            <p class="text-xs text-zinc-400 mt-4">
+                            <p class="text-xs text-zinc-300 mt-4 font-sans">
                                 Dipimpin oleh: <strong class="text-white">{{ $setting->principal_name }}</strong>
                             </p>
                         @endif
                     </div>
 
                     <div class="pt-8 border-t border-zinc-700/60 flex items-center justify-between">
-                        <span class="text-xs text-zinc-400">Komitmen Pendidikan Unggul</span>
-                        <a href="{{ route('school.public.profile', ['school' => $school->slug]) }}" class="text-xs font-semibold text-white hover:text-red-400 transition-colors flex items-center gap-1">
+                        <span class="text-xs text-zinc-400 font-sans">Komitmen Keunggulan & Integritas</span>
+                        <a href="{{ route('school.public.profile', ['school' => $school->slug]) }}" class="text-xs font-semibold text-white/90 hover:text-white transition-colors flex items-center gap-1 font-sans">
                             <span>Visi & Misi</span>
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </a>
@@ -157,7 +157,7 @@
                 <!-- Center & Bottom Photo Collage -->
                 <div class="lg:col-span-4 grid grid-cols-2 gap-4 items-center">
                     <div class="space-y-4">
-                        <div class="rounded-2xl overflow-hidden shadow-md aspect-4/3 bg-zinc-100">
+                        <div class="rounded-2xl overflow-hidden shadow-md aspect-4/3 bg-zinc-100 border border-zinc-200/70">
                             <img 
                                 src="{{ asset('images/edmunhigh/small-group.jpg') }}" 
                                 alt="Students Discussion" 
@@ -165,12 +165,12 @@
                             >
                         </div>
                         <div class="p-4 bg-zinc-50 rounded-2xl border border-zinc-200/80 text-center">
-                            <span class="text-2xl font-serif font-bold text-zinc-900 block">100%</span>
-                            <span class="text-[11px] text-zinc-500">Kelulusan & Lanjut Studi</span>
+                            <span class="text-2xl sm:text-3xl font-serif font-bold text-zinc-900 block">100%</span>
+                            <span class="text-[11px] font-medium text-zinc-500 font-sans">Kelulusan & Penyaluran Studi</span>
                         </div>
                     </div>
 
-                    <div class="rounded-3xl overflow-hidden shadow-lg aspect-3/4 bg-zinc-100">
+                    <div class="rounded-3xl overflow-hidden shadow-lg aspect-3/4 bg-zinc-100 border border-zinc-200/70">
                         <img 
                             src="{{ asset('images/edmunhigh/student-portrait.jpg') }}" 
                             alt="Student Portrait" 
@@ -185,18 +185,18 @@
                         {!! $crosshairSvg !!}
                     </div>
 
-                    <p class="text-sm text-zinc-600 leading-relaxed">
+                    <p class="text-sm text-zinc-600 leading-relaxed font-sans">
                         @if (!empty($setting->welcome_message))
-                            {{ Str::limit(strip_tags($setting->welcome_message), 180) }}
+                            {{ Str::limit(strip_tags($setting->welcome_message), 210) }}
                         @else
-                            Unlocking every student's potential by offering a stimulating and supportive environment is what we offer. Our innovative education encourages students to explore, collaborate, and excel.
+                            Kami mendedikasikan lingkungan belajar yang kondusif, berpusat pada siswa, dan mendorong eksplorasi keilmuan secara mendalam. Setiap siswa dibimbing untuk mengenali potensinya, bernalar kritis, serta berkontribusi nyata bagi masyarakat.
                         @endif
                     </p>
 
                     <div>
                         <a 
                             href="{{ route('school.public.profile', ['school' => $school->slug]) }}" 
-                            class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-zinc-900 hover:text-[#E11D2E] border-b border-zinc-900 hover:border-[#E11D2E] pb-1 transition-all"
+                            class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-zinc-900 hover:text-zinc-600 border-b border-zinc-900 hover:border-zinc-600 pb-1 transition-all"
                         >
                             <span>Learn More</span>
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -209,7 +209,7 @@
             </div>
 
             <!-- Bottom: 3 Core Pillars (Academic Excellence, Faculty, Supportive Community) -->
-            <div class="pt-12 border-t border-zinc-200/80 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div id="community" class="pt-12 border-t border-zinc-200/80 grid grid-cols-1 md:grid-cols-3 gap-8">
                 
                 <!-- Pillar 1 -->
                 <div class="space-y-3">
@@ -219,9 +219,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-base text-zinc-900">Academic Excellence</h3>
-                    <p class="text-xs sm:text-sm text-zinc-500 leading-relaxed">
-                        Our rigorous curriculum ensures students are well-prepared for college and life beyond.
+                    <h3 class="font-bold text-base text-zinc-900 font-sans">Academic Excellence</h3>
+                    <p class="text-xs sm:text-sm text-zinc-500 leading-relaxed font-sans">
+                        Kurikulum komprehensif berstandar unggul yang menstimulasi daya analitis, pemecahan masalah, dan penguasaan sains modern.
                     </p>
                 </div>
 
@@ -232,9 +232,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-base text-zinc-900">Experienced Faculty</h3>
-                    <p class="text-xs sm:text-sm text-zinc-500 leading-relaxed">
-                        Our dedicated teachers are passionate about education and committed to student success.
+                    <h3 class="font-bold text-base text-zinc-900 font-sans">Experienced Faculty</h3>
+                    <p class="text-xs sm:text-sm text-zinc-500 leading-relaxed font-sans">
+                        Didampingi tenaga pendidik profesional, bersertifikasi, dan berdedikasi membimbing potensi intelektual serta karakter siswa.
                     </p>
                 </div>
 
@@ -245,9 +245,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-base text-zinc-900">Supportive Community</h3>
-                    <p class="text-xs sm:text-sm text-zinc-500 leading-relaxed">
-                        We foster a strong sense of community, character, and belonging for all students on board.
+                    <h3 class="font-bold text-base text-zinc-900 font-sans">Supportive Community</h3>
+                    <p class="text-xs sm:text-sm text-zinc-500 leading-relaxed font-sans">
+                        Ekosistem sekolah yang hangat, inklusif, dan kolaboratif, menumbuhkan jiwa kepemimpinan serta integritas etika sosial.
                     </p>
                 </div>
 
@@ -259,7 +259,7 @@
     <!-- ====================================================================== -->
     <!-- 3. STUDENT PROGRAMS SECTION (Interactive Split Layout)                 -->
     <!-- ====================================================================== -->
-    <section class="py-16 sm:py-24 bg-[#F8F9FA] border-b border-zinc-200/80">
+    <section id="programs" class="py-16 sm:py-24 bg-[#F8F9FA] border-b border-zinc-200/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
@@ -267,7 +267,7 @@
                 <!-- Left Column: Title & Programs List -->
                 <div class="lg:col-span-6 space-y-8">
                     <div>
-                        <span class="text-[11px] font-bold tracking-widest uppercase text-zinc-400 block mb-2">
+                        <span class="text-[11px] font-bold tracking-widest uppercase text-zinc-400 block mb-2 font-sans">
                             PROGRAMS
                         </span>
                         <h2 class="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-zinc-900 leading-[1.12]">
@@ -277,35 +277,35 @@
                     </div>
 
                     <!-- Interactive Program Items List -->
-                    <div class="space-y-4 pt-2">
+                    <div class="space-y-4 pt-2 font-sans">
                         <div class="flex items-center gap-3 text-sm sm:text-base font-bold text-zinc-900 cursor-pointer group">
-                            <span class="text-[#E11D2E] font-bold">&mdash;</span>
-                            <span class="border-b border-zinc-900 pb-0.5">College AP & STEM Program</span>
+                            <span class="text-zinc-900 font-bold">&mdash;</span>
+                            <span class="border-b border-zinc-900 pb-0.5">Program Penguatan Sains & Riset Teknologi (STEM)</span>
                         </div>
 
                         <div class="flex items-center gap-3 text-sm sm:text-base font-medium text-zinc-400 hover:text-zinc-800 transition-colors cursor-pointer group">
                             <span class="opacity-0 group-hover:opacity-100 transition-opacity text-zinc-400">&mdash;</span>
-                            <span>Peminatan IPA / Sains & Riset Bioteknologi</span>
+                            <span>Peminatan MIPA (Matematika & Ilmu Pengetahuan Alam Terapan)</span>
                         </div>
 
                         <div class="flex items-center gap-3 text-sm sm:text-base font-medium text-zinc-400 hover:text-zinc-800 transition-colors cursor-pointer group">
                             <span class="opacity-0 group-hover:opacity-100 transition-opacity text-zinc-400">&mdash;</span>
-                            <span>Peminatan IPS / Social & Business Economics</span>
+                            <span>Peminatan Sosial Humaniora & Studi Ekonomi Global</span>
                         </div>
 
                         <div class="flex items-center gap-3 text-sm sm:text-base font-medium text-zinc-400 hover:text-zinc-800 transition-colors cursor-pointer group">
                             <span class="opacity-0 group-hover:opacity-100 transition-opacity text-zinc-400">&mdash;</span>
-                            <span>Program Bahasa & Komunikasi Global (TOEFL/IELTS)</span>
+                            <span>Program Bahasa & Diplomasi Komunikasi Internasional</span>
                         </div>
 
                         <div class="flex items-center gap-3 text-sm sm:text-base font-medium text-zinc-400 hover:text-zinc-800 transition-colors cursor-pointer group">
                             <span class="opacity-0 group-hover:opacity-100 transition-opacity text-zinc-400">&mdash;</span>
-                            <span>Program Vokasi Digital (Software Engineering & AI)</span>
+                            <span>Inovasi Digital, Rekayasa Perangkat Lunak & Kecerdasan Buatan</span>
                         </div>
 
                         <div class="flex items-center gap-3 text-sm sm:text-base font-medium text-zinc-400 hover:text-zinc-800 transition-colors cursor-pointer group">
                             <span class="opacity-0 group-hover:opacity-100 transition-opacity text-zinc-400">&mdash;</span>
-                            <span>Humanities & Leadership Development</span>
+                            <span>Pengembangan Kepemimpinan Siswa & Seni Budaya</span>
                         </div>
                     </div>
 
@@ -327,12 +327,12 @@
 
                     <!-- Floating Dark Navy Overlay Card -->
                     <div class="sm:absolute -bottom-6 -right-6 mt-4 sm:mt-0 bg-[#161F2E] text-white p-6 sm:p-8 rounded-3xl shadow-2xl max-w-sm border border-zinc-700/50" style="background-color: #161F2E; color: #ffffff;">
-                        <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed">
-                            College-level courses and exams that allow students to earn college credit, certifications, and national academic honors.
+                        <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed font-sans">
+                            Pembelajaran berbasis riset dan proyek kolaboratif nyata yang membekali siswa dengan portofolio akademik unggul, sertifikasi kompetensi, serta kesiapan menembus perguruan tinggi terkemuka.
                         </p>
-                        <div class="mt-4 pt-4 border-t border-zinc-700/60 flex items-center justify-between">
-                            <span class="text-[11px] text-zinc-400">Kurikulum Merdeka Unggul</span>
-                            <a href="{{ route('school.public.profile', ['school' => $school->slug]) }}" class="text-xs font-bold text-white hover:text-red-400 transition-colors">
+                        <div class="mt-4 pt-4 border-t border-zinc-700/60 flex items-center justify-between font-sans">
+                            <span class="text-[11px] text-zinc-400">Kurikulum Unggul Nasional</span>
+                            <a href="{{ route('school.public.profile', ['school' => $school->slug]) }}" class="text-xs font-semibold text-white/90 hover:text-white transition-colors">
                                 Detail Kurikulum &rarr;
                             </a>
                         </div>
@@ -347,7 +347,7 @@
     <!-- ====================================================================== -->
     <!-- 4. CAMPUS LIFE CINEMATIC BANNER (Video Tour Highlight)                 -->
     <!-- ====================================================================== -->
-    <section class="py-14 sm:py-20 bg-white border-b border-zinc-200/80">
+    <section id="campus-life" class="py-14 sm:py-20 bg-white border-b border-zinc-200/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <div class="relative rounded-3xl overflow-hidden shadow-2xl aspect-[16/8] sm:aspect-[16/7] lg:aspect-[16/6.5] bg-zinc-900 group">
@@ -363,17 +363,17 @@
                     <a 
                         href="{{ $setting->hero_video_url ?: '#' }}" 
                         @if ($setting->hero_video_url) target="_blank" @endif
-                        class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white/90 hover:bg-white text-zinc-900 flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 backdrop-blur-xs group/btn"
+                        class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white/95 hover:bg-white text-zinc-900 flex items-center justify-center shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 backdrop-blur-xs group/btn"
                     >
                         <svg class="w-8 h-8 sm:w-10 sm:h-10 fill-current text-zinc-900 ml-1.5" viewBox="0 0 24 24">
                             <path d="M8 5v14l11-7z"/>
                         </svg>
                     </a>
-                    <span class="mt-4 text-xs sm:text-sm font-bold tracking-wider uppercase text-white drop-shadow-md">
+                    <span class="mt-4 text-xs sm:text-sm font-bold tracking-wider uppercase text-white drop-shadow-md font-sans">
                         Tur Virtual Kampus & Suasana Pembelajaran
                     </span>
-                    <span class="text-[11px] text-zinc-200 drop-shadow-sm mt-0.5">
-                        Lihat fasilitas laboratorium, perpustakaan modern, dan aktivitas kolaborasi siswa
+                    <span class="text-[11px] text-zinc-200 drop-shadow-sm mt-0.5 font-sans">
+                        Eksplorasi ruang belajar modern, laboratorium sains terpadu, perpustakaan digital, serta sarana olahraga
                     </span>
                 </div>
             </div>
@@ -385,14 +385,14 @@
     <!-- 5. NEWS & ARTICLES SECTION (Matching Real Published Content)          -->
     <!-- ====================================================================== -->
     @if ($latestNews->isNotEmpty())
-        <section class="py-14 sm:py-20 bg-zinc-50 border-b border-zinc-200/80">
+        <section id="news" class="py-14 sm:py-20 bg-zinc-50 border-b border-zinc-200/80">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between mb-8">
                     <div>
-                        <span class="text-[11px] font-bold tracking-widest uppercase text-zinc-400 block mb-1">NEWS</span>
+                        <span class="text-[11px] font-bold tracking-widest uppercase text-zinc-400 block mb-1 font-sans">NEWS</span>
                         <h2 class="text-2xl sm:text-3xl font-serif text-zinc-900">Warta & Berita Terkini</h2>
                     </div>
-                    <a href="{{ route('school.public.articles', ['school' => $school->slug]) }}" class="text-xs font-bold uppercase tracking-wider text-zinc-900 hover:text-[#E11D2E] inline-flex items-center gap-1">
+                    <a href="{{ route('school.public.articles', ['school' => $school->slug]) }}" class="text-xs font-bold uppercase tracking-wider text-zinc-900 hover:text-zinc-600 inline-flex items-center gap-1 font-sans">
                         <span>Lihat Semua</span>
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </a>
@@ -410,29 +410,29 @@
                                     </div>
                                 @endif
                                 @if ($news->category)
-                                    <span class="absolute top-2.5 left-2.5 px-2 py-0.5 text-[10px] font-bold rounded bg-zinc-900/80 text-white backdrop-blur-xs">
+                                    <span class="absolute top-2.5 left-2.5 px-2 py-0.5 text-[10px] font-bold rounded bg-zinc-900/80 text-white backdrop-blur-xs font-sans">
                                         {{ $news->category }}
                                     </span>
                                 @endif
                             </div>
                             <div class="p-5 flex-1 flex flex-col justify-between">
                                 <div>
-                                    <span class="text-[11px] text-zinc-400 block mb-1">
+                                    <span class="text-[11px] text-zinc-400 block mb-1 font-sans">
                                         {{ $news->published_at ? $news->published_at->format('d M Y') : 'Terbaru' }}
                                     </span>
-                                    <h3 class="font-bold text-sm text-zinc-900 leading-snug line-clamp-2 mb-2 hover:text-[#E11D2E] transition-colors">
+                                    <h3 class="font-bold text-sm text-zinc-900 leading-snug line-clamp-2 mb-2 hover:text-zinc-700 transition-colors font-sans">
                                         <a href="{{ route('school.public.article-detail', ['school' => $school->slug, 'slug' => $news->slug]) }}">
                                             {{ $news->title }}
                                         </a>
                                     </h3>
-                                    <p class="text-xs text-zinc-500 line-clamp-2 leading-relaxed">
+                                    <p class="text-xs text-zinc-500 line-clamp-2 leading-relaxed font-sans">
                                         {{ $news->excerpt ?: Str::limit(strip_tags($news->content), 90) }}
                                     </p>
                                 </div>
-                                <div class="pt-3 mt-3 border-t border-zinc-100">
-                                    <a href="{{ route('school.public.article-detail', ['school' => $school->slug, 'slug' => $news->slug]) }}" class="text-xs font-bold text-[#E11D2E] hover:underline inline-flex items-center gap-1">
+                                <div class="pt-3 mt-3 border-t border-zinc-100 font-sans">
+                                    <a href="{{ route('school.public.article-detail', ['school' => $school->slug, 'slug' => $news->slug]) }}" class="text-xs font-semibold text-zinc-900 hover:underline inline-flex items-center gap-1">
                                         <span>Baca Artikel</span>
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7m0 0l-7 7"/></svg>
                                     </a>
                                 </div>
                             </div>
@@ -446,7 +446,7 @@
     <!-- ====================================================================== -->
     <!-- 6. EVENTS & AGENDA SECTION (Join our next upcoming events)             -->
     <!-- ====================================================================== -->
-    <section class="py-16 sm:py-24 bg-white border-b border-zinc-200/80">
+    <section id="events" class="py-16 sm:py-24 bg-white border-b border-zinc-200/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
@@ -454,7 +454,7 @@
                 <!-- Left: Section Title & Blueprint Grid -->
                 <div class="lg:col-span-5 space-y-6">
                     <div>
-                        <span class="text-[11px] font-bold tracking-widest uppercase text-zinc-400 block mb-2">
+                        <span class="text-[11px] font-bold tracking-widest uppercase text-zinc-400 block mb-2 font-sans">
                             EVENTS
                         </span>
                         <h2 class="text-3xl sm:text-4xl lg:text-5xl font-serif font-normal text-zinc-900 leading-[1.15]">
@@ -463,8 +463,8 @@
                         </h2>
                     </div>
 
-                    <p class="text-xs sm:text-sm text-zinc-500 leading-relaxed max-w-sm">
-                        Ikuti berbagai agenda akademik, pameran karya siswa, kompetisi sains, serta open house penerimaan siswa baru.
+                    <p class="text-xs sm:text-sm text-zinc-500 leading-relaxed max-w-sm font-sans">
+                        Ikuti agenda akademik terdekat, simposium sains, pameran inovasi seni & teknologi, serta sosialisasi penerimaan siswa baru.
                     </p>
 
                     <div class="pt-6 hidden sm:block">
@@ -472,7 +472,7 @@
                     </div>
 
                     <div class="pt-2">
-                        <a href="{{ route('school.public.events', ['school' => $school->slug]) }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold border border-zinc-300 hover:border-zinc-900 text-zinc-800 transition-colors">
+                        <a href="{{ route('school.public.events', ['school' => $school->slug]) }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold border border-zinc-300 hover:border-zinc-900 text-zinc-800 transition-colors font-sans">
                             <span>Lihat Kalender Seluruh Acara</span>
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </a>
@@ -480,7 +480,7 @@
                 </div>
 
                 <!-- Right: Sleek Event List Cards -->
-                <div class="lg:col-span-7 space-y-4">
+                <div class="lg:col-span-7 space-y-4 font-sans">
                     
                     @if ($upcomingEvents->isNotEmpty())
                         @foreach ($upcomingEvents as $evt)
@@ -498,7 +498,7 @@
                                     </div>
 
                                     <div class="min-w-0">
-                                        <h3 class="font-bold text-sm sm:text-base text-zinc-900 leading-snug group-hover:text-[#E11D2E] transition-colors line-clamp-1">
+                                        <h3 class="font-bold text-sm sm:text-base text-zinc-900 leading-snug group-hover:text-zinc-700 transition-colors line-clamp-1">
                                             {{ $evt->title }}
                                         </h3>
                                         <div class="flex flex-wrap items-center gap-3 text-xs text-zinc-500 mt-1">
@@ -519,7 +519,7 @@
 
                                 <a 
                                     href="{{ route('school.public.events', ['school' => $school->slug]) }}" 
-                                    class="text-xs font-bold uppercase tracking-wider text-zinc-900 group-hover:text-[#E11D2E] inline-flex items-center gap-1 shrink-0"
+                                    class="text-xs font-bold uppercase tracking-wider text-zinc-900 group-hover:text-zinc-600 inline-flex items-center gap-1 shrink-0"
                                 >
                                     <span>Learn More</span>
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
@@ -527,71 +527,71 @@
                             </div>
                         @endforeach
                     @else
-                        <!-- Default Curated EdmunHigh Style Events List -->
+                        <!-- Default Curated Institutional Events List -->
                         <div class="bg-zinc-50/70 hover:bg-zinc-100/80 p-5 rounded-2xl border border-zinc-200/80 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group">
                             <div class="flex items-center gap-4 min-w-0">
                                 <div class="w-16 h-16 rounded-xl overflow-hidden bg-zinc-200 shrink-0">
-                                    <img src="{{ asset('images/edmunhigh/small-group.jpg') }}" alt="Senior Fine Arts Showcase" class="w-full h-full object-cover">
+                                    <img src="{{ asset('images/edmunhigh/small-group.jpg') }}" alt="Pentas Seni & Gelar Inovasi Siswa" class="w-full h-full object-cover">
                                 </div>
                                 <div>
-                                    <h3 class="font-bold text-sm sm:text-base text-zinc-900 group-hover:text-[#E11D2E] transition-colors">
-                                        Senior Fine Arts & Technology Showcase
+                                    <h3 class="font-bold text-sm sm:text-base text-zinc-900 group-hover:text-zinc-700 transition-colors">
+                                        Pentas Seni & Gelar Inovasi Siswa
                                     </h3>
                                     <div class="flex items-center gap-3 text-xs text-zinc-500 mt-1">
                                         <span>5 &ndash; 6 November 2026</span>
                                         <span>&bull;</span>
-                                        <span>Edmun Auditorium & Art Studio</span>
+                                        <span>Auditorium Utama & Gedung Seni Kampus</span>
                                     </div>
                                 </div>
                             </div>
-                            <span class="text-xs font-bold uppercase tracking-wider text-zinc-900 group-hover:text-[#E11D2E] inline-flex items-center gap-1 shrink-0">
-                                <span>Learn More</span>
+                            <a href="{{ route('school.public.events', ['school' => $school->slug]) }}" class="text-xs font-bold uppercase tracking-wider text-zinc-900 group-hover:text-zinc-600 inline-flex items-center gap-1 shrink-0">
+                                <span>Lihat Rincian</span>
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                            </span>
+                            </a>
                         </div>
 
                         <div class="bg-zinc-50/70 hover:bg-zinc-100/80 p-5 rounded-2xl border border-zinc-200/80 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group">
                             <div class="flex items-center gap-4 min-w-0">
                                 <div class="w-16 h-16 rounded-xl overflow-hidden bg-zinc-200 shrink-0">
-                                    <img src="{{ asset('images/edmunhigh/programs-classroom.jpg') }}" alt="Spring High Science Fair" class="w-full h-full object-cover">
+                                    <img src="{{ asset('images/edmunhigh/programs-classroom.jpg') }}" alt="Pameran Riset Ilmiah & Inovasi Teknologi" class="w-full h-full object-cover">
                                 </div>
                                 <div>
-                                    <h3 class="font-bold text-sm sm:text-base text-zinc-900 group-hover:text-[#E11D2E] transition-colors">
-                                        National High School Science & Robotics Fair
+                                    <h3 class="font-bold text-sm sm:text-base text-zinc-900 group-hover:text-zinc-700 transition-colors">
+                                        Pameran Riset Ilmiah & Inovasi Teknologi Siswa
                                     </h3>
                                     <div class="flex items-center gap-3 text-xs text-zinc-500 mt-1">
                                         <span>18 November 2026</span>
                                         <span>&bull;</span>
-                                        <span>Innovation & STEM Laboratory</span>
+                                        <span>Laboratorium Inovasi Sains & STEM</span>
                                     </div>
                                 </div>
                             </div>
-                            <span class="text-xs font-bold uppercase tracking-wider text-zinc-900 group-hover:text-[#E11D2E] inline-flex items-center gap-1 shrink-0">
-                                <span>Learn More</span>
+                            <a href="{{ route('school.public.events', ['school' => $school->slug]) }}" class="text-xs font-bold uppercase tracking-wider text-zinc-900 group-hover:text-zinc-600 inline-flex items-center gap-1 shrink-0">
+                                <span>Lihat Rincian</span>
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                            </span>
+                            </a>
                         </div>
 
                         <div class="bg-zinc-50/70 hover:bg-zinc-100/80 p-5 rounded-2xl border border-zinc-200/80 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group">
                             <div class="flex items-center gap-4 min-w-0">
                                 <div class="w-16 h-16 rounded-xl overflow-hidden bg-zinc-200 shrink-0">
-                                    <img src="{{ asset('images/edmunhigh/student-portrait.jpg') }}" alt="Public College and Career Day" class="w-full h-full object-cover">
+                                    <img src="{{ asset('images/edmunhigh/student-portrait.jpg') }}" alt="Edukasi & Pembekalan Karir Perguruan Tinggi" class="w-full h-full object-cover">
                                 </div>
                                 <div>
-                                    <h3 class="font-bold text-sm sm:text-base text-zinc-900 group-hover:text-[#E11D2E] transition-colors">
-                                        Public College & Career Preparation Day
+                                    <h3 class="font-bold text-sm sm:text-base text-zinc-900 group-hover:text-zinc-700 transition-colors">
+                                        Edukasi & Pembekalan Karir Perguruan Tinggi
                                     </h3>
                                     <div class="flex items-center gap-3 text-xs text-zinc-500 mt-1">
                                         <span>25 November 2026</span>
                                         <span>&bull;</span>
-                                        <span>Main Library & Exhibition Hall</span>
+                                        <span>Perpustakaan Utama & Ruang Pameran</span>
                                     </div>
                                 </div>
                             </div>
-                            <span class="text-xs font-bold uppercase tracking-wider text-zinc-900 group-hover:text-[#E11D2E] inline-flex items-center gap-1 shrink-0">
-                                <span>Learn More</span>
+                            <a href="{{ route('school.public.events', ['school' => $school->slug]) }}" class="text-xs font-bold uppercase tracking-wider text-zinc-900 group-hover:text-zinc-600 inline-flex items-center gap-1 shrink-0">
+                                <span>Lihat Rincian</span>
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                            </span>
+                            </a>
                         </div>
                     @endif
 
@@ -610,8 +610,8 @@
             <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
                 
                 <div class="space-y-3 max-w-2xl text-center lg:text-left">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#E11D2E] text-white shadow-xs">
-                        <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                    <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-semibold bg-white/10 text-zinc-200 border border-white/15 backdrop-blur-xs font-sans">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                         Penerimaan Peserta Didik Baru (PPDB / SPMB)
                     </span>
                     <h2 class="text-3xl sm:text-4xl font-serif leading-tight">
@@ -621,42 +621,42 @@
                             Bergabunglah dengan Komunitas Pembelajar Berprestasi
                         @endif
                     </h2>
-                    <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed">
+                    <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed font-sans">
                         @if ($activeAdmissionPeriod)
                             Periode Pendaftaran: <strong>{{ $activeAdmissionPeriod->start_date->format('d M Y') }}</strong> s/d <strong>{{ $activeAdmissionPeriod->end_date->format('d M Y') }}</strong>
                             @if ($activeAdmissionPeriod->tracks->isNotEmpty())
                                 &bull; Jalur: {{ $activeAdmissionPeriod->tracks->pluck('name')->implode(', ') }}
                             @endif
                         @else
-                            Daftarkan putra-putri Anda untuk menempuh pendidikan berkualitas tinggi dengan pembinaan karakter, fasilitas modern, dan peluang beasiswa prestasi.
+                            Daftarkan putra-putri Anda untuk menempuh pendidikan berkualitas tinggi dengan pembinaan karakter, fasilitas berstandar internasional, dan peluang beasiswa prestasi.
                         @endif
                     </p>
                 </div>
 
-                <div class="flex flex-wrap items-center justify-center gap-4 shrink-0">
+                <div class="flex flex-wrap items-center justify-center gap-4 shrink-0 font-sans">
                     @if ($activeAdmissionPeriod)
                         <a 
                             href="{{ route('ppdb.register', ['period' => $activeAdmissionPeriod->code]) }}" 
-                            class="px-8 py-4 rounded-full font-bold text-sm bg-[#E11D2E] hover:bg-rose-700 text-white shadow-xl transition-all duration-200 hover:-translate-y-0.5"
+                            class="px-8 py-4 rounded-full font-bold text-sm bg-white hover:bg-zinc-100 text-zinc-900 shadow-xl transition-all duration-200 hover:-translate-y-0.5"
                         >
                             Daftar Sekarang &rarr;
                         </a>
                         <a 
                             href="{{ route('ppdb.check-status') }}" 
-                            class="px-6 py-4 rounded-full font-semibold text-sm bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-colors"
+                            class="px-6 py-4 rounded-full font-semibold text-sm bg-transparent hover:bg-white/10 text-white border border-white/30 transition-colors"
                         >
                             Cek Status Seleksi
                         </a>
                     @else
                         <a 
                             href="{{ route('ppdb.index') }}" 
-                            class="px-8 py-4 rounded-full font-bold text-sm bg-[#E11D2E] hover:bg-rose-700 text-white shadow-xl transition-all duration-200 hover:-translate-y-0.5"
+                            class="px-8 py-4 rounded-full font-bold text-sm bg-white hover:bg-zinc-100 text-zinc-900 shadow-xl transition-all duration-200 hover:-translate-y-0.5"
                         >
                             Informasi Jalur Masuk PPDB &rarr;
                         </a>
                         <a 
                             href="{{ route('school.public.contact', ['school' => $school->slug]) }}" 
-                            class="px-6 py-4 rounded-full font-semibold text-sm bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-colors"
+                            class="px-6 py-4 rounded-full font-semibold text-sm bg-transparent hover:bg-white/10 text-white border border-white/30 transition-colors"
                         >
                             Hubungi Admin PPDB
                         </a>

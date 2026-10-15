@@ -30,7 +30,7 @@
                 <div>
                     <div class="flex items-center gap-2 mb-1">
                         <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
-                            {{ $school?->name ?? 'SMP/SMA Nusantara Utama' }}
+                            {{ $school?->name ?? 'Yayasan Perguruan Nusantara Utama' }}
                         </h1>
                         @if ($school?->is_active)
                             <x-badge variant="success" size="sm" dot>Aktif</x-badge>

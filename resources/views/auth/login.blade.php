@@ -88,62 +88,18 @@
                     </div>
                 </form>
 
-                <!-- Demo Credentials Helper for QA & Testing -->
-                <div class="mt-8 pt-6 border-t border-slate-100">
-                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 text-center mb-3">
-                        Akun Uji Coba Cepat (Fase 0 Foundation)
-                    </p>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                        <button
-                            type="button"
-                            onclick="fillDemo('superadmin@eduvia.test', 'Password123!')"
-                            class="p-2 rounded-xl border border-slate-200 hover:border-brand-500 hover:bg-brand-50/50 text-left transition-colors"
-                        >
-                            <div class="font-bold text-slate-800">Super Admin</div>
-                            <div class="text-[10px] text-slate-500 truncate">superadmin@eduvia.test</div>
-                        </button>
-
-                        <button
-                            type="button"
-                            onclick="fillDemo('admin.sekolah@eduvia.test', 'Password123!')"
-                            class="p-2 rounded-xl border border-slate-200 hover:border-brand-500 hover:bg-brand-50/50 text-left transition-colors"
-                        >
-                            <div class="font-bold text-slate-800">Admin Sekolah</div>
-                            <div class="text-[10px] text-slate-500 truncate">admin.sekolah@...</div>
-                        </button>
-
-                        <button
-                            type="button"
-                            onclick="fillDemo('guru@eduvia.test', 'Password123!')"
-                            class="p-2 rounded-xl border border-slate-200 hover:border-brand-500 hover:bg-brand-50/50 text-left transition-colors"
-                        >
-                            <div class="font-bold text-slate-800">Guru / Pengajar</div>
-                            <div class="text-[10px] text-slate-500 truncate">guru@eduvia.test</div>
-                        </button>
-
-                        <button
-                            type="button"
-                            onclick="fillDemo('siswa@eduvia.test', 'Password123!')"
-                            class="p-2 rounded-xl border border-slate-200 hover:border-brand-500 hover:bg-brand-50/50 text-left transition-colors"
-                        >
-                            <div class="font-bold text-slate-800">Siswa / Pelajar</div>
-                            <div class="text-[10px] text-slate-500 truncate">siswa@eduvia.test</div>
-                        </button>
-                    </div>
+                <!-- Security & Help Notice -->
+                <div class="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+                    <span class="inline-flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        <span>Koneksi Terenkripsi SSL</span>
+                    </span>
+                    <a href="{{ route('home') }}" class="text-brand-600 hover:text-brand-700 font-medium transition-colors">
+                        Kembali ke Beranda &rarr;
+                    </a>
                 </div>
             </x-card>
 
         </div>
     </div>
-
-    <script>
-        function fillDemo(email, pass) {
-            document.getElementById('emailInput').value = email;
-            document.getElementById('passwordInput').value = pass;
-            if (window.toast) {
-                window.toast('Kredensial akun uji coba (' + email + ') telah terisi otomatis.', 'info');
-            }
-        }
-    </script>
 </x-layouts.guest>

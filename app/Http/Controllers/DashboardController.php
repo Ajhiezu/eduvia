@@ -12,6 +12,7 @@ use App\Models\ClassroomStudent;
 use App\Models\School;
 use App\Models\TeachingAssignment;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -20,7 +21,7 @@ class DashboardController extends Controller
     /**
      * Display the authenticated user's role-tailored dashboard.
      */
-    public function index(Request $request): View
+    public function index(Request $request): View|RedirectResponse
     {
         $user = $request->user();
         $school = School::current();

@@ -8,7 +8,7 @@
         <div class="text-center max-w-3xl mx-auto mb-16">
             <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-50 border border-brand-200 text-brand-700 text-xs font-semibold mb-6 shadow-2xs">
                 <span class="w-2 h-2 rounded-full bg-brand-600 animate-pulse"></span>
-                <span>Learn · Grow · Build Your Future · Fase 0 Foundation</span>
+                <span>Learn &bull; Grow &bull; Build Your Future &bull; Sistem Akademik Sekolah Terpadu</span>
             </div>
 
             <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15]">
@@ -36,15 +36,11 @@
                     Masuk ke Sistem
                 </x-button>
 
-                <x-button href="{{ route('design-system') }}" size="lg" variant="outline">
+                <x-button href="{{ route('school.public.home', ['school' => 'nusantara-utama']) }}" size="lg" variant="outline">
                     <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                     </svg>
-                    Lihat Design System UI
-                </x-button>
-
-                <x-button href="{{ url('/api/v1/health') }}" target="_blank" size="lg" variant="ghost">
-                    API Healthcheck &rarr;
+                    Lihat Situs Sekolah Contoh
                 </x-button>
             </div>
         </div>

@@ -730,8 +730,8 @@
                     <div class="flex items-start justify-between">
                         <div>
                             <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Identitas Sekolah</p>
-                            <h3 class="text-base font-bold text-zinc-900 mt-1 truncate" title="{{ $school?->name ?? 'SMP/SMA Nusantara Utama' }}">
-                                {{ $school?->short_name ?? $school?->name ?? 'Nusantara Utama' }}
+                            <h3 class="text-base font-bold text-zinc-900 mt-1 truncate" title="{{ $school?->name ?? 'Yayasan Perguruan Nusantara Utama' }}">
+                                {{ $school?->short_name ?? $school?->name ?? 'Yayasan Nusantara Utama' }}
                             </h3>
                         </div>
                         <div class="w-10 h-10 rounded-lg bg-zinc-100 text-zinc-600 flex items-center justify-center shrink-0">
@@ -1123,14 +1123,14 @@
                         </div>
                     </x-card>
 
-                    <!-- Living Design System Shortcut Card -->
-                    <x-card title="Living Design System" subtitle="Komponen antarmuka & panduan brand Eduvia.">
+                    <!-- Help & Support Center Card -->
+                    <x-card title="Pusat Bantuan & Layanan" subtitle="Panduan operasional & dukungan teknis Eduvia.">
                         <p class="text-xs text-zinc-500 mb-4 leading-relaxed">
-                            Lihat katalog lengkap komponen antarmuka yang telah disesuaikan dengan arsitektur Metis v1.0.0 dan identitas warna primer resmi Eduvia.
+                            Akses dokumentasi panduan penggunaan modul administrasi, e-learning, presensi, dan penilaian untuk seluruh staf pengajar dan tenaga kependidikan.
                         </p>
-                        <x-button href="{{ route('design-system') }}" variant="outline" size="sm" class="w-full">
-                            Buka Katalog Komponen &rarr;
-                        </x-button>
+                        <a href="{{ route('school.public.contact', ['school' => $currentSchool?->slug ?? 'nusantara-utama']) }}" class="inline-flex items-center justify-center w-full px-4 py-2 text-xs font-semibold rounded-xl border border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition-colors">
+                            <span>Hubungi Bantuan Dukungan &rarr;</span>
+                        </a>
                     </x-card>
                 </div>
             </div>

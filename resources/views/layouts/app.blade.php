@@ -13,9 +13,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Favicon & Brand Icons -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/brand/eduvia-app-icon-light.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('Desain tanpa judul (7).ico') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('Desain tanpa judul (7).ico') }}">
 
     <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -111,7 +110,7 @@
             <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-100/80 border border-zinc-200 text-xs text-zinc-700">
                 <span class="w-2 h-2 rounded-full {{ $currentSchool?->is_active ? 'bg-emerald-500' : 'bg-zinc-400' }}"></span>
                 <span class="font-semibold text-zinc-800 truncate max-w-[150px]" title="{{ $currentSchool?->name }}">
-                    {{ $currentSchool?->name ?? 'SMP/SMA Nusantara Utama' }}
+                    {{ $currentSchool?->name ?? 'Yayasan Perguruan Nusantara Utama' }}
                 </span>
                 <span class="text-zinc-300">|</span>
                 <span class="text-zinc-500 text-[11px]">
@@ -319,15 +318,6 @@
                                     <span>Presensi Saya</span>
                                 </a>
                             @endif
-
-                            @if (auth()->user()->hasRole(\App\Enums\UserRole::SUPER_ADMIN, \App\Enums\UserRole::SCHOOL_ADMIN))
-                                <a href="{{ route('design-system') }}" class="flex items-center gap-2 px-4 py-2 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition-colors">
-                                    <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
-                                    </svg>
-                                    <span>Design System</span>
-                                </a>
-                            @endif
                         </div>
 
                         <div class="pt-1 border-t border-zinc-100">
@@ -397,10 +387,10 @@
                 <span class="w-1.5 h-1.5 rounded-full {{ $currentSchool?->is_active ? 'bg-emerald-500' : 'bg-zinc-300' }}"></span>
             </div>
             <div class="font-bold text-zinc-800 text-xs truncate" title="{{ $currentSchool?->name }}">
-                {{ $currentSchool?->name ?? 'SMP/SMA Nusantara Utama' }}
+                {{ $currentSchool?->name ?? 'Yayasan Perguruan Nusantara Utama' }}
             </div>
             <div class="text-[10px] text-zinc-500 mt-0.5 truncate">
-                {{ $activeYear?->name ?? 'Tahun Ajaran' }} &bull; {{ $activeSemester?->name ?? 'Fase 1' }}
+                {{ $activeYear?->name ?? 'Tahun Ajaran' }} &bull; {{ $activeSemester?->name ?? 'Semester Aktif' }}
             </div>
         </div>
 
@@ -1173,29 +1163,11 @@
                 </a>
             @endif
 
-            <!-- Section: Bantuan & Komponen (Khusus Administrator) -->
-            @if (auth()->check() && auth()->user()->hasRole(\App\Enums\UserRole::SUPER_ADMIN, \App\Enums\UserRole::SCHOOL_ADMIN))
-                <div class="pt-4 pb-1 px-2" x-show="!sidebarCollapsed">
-                    <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Bantuan & Desain</span>
-                </div>
-
-                <a
-                    href="{{ route('design-system') }}"
-                    class="metis-nav-item {{ request()->routeIs('design-system') ? 'active' : '' }}"
-                    :title="sidebarCollapsed ? 'Design System' : ''"
-                >
-                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
-                    </svg>
-                    <span x-show="!sidebarCollapsed" class="truncate">Design System</span>
-                    <span x-show="!sidebarCollapsed" class="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600">v1.0</span>
-                </a>
-            @endif
         </nav>
 
         <!-- Sidebar Footer Status -->
         <div class="p-3 border-t border-zinc-100 bg-zinc-50/40 text-center" x-show="!sidebarCollapsed">
-            <p class="text-[10px] text-zinc-400 font-medium">Eduvia &bull; Fase 5 School Operations</p>
+            <p class="text-[10px] text-zinc-400 font-medium">Eduvia &bull; Sistem Akademik Terpadu</p>
         </div>
     </aside>
 

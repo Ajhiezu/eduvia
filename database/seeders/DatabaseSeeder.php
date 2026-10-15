@@ -99,11 +99,13 @@ class DatabaseSeeder extends Seeder
 
         // 6. School Profile Foundation (Modul 1)
         $school = School::firstOrCreate(
-            ['name' => 'SMP/SMA Nusantara Utama'],
+            ['slug' => 'nusantara-utama'],
             [
-                'short_name' => 'Nusantara Utama',
+                'name' => 'Yayasan Perguruan Nusantara Utama',
+                'short_name' => 'Yayasan Nusantara Utama',
                 'npsn' => '20104567',
-                'educational_levels' => ['smp', 'sma'],
+                'educational_levels' => ['sd', 'smp', 'sma'],
+                'logo_path' => 'schools/logos/yayasan-nusantara-utama-logo.png',
                 'address' => 'Jl. Pendidikan Karakter No. 45, Kebayoran Baru',
                 'city' => 'Jakarta Selatan',
                 'province' => 'DKI Jakarta',

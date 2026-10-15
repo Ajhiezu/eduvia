@@ -169,7 +169,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-zinc-700 mb-1">Jabatan Resmi</label>
-                    <input type="text" name="principal_title" value="{{ old('principal_title', $setting->principal_title) }}" placeholder="Kepala Sekolah SMP/SMA Nusantara Utama" class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200">
+                    <input type="text" name="principal_title" value="{{ old('principal_title', $setting->principal_title) }}" placeholder="Ketua Yayasan / Direktur Pendidikan Nusantara Utama" class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200">
                 </div>
             </div>
 

@@ -29,7 +29,7 @@
                             label="Nama Resmi Sekolah"
                             name="name"
                             value="{{ old('name', $school?->name) }}"
-                            placeholder="Contoh: SMP/SMA Nusantara Utama"
+                            placeholder="Contoh: Yayasan Perguruan Nusantara Utama"
                             required
                         />
                     </div>

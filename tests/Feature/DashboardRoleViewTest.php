@@ -100,4 +100,13 @@ class DashboardRoleViewTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Pengujian Otorisasi Role (Backend Security Gate)');
     }
+
+    public function test_parent_accessing_dashboard_redirects_to_parent_dashboard(): void
+    {
+        $parent = User::factory()->parentRole()->create();
+
+        $response = $this->actingAs($parent)->get('/dashboard');
+
+        $response->assertRedirect(route('parent.dashboard'));
+    }
 }

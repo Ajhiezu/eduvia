@@ -16,9 +16,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Favicon & Brand Icons -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/brand/eduvia-app-icon-light.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('Desain tanpa judul (7).ico') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('Desain tanpa judul (7).ico') }}">
 
     <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -40,12 +39,8 @@
                 <a href="{{ route('home') }}" class="text-xs sm:text-sm font-semibold text-slate-600 hover:text-brand-600 transition-colors px-2 py-1.5 rounded-lg">
                     Beranda
                 </a>
-                <a href="{{ route('design-system') }}" class="hidden sm:inline-block text-xs sm:text-sm font-semibold text-slate-600 hover:text-brand-600 transition-colors px-2 py-1.5 rounded-lg">
-                    Design System
-                </a>
-                <a href="{{ route('health') }}" target="_blank" class="hidden md:inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Sistem Sehat
+                <a href="{{ route('school.public.home', ['school' => 'nusantara-utama']) }}" class="hidden sm:inline-block text-xs sm:text-sm font-semibold text-slate-600 hover:text-brand-600 transition-colors px-2 py-1.5 rounded-lg">
+                    Portal Sekolah
                 </a>
 
                 @auth
@@ -71,14 +66,12 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-2 text-slate-600 font-medium">
                 <span class="w-2 h-2 rounded-full bg-brand-600"></span>
-                <span>Eduvia Platform &copy; {{ date('Y') }}. Fase 0: Project Foundation & Architecture.</span>
+                <span>Eduvia Platform &copy; {{ date('Y') }}. Seluruh Hak Cipta Dilindungi.</span>
             </div>
             <div class="flex items-center gap-4">
-                <a href="{{ route('design-system') }}" class="hover:text-brand-600 transition-colors">Komponen UI</a>
+                <span class="text-slate-400">Platform E-Learning & Manajemen Sekolah Terpadu</span>
                 <span class="text-slate-300">&bull;</span>
-                <a href="{{ url('/api/v1/health') }}" target="_blank" class="hover:text-brand-600 transition-colors">API Healthcheck</a>
-                <span class="text-slate-300">&bull;</span>
-                <span class="text-slate-400">Jenjang: SD &bull; SMP &bull; SMA &bull; SMK</span>
+                <span class="text-slate-500 font-medium">Jenjang SD &bull; SMP &bull; SMA &bull; SMK</span>
             </div>
         </div>
     </footer>

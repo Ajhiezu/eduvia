@@ -97,6 +97,8 @@ class DashboardController extends Controller
                 'rate' => $attendanceRate,
             ];
             $viewData['recentAttendance'] = $recentAttendance;
+        } elseif ($user->hasRole(UserRole::PARENT)) {
+            return redirect()->route('parent.dashboard');
         }
 
         return view('dashboard', $viewData);

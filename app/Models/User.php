@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -181,6 +182,30 @@ class User extends Authenticatable
     }
 
     /**
+     * Questions created by this user in the question bank.
+     */
+    public function createdExamQuestions(): HasMany
+    {
+        return $this->hasMany(ExamQuestion::class, 'created_by');
+    }
+
+    /**
+     * Exams created by this user (teacher).
+     */
+    public function createdExams(): HasMany
+    {
+        return $this->hasMany(Exam::class, 'teacher_id');
+    }
+
+    /**
+     * Exam attempts made by this user (student).
+     */
+    public function examAttempts(): HasMany
+    {
+        return $this->hasMany(ExamAttempt::class, 'student_id');
+    }
+
+    /**
      * Extended profile for staff / teacher.
      */
     public function staffProfile(): HasOne
@@ -247,5 +272,164 @@ class User extends Authenticatable
     public function getNisAttribute(): ?string
     {
         return $this->studentProfile?->nis;
+    }
+
+    /**
+     * Subject gradebooks managed by this teacher.
+     *
+     * @return HasMany<SubjectGradebook, $this>
+     */
+    public function subjectGradebooks(): HasMany
+    {
+        return $this->hasMany(SubjectGradebook::class, 'teacher_id');
+    }
+
+    /**
+     * Report cards for this student.
+     *
+     * @return HasMany<StudentReportCard, $this>
+     */
+    public function studentReportCards(): HasMany
+    {
+        return $this->hasMany(StudentReportCard::class, 'student_id');
+    }
+
+    /**
+     * Report cards managed by this homeroom teacher.
+     *
+     * @return HasMany<StudentReportCard, $this>
+     */
+    public function homeroomReportCards(): HasMany
+    {
+        return $this->hasMany(StudentReportCard::class, 'homeroom_teacher_id');
+    }
+
+    /**
+     * Parent-student relations where this user is the parent.
+     *
+     * @return HasMany<ParentStudentRelation, $this>
+     */
+    public function parentRelations(): HasMany
+    {
+        return $this->hasMany(ParentStudentRelation::class, 'parent_id');
+    }
+
+    /**
+     * Parent-student relations where this user is the student.
+     *
+     * @return HasMany<ParentStudentRelation, $this>
+     */
+    public function studentRelations(): HasMany
+    {
+        return $this->hasMany(ParentStudentRelation::class, 'student_id');
+    }
+
+    /**
+     * Linked children for this parent account.
+     *
+     * @return BelongsToMany<User, $this>
+     */
+    public function linkedChildren(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'parent_student_relations', 'parent_id', 'student_id')
+            ->withPivot(['id', 'school_id', 'relationship_type', 'status', 'is_primary_contact', 'verified_at', 'notes'])
+            ->withTimestamps();
+    }
+
+    /**
+     * Active, verified children for this parent.
+     *
+     * @return BelongsToMany<User, $this>
+     */
+    public function activeChildren(): BelongsToMany
+    {
+        return $this->linkedChildren()->wherePivot('status', ParentStudentRelation::STATUS_ACTIVE);
+    }
+
+    /**
+     * Linked parents for this student account.
+     *
+     * @return BelongsToMany<User, $this>
+     */
+    public function linkedParents(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'parent_student_relations', 'student_id', 'parent_id')
+            ->withPivot(['id', 'school_id', 'relationship_type', 'status', 'is_primary_contact', 'verified_at', 'notes'])
+            ->withTimestamps();
+    }
+
+    /**
+     * Active, verified parents for this student.
+     *
+     * @return BelongsToMany<User, $this>
+     */
+    public function activeParents(): BelongsToMany
+    {
+        return $this->linkedParents()->wherePivot('status', ParentStudentRelation::STATUS_ACTIVE);
+    }
+
+    /**
+     * Conversations where this user is the parent.
+     *
+     * @return HasMany<ParentTeacherConversation, $this>
+     */
+    public function parentConversations(): HasMany
+    {
+        return $this->hasMany(ParentTeacherConversation::class, 'parent_id');
+    }
+
+    /**
+     * Conversations where this user is the teacher.
+     *
+     * @return HasMany<ParentTeacherConversation, $this>
+     */
+    public function teacherConversations(): HasMany
+    {
+        return $this->hasMany(ParentTeacherConversation::class, 'teacher_id');
+    }
+
+    /**
+     * Invoices billed to this student.
+     *
+     * @return HasMany<Invoice, $this>
+     */
+    public function studentInvoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class, 'student_id');
+    }
+
+    /**
+     * Payments associated with this student.
+     *
+     * @return HasMany<Payment, $this>
+     */
+    public function studentPayments(): HasMany
+    {
+        return $this->hasMany(Payment::class, 'student_id');
+    }
+
+    /**
+     * Discounts or scholarships assigned to this student.
+     *
+     * @return HasMany<StudentDiscount, $this>
+     */
+    public function studentDiscounts(): HasMany
+    {
+        return $this->hasMany(StudentDiscount::class, 'student_id');
+    }
+
+    public function libraryLoans(): HasMany
+    {
+        return $this->hasMany(LibraryLoan::class);
+    }
+
+    public function facilityReservations(): HasMany
+    {
+        return $this->hasMany(FacilityReservation::class);
+    }
+
+    public function lettersCreated(): HasMany
+    {
+        return $this->hasMany(SchoolLetter::class, 'created_by');
     }
 }

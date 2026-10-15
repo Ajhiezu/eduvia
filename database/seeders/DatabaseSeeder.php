@@ -13,6 +13,7 @@ use App\Models\AttendanceSession;
 use App\Models\Classroom;
 use App\Models\ClassroomStudent;
 use App\Models\GradeLevel;
+use App\Models\LessonSchedule;
 use App\Models\School;
 use App\Models\Semester;
 use App\Models\StaffProfile;
@@ -470,6 +471,68 @@ class DatabaseSeeder extends Seeder
                 );
             }
 
+            // Phase 3: Jadwal Pelajaran (Lesson Schedules)
+            LessonSchedule::firstOrCreate(
+                [
+                    'teaching_assignment_id' => $assignment->id,
+                    'day_of_week' => 1, // Senin
+                    'start_time' => '07:30',
+                ],
+                [
+                    'school_id' => $school->id,
+                    'end_time' => '09:00',
+                    'room' => 'Ruang 101',
+                    'is_active' => true,
+                ]
+            );
+
+            LessonSchedule::firstOrCreate(
+                [
+                    'teaching_assignment_id' => $assignment->id,
+                    'day_of_week' => 3, // Rabu
+                    'start_time' => '09:15',
+                ],
+                [
+                    'school_id' => $school->id,
+                    'end_time' => '10:45',
+                    'room' => 'Ruang 101',
+                    'is_active' => true,
+                ]
+            );
+
+            // Additional schedule for IPA
+            if (isset($createdSubjects['IPA'])) {
+                $ipaAssignment = TeachingAssignment::firstOrCreate(
+                    [
+                        'academic_year_id' => $academicYear->id,
+                        'classroom_id' => $class7A->id,
+                        'subject_id' => $createdSubjects['IPA']->id,
+                        'teacher_id' => $teacherUser->id,
+                    ],
+                    [
+                        'school_id' => $school->id,
+                        'semester_id' => $semesterGanjil->id,
+                        'hours_per_week' => 2,
+                        'is_active' => true,
+                        'notes' => 'Pengampu IPA Kelas VII-A',
+                    ]
+                );
+
+                LessonSchedule::firstOrCreate(
+                    [
+                        'teaching_assignment_id' => $ipaAssignment->id,
+                        'day_of_week' => 4, // Kamis
+                        'start_time' => '07:30',
+                    ],
+                    [
+                        'school_id' => $school->id,
+                        'end_time' => '09:00',
+                        'room' => 'Lab IPA',
+                        'is_active' => true,
+                    ]
+                );
+            }
+
             // 11. Modul 25: PPDB / SPMB Seeding
             $admissionPeriod = AdmissionPeriod::firstOrCreate(
                 [
@@ -620,5 +683,8 @@ class DatabaseSeeder extends Seeder
 
         // 7. Seed School Public Website Content
         $this->call(SchoolWebsiteSeeder::class);
+
+        // 8. Seed Computer Based Test (CBT) Bank Soal & Demo Exam
+        $this->call(CbtSeeder::class);
     }
 }

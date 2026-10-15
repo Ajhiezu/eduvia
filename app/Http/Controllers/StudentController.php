@@ -25,7 +25,7 @@ class StudentController extends Controller
     public function index(Request $request): View
     {
         $school = School::current();
-        $schoolId = $school?->id;
+        $schoolId = $school?->id ?? $request->user()?->school_id;
 
         $search = $request->input('search');
         $status = $request->input('status');
@@ -34,6 +34,7 @@ class StudentController extends Controller
 
         $query = User::query()
             ->where('role', UserRole::STUDENT->value)
+            ->when($schoolId, fn ($q) => $q->where('school_id', $schoolId))
             ->with(['studentProfile', 'classroomEnrollments.classroom.gradeLevel'])
             ->when($search, function ($q) use ($search) {
                 $q->where(function ($sub) use ($search) {
@@ -64,7 +65,8 @@ class StudentController extends Controller
         $students = $query->paginate(15)->withQueryString();
 
         // Metrics calculations
-        $baseStudentQuery = User::where('role', UserRole::STUDENT->value);
+        $baseStudentQuery = User::where('role', UserRole::STUDENT->value)
+            ->when($schoolId, fn ($q) => $q->where('school_id', $schoolId));
         $totalActiveCount = (clone $baseStudentQuery)->whereHas('studentProfile', fn ($p) => $p->where('student_status', 'active'))->count();
         $totalTransferredCount = (clone $baseStudentQuery)->whereHas('studentProfile', fn ($p) => $p->where('student_status', 'transferred'))->count();
         $totalGraduatedCount = (clone $baseStudentQuery)->whereHas('studentProfile', fn ($p) => $p->where('student_status', 'graduated'))->count();
@@ -124,6 +126,7 @@ class StudentController extends Controller
                 'email' => $request->input('email'),
                 'phone' => $request->input('phone'),
                 'role' => UserRole::STUDENT->value,
+                'school_id' => $schoolId,
                 'is_active' => true,
                 'password' => Hash::make($request->input('password') ?? 'Password123!'),
             ]);
@@ -173,12 +176,18 @@ class StudentController extends Controller
             abort(404);
         }
 
+        $this->authorizeStudent($student);
+
         $student->load([
             'studentProfile',
             'classroomEnrollments.classroom.gradeLevel',
             'classroomEnrollments.academicYear',
             'studentStatusHistories.actor',
             'attendanceRecords.session.teachingAssignment.subject',
+            'activeParents',
+            'examAttempts.exam.subject',
+            'studentReportCards.academicYear',
+            'studentReportCards.semester',
         ]);
 
         $profile = $student->studentProfile;
@@ -200,12 +209,16 @@ class StudentController extends Controller
 
         // Available classrooms for mutation if needed
         $school = School::current();
-        $schoolId = $school?->id;
+        $schoolId = $school?->id ?? request()->user()?->school_id;
         $otherClassrooms = Classroom::when($schoolId, fn ($q) => $q->where('school_id', $schoolId))
             ->active()
             ->when($currentEnrollment, fn ($q) => $q->where('id', '!=', $currentEnrollment->classroom_id))
             ->orderBy('name')
             ->get();
+
+        $linkedParents = $student->activeParents;
+        $examAttempts = $student->examAttempts()->with('exam.subject')->latest()->take(10)->get();
+        $reportCards = $student->studentReportCards()->with(['academicYear', 'semester'])->latest()->get();
 
         return view('students.show', compact(
             'student',
@@ -218,7 +231,10 @@ class StudentController extends Controller
             'permit',
             'absent',
             'totalSessions',
-            'otherClassrooms'
+            'otherClassrooms',
+            'linkedParents',
+            'examAttempts',
+            'reportCards'
         ));
     }
 
@@ -231,6 +247,8 @@ class StudentController extends Controller
             abort(404);
         }
 
+        $this->authorizeStudent($student);
+
         $profile = $student->studentProfile;
 
         return view('students.edit', compact('student', 'profile'));
@@ -241,6 +259,8 @@ class StudentController extends Controller
      */
     public function update(UpdateStudentRequest $request, User $student): RedirectResponse
     {
+        $this->authorizeStudent($student);
+
         DB::transaction(function () use ($request, $student) {
             $student->update([
                 'name' => $request->input('name'),
@@ -276,6 +296,8 @@ class StudentController extends Controller
      */
     public function updateStatus(ChangeStudentStatusRequest $request, User $student): RedirectResponse
     {
+        $this->authorizeStudent($student);
+
         $profile = $student->studentProfile;
         if (! $profile) {
             $profile = StudentProfile::create([
@@ -300,6 +322,8 @@ class StudentController extends Controller
      */
     public function destroy(User $student): RedirectResponse
     {
+        $this->authorizeStudent($student);
+
         // Safety check: protect academic and attendance records
         if ($student->classroomEnrollments()->exists() || $student->attendanceRecords()->exists()) {
             return redirect()->back()->withErrors([
@@ -312,5 +336,23 @@ class StudentController extends Controller
 
         return redirect()->route('students.index')
             ->with('status', 'Akun peserta didik berhasil dihapus.');
+    }
+
+    /**
+     * Ensure student belongs to the current school scope.
+     */
+    protected function authorizeStudent(User $student): void
+    {
+        $user = request()->user();
+        if ($user && $user->isSuperAdmin()) {
+            return;
+        }
+
+        $school = School::current();
+        $schoolId = $school?->id ?? $user?->school_id;
+
+        if ($schoolId && $student->school_id && $student->school_id !== $schoolId) {
+            abort(403, 'Akses ke data peserta didik sekolah lain tidak diizinkan.');
+        }
     }
 }

@@ -77,6 +77,46 @@ class School extends Model
     }
 
     /**
+     * Fee categories for this school.
+     *
+     * @return HasMany<FeeCategory, $this>
+     */
+    public function feeCategories(): HasMany
+    {
+        return $this->hasMany(FeeCategory::class);
+    }
+
+    /**
+     * Invoices issued by this school.
+     *
+     * @return HasMany<Invoice, $this>
+     */
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    /**
+     * Payments recorded for this school.
+     *
+     * @return HasMany<Payment, $this>
+     */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    /**
+     * Receipts issued by this school.
+     *
+     * @return HasMany<Receipt, $this>
+     */
+    public function receipts(): HasMany
+    {
+        return $this->hasMany(Receipt::class);
+    }
+
+    /**
      * Get classrooms belonging to this school.
      *
      * @return HasMany<Classroom, $this>
@@ -175,6 +215,106 @@ class School extends Model
     }
 
     /**
+     * Get guest contact messages for this school.
+     *
+     * @return HasMany<SchoolMessage, $this>
+     */
+    public function messages(): HasMany
+    {
+        return $this->hasMany(SchoolMessage::class);
+    }
+
+    /**
+     * Get unread guest messages for this school.
+     *
+     * @return HasMany<SchoolMessage, $this>
+     */
+    public function unreadMessages(): HasMany
+    {
+        return $this->hasMany(SchoolMessage::class)->where('is_read', false);
+    }
+
+    /**
+     * Get subjects belonging to this school.
+     *
+     * @return HasMany<Subject, $this>
+     */
+    public function subjects(): HasMany
+    {
+        return $this->hasMany(Subject::class);
+    }
+
+    /**
+     * Get teaching assignments in this school.
+     *
+     * @return HasMany<TeachingAssignment, $this>
+     */
+    public function teachingAssignments(): HasMany
+    {
+        return $this->hasMany(TeachingAssignment::class);
+    }
+
+    /**
+     * Get lesson schedules in this school.
+     *
+     * @return HasMany<LessonSchedule, $this>
+     */
+    public function lessonSchedules(): HasMany
+    {
+        return $this->hasMany(LessonSchedule::class);
+    }
+
+    /**
+     * Get question bank items in this school.
+     *
+     * @return HasMany<ExamQuestion, $this>
+     */
+    public function examQuestions(): HasMany
+    {
+        return $this->hasMany(ExamQuestion::class);
+    }
+
+    /**
+     * Get exams in this school.
+     *
+     * @return HasMany<Exam, $this>
+     */
+    public function exams(): HasMany
+    {
+        return $this->hasMany(Exam::class);
+    }
+
+    /**
+     * Get assessment weight configurations for this school.
+     *
+     * @return HasMany<AssessmentWeightConfiguration, $this>
+     */
+    public function assessmentWeightConfigurations(): HasMany
+    {
+        return $this->hasMany(AssessmentWeightConfiguration::class);
+    }
+
+    /**
+     * Get subject gradebooks in this school.
+     *
+     * @return HasMany<SubjectGradebook, $this>
+     */
+    public function subjectGradebooks(): HasMany
+    {
+        return $this->hasMany(SubjectGradebook::class);
+    }
+
+    /**
+     * Get student report cards in this school.
+     *
+     * @return HasMany<StudentReportCard, $this>
+     */
+    public function studentReportCards(): HasMany
+    {
+        return $this->hasMany(StudentReportCard::class);
+    }
+
+    /**
      * Get public URL for school logo.
      */
     public function logoUrl(): ?string
@@ -184,5 +324,50 @@ class School extends Model
         }
 
         return Storage::disk('public')->url($this->logo_path);
+    }
+
+    public function libraryBooks(): HasMany
+    {
+        return $this->hasMany(LibraryBook::class);
+    }
+
+    public function libraryLoans(): HasMany
+    {
+        return $this->hasMany(LibraryLoan::class);
+    }
+
+    public function inventoryCategories(): HasMany
+    {
+        return $this->hasMany(InventoryCategory::class);
+    }
+
+    public function schoolAssets(): HasMany
+    {
+        return $this->hasMany(SchoolAsset::class);
+    }
+
+    public function consumableItems(): HasMany
+    {
+        return $this->hasMany(ConsumableItem::class);
+    }
+
+    public function schoolRooms(): HasMany
+    {
+        return $this->hasMany(SchoolRoom::class);
+    }
+
+    public function facilityReservations(): HasMany
+    {
+        return $this->hasMany(FacilityReservation::class);
+    }
+
+    public function facilityIncidents(): HasMany
+    {
+        return $this->hasMany(FacilityIncident::class);
+    }
+
+    public function schoolLetters(): HasMany
+    {
+        return $this->hasMany(SchoolLetter::class);
     }
 }

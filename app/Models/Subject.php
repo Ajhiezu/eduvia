@@ -22,6 +22,10 @@ class Subject extends Model
         'code',
         'name',
         'group',
+        'curriculum',
+        'educational_level',
+        'credit_hours',
+        'academic_program',
         'order',
         'is_active',
         'description',
@@ -34,6 +38,7 @@ class Subject extends Model
      */
     protected $casts = [
         'order' => 'integer',
+        'credit_hours' => 'integer',
         'is_active' => 'boolean',
     ];
 
@@ -67,5 +72,21 @@ class Subject extends Model
     public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('order')->orderBy('name');
+    }
+
+    /**
+     * Scope for curriculum.
+     */
+    public function scopeCurriculum(Builder $query, ?string $curriculum): Builder
+    {
+        return $curriculum ? $query->where('curriculum', $curriculum) : $query;
+    }
+
+    /**
+     * Scope for educational level.
+     */
+    public function scopeEducationalLevel(Builder $query, ?string $level): Builder
+    {
+        return $level ? $query->where('educational_level', $level) : $query;
     }
 }

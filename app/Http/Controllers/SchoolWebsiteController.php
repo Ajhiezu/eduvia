@@ -6,6 +6,7 @@ use App\Models\School;
 use App\Models\SchoolExtracurricular;
 use App\Models\SchoolFacility;
 use App\Models\SchoolGallery;
+use App\Models\SchoolMessage;
 use App\Models\SchoolPost;
 use App\Models\SchoolWebsiteSetting;
 use Illuminate\Http\RedirectResponse;
@@ -65,11 +66,15 @@ class SchoolWebsiteController extends Controller
             'facility_count' => $school->facilities()->where('category', 'facility')->count(),
             'program_count' => $school->facilities()->where('category', 'featured_program')->count(),
             'gallery_count' => $school->galleries()->count(),
+            'total_messages' => $school->messages()->count(),
+            'unread_messages' => $school->messages()->where('is_read', false)->count(),
+            'new_messages' => $school->messages()->where('status', SchoolMessage::STATUS_NEW)->count(),
         ];
 
         $recentPosts = $school->posts()->latest()->take(6)->get();
+        $recentMessages = $school->messages()->latest()->take(5)->get();
 
-        return view('school.website.dashboard', compact('school', 'setting', 'stats', 'recentPosts'));
+        return view('school.website.dashboard', compact('school', 'setting', 'stats', 'recentPosts', 'recentMessages'));
     }
 
     // =========================================================================
@@ -693,5 +698,177 @@ class SchoolWebsiteController extends Controller
         $gallery->delete();
 
         return redirect()->route('website.galleries.index')->with('success', 'Foto galeri berhasil dihapus.');
+    }
+
+    // =========================================================================
+    // 7. PENGELOLAAN PESAN PENGUNJUNG & BUKU TAMU
+    // =========================================================================
+
+    public function messages(Request $request): View
+    {
+        $school = $this->getSchool();
+
+        $stats = [
+            'total' => $school->messages()->count(),
+            'unread' => $school->messages()->where('is_read', false)->count(),
+            'new' => $school->messages()->where('status', SchoolMessage::STATUS_NEW)->count(),
+            'in_progress' => $school->messages()->where('status', SchoolMessage::STATUS_IN_PROGRESS)->count(),
+            'resolved' => $school->messages()->where('status', SchoolMessage::STATUS_RESOLVED)->count(),
+            'archived' => $school->messages()->where('status', SchoolMessage::STATUS_ARCHIVED)->count(),
+        ];
+
+        $query = $school->messages();
+
+        // Search by keyword
+        if ($search = $request->query('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('subject', 'like', "%{$search}%")
+                    ->orWhere('reference_number', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by category
+        if ($category = $request->query('category')) {
+            $query->where('category', $category);
+        }
+
+        // Filter by status
+        if ($status = $request->query('status')) {
+            $query->where('status', $status);
+        }
+
+        // Filter unread only
+        if ($request->boolean('unread_only')) {
+            $query->where('is_read', false);
+        }
+
+        // Filter by date range
+        if ($dateFrom = $request->query('date_from')) {
+            $query->whereDate('created_at', '>=', $dateFrom);
+        }
+        if ($dateTo = $request->query('date_to')) {
+            $query->whereDate('created_at', '<=', $dateTo);
+        }
+
+        // Sort order
+        $sort = $request->query('sort', 'newest');
+        if ($sort === 'oldest') {
+            $query->orderBy('created_at', 'asc')->orderBy('id', 'asc');
+        } else {
+            $query->orderBy('created_at', 'desc')->orderBy('id', 'desc');
+        }
+
+        $messages = $query->paginate(15)->withQueryString();
+
+        return view('school.website.messages.index', compact('school', 'messages', 'stats'));
+    }
+
+    public function showMessage(SchoolMessage $message): View
+    {
+        $school = $this->getSchool();
+        $this->authorizeTenant($message, $school);
+
+        // Automatically mark message as read
+        if (! $message->is_read) {
+            $message->markAsRead();
+        }
+
+        return view('school.website.messages.show', compact('school', 'message'));
+    }
+
+    public function updateMessageStatus(SchoolMessage $message, Request $request): RedirectResponse
+    {
+        $school = $this->getSchool();
+        $this->authorizeTenant($message, $school);
+
+        $validated = $request->validate([
+            'status' => ['required', 'string', 'in:'.implode(',', array_keys(SchoolMessage::STATUSES))],
+        ]);
+
+        $updates = ['status' => $validated['status']];
+
+        if ($validated['status'] === SchoolMessage::STATUS_RESOLVED && ! $message->resolved_at) {
+            $updates['resolved_at'] = now();
+        } elseif ($validated['status'] !== SchoolMessage::STATUS_RESOLVED) {
+            $updates['resolved_at'] = null;
+        }
+
+        $message->update($updates);
+
+        return redirect()->back()->with('success', 'Status pesan berhasil diperbarui menjadi: '.$message->statusLabel());
+    }
+
+    public function updateMessageNotes(SchoolMessage $message, Request $request): RedirectResponse
+    {
+        $school = $this->getSchool();
+        $this->authorizeTenant($message, $school);
+
+        $validated = $request->validate([
+            'internal_notes' => ['nullable', 'string', 'max:5000'],
+        ]);
+
+        $message->update([
+            'internal_notes' => $validated['internal_notes'],
+        ]);
+
+        return redirect()->back()->with('success', 'Catatan internal berhasil disimpan.');
+    }
+
+    public function destroyMessage(SchoolMessage $message): RedirectResponse
+    {
+        $school = $this->getSchool();
+        $this->authorizeTenant($message, $school);
+
+        $message->delete();
+
+        return redirect()->route('website.messages.index')->with('success', 'Pesan berhasil dihapus.');
+    }
+
+    public function bulkMessages(Request $request): RedirectResponse
+    {
+        $school = $this->getSchool();
+
+        $validated = $request->validate([
+            'action' => ['required', 'string', 'in:mark_read,mark_unread,mark_resolved,archive,delete'],
+            'message_ids' => ['required', 'array', 'min:1'],
+            'message_ids.*' => ['integer', 'exists:school_messages,id'],
+        ]);
+
+        // Strict tenant isolation: only retrieve messages belonging to the current tenant school
+        $messages = SchoolMessage::where('school_id', $school->id)
+            ->whereIn('id', $validated['message_ids'])
+            ->get();
+
+        $count = $messages->count();
+        if ($count === 0) {
+            return redirect()->back()->with('error', 'Tidak ada pesan yang dipilih atau valid.');
+        }
+
+        match ($validated['action']) {
+            'mark_read' => SchoolMessage::where('school_id', $school->id)
+                ->whereIn('id', $messages->pluck('id'))
+                ->update(['is_read' => true, 'read_at' => now()]),
+
+            'mark_unread' => SchoolMessage::where('school_id', $school->id)
+                ->whereIn('id', $messages->pluck('id'))
+                ->update(['is_read' => false, 'read_at' => null]),
+
+            'mark_resolved' => SchoolMessage::where('school_id', $school->id)
+                ->whereIn('id', $messages->pluck('id'))
+                ->update(['status' => SchoolMessage::STATUS_RESOLVED, 'resolved_at' => now(), 'is_read' => true]),
+
+            'archive' => SchoolMessage::where('school_id', $school->id)
+                ->whereIn('id', $messages->pluck('id'))
+                ->update(['status' => SchoolMessage::STATUS_ARCHIVED]),
+
+            'delete' => SchoolMessage::where('school_id', $school->id)
+                ->whereIn('id', $messages->pluck('id'))
+                ->delete(),
+        };
+
+        return redirect()->route('website.messages.index')->with('success', "{$count} pesan berhasil diproses.");
     }
 }

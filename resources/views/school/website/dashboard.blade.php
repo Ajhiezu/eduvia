@@ -63,7 +63,7 @@
     </div>
 
     <!-- Metric Stats Cards -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3.5">
         <div class="bg-white rounded-2xl p-4 border border-zinc-200 shadow-2xs">
             <span class="text-[11px] font-medium text-zinc-500 block">Total Konten</span>
             <strong class="text-2xl font-black text-zinc-900">{{ $stats['total_posts'] }}</strong>
@@ -94,6 +94,11 @@
             <strong class="text-2xl font-black text-zinc-900">{{ $stats['gallery_count'] }}</strong>
             <span class="text-[10px] text-zinc-400 block mt-1">Foto dokumentasi</span>
         </div>
+        <a href="{{ route('website.messages.index') }}" class="bg-white rounded-2xl p-4 border border-rose-200 shadow-2xs bg-rose-50/20 hover:bg-rose-50/40 transition-colors block">
+            <span class="text-[11px] font-bold text-[#E11D2E] block">Pesan Masuk</span>
+            <strong class="text-2xl font-black text-[#E11D2E]">{{ $stats['unread_messages'] ?? 0 }}</strong>
+            <span class="text-[10px] text-[#E11D2E]/80 block mt-1">Belum dibaca &rarr;</span>
+        </a>
     </div>
 
     <!-- Shortcuts & Quick Actions -->
@@ -123,6 +128,10 @@
             <a href="{{ route('website.galleries.index') }}" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-zinc-100 text-zinc-700 hover:bg-zinc-200 transition-colors">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 <span>Unggah Foto Galeri</span>
+            </a>
+            <a href="{{ route('website.messages.index') }}" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-rose-50 text-[#E11D2E] hover:bg-rose-100 border border-rose-100 transition-colors">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <span>Kelola Pesan Pengunjung</span>
             </a>
         </div>
     </div>
@@ -201,6 +210,81 @@
                                             Edit
                                         </a>
                                     </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+    </div>
+
+    <!-- Recent Guest Messages Table -->
+    <div class="bg-white rounded-2xl border border-zinc-200 shadow-2xs overflow-hidden">
+        <div class="p-5 border-b border-zinc-100 flex items-center justify-between">
+            <div>
+                <h3 class="font-bold text-base text-zinc-900">Pesan Pengunjung Terbaru</h3>
+                <p class="text-xs text-zinc-500">Pertanyaan dan buku tamu yang dikirim pengunjung melalui website resmi.</p>
+            </div>
+            <a href="{{ route('website.messages.index') }}" class="text-xs font-bold text-[#E11D2E] hover:underline">
+                Lihat Semua Pesan &rarr;
+            </a>
+        </div>
+
+        @if (empty($recentMessages) || $recentMessages->isEmpty())
+            <div class="p-8 text-center text-zinc-400 text-sm">
+                Belum ada pesan yang masuk dari pengunjung website sekolah.
+            </div>
+        @else
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-zinc-50 text-zinc-500 uppercase tracking-wider font-semibold border-b border-zinc-200">
+                        <tr>
+                            <th class="px-5 py-3">Pengirim</th>
+                            <th class="px-4 py-3">Subjek & Referensi</th>
+                            <th class="px-4 py-3">Kategori</th>
+                            <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3">Waktu</th>
+                            <th class="px-5 py-3 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-zinc-100 text-zinc-700">
+                        @foreach ($recentMessages as $msg)
+                            <tr class="hover:bg-zinc-50/60 transition-colors {{ ! $msg->is_read ? 'bg-rose-50/20 font-medium' : '' }}">
+                                <td class="px-5 py-3">
+                                    <div class="flex items-center gap-2">
+                                        @if (! $msg->is_read)
+                                            <span class="w-2 h-2 rounded-full bg-[#E11D2E] shrink-0" title="Belum dibaca"></span>
+                                        @endif
+                                        <div>
+                                            <span class="font-bold text-zinc-900 block truncate max-w-xs">{{ $msg->name }}</span>
+                                            <span class="text-[11px] text-zinc-400 block">{{ $msg->email }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="truncate max-w-sm font-semibold text-zinc-900" title="{{ $msg->subject }}">
+                                        {{ $msg->subject }}
+                                    </div>
+                                    <span class="font-mono text-[10px] text-zinc-400">{{ $msg->reference_number }}</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-zinc-100 text-zinc-700">
+                                        {{ $msg->categoryLabel() }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border {{ $msg->statusBadgeClasses() }}">
+                                        {{ $msg->statusLabel() }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-zinc-500 whitespace-nowrap text-[11px]">
+                                    {{ $msg->created_at->format('d M Y, H:i') }}
+                                </td>
+                                <td class="px-5 py-3 text-right">
+                                    <a href="{{ route('website.messages.show', $msg) }}" class="px-2.5 py-1 text-[11px] font-semibold rounded bg-zinc-100 hover:bg-zinc-200 text-zinc-800 transition-colors">
+                                        Buka Detail
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach

@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NewContactMessageMail;
 use App\Models\AdmissionPeriod;
 use App\Models\School;
+use App\Models\SchoolMessage;
 use App\Models\SchoolWebsiteSetting;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class SchoolPublicController extends Controller
@@ -41,9 +46,13 @@ class SchoolPublicController extends Controller
     /**
      * Public Landing Page of the School.
      */
-    public function home(School $school): View
+    public function home(School $school): View|RedirectResponse
     {
         $this->ensureWebsiteAccessible($school);
+
+        if ($school->slug === 'nusantara-utama' && request()->routeIs('school.public.home')) {
+            return redirect()->route('home');
+        }
 
         $setting = $school->websiteSetting ?? new SchoolWebsiteSetting([
             'school_id' => $school->id,
@@ -356,6 +365,94 @@ class SchoolPublicController extends Controller
     }
 
     /**
+     * Public Contact & Guestbook Page.
+     */
+    public function contact(School $school): View
+    {
+        $this->ensureWebsiteAccessible($school);
+
+        $setting = $school->websiteSetting ?? new SchoolWebsiteSetting(['school_id' => $school->id]);
+
+        return view('public.school.contact', compact('school', 'setting'));
+    }
+
+    /**
+     * Submit Contact / Guest Message.
+     */
+    public function submitContact(School $school, Request $request): RedirectResponse
+    {
+        $this->ensureWebsiteAccessible($school);
+
+        // Anti-spam honeypot verification: if hp_website is filled, it's a bot
+        if ($request->filled('hp_website')) {
+            return redirect()
+                ->route('school.public.contact', ['school' => $school->slug])
+                ->with('contact_success', true)
+                ->with('reference_number', SchoolMessage::generateReferenceNumber());
+        }
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:150'],
+            'email' => ['required', 'string', 'email', 'max:150'],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'category' => ['required', 'string', 'in:'.implode(',', array_keys(SchoolMessage::CATEGORIES))],
+            'subject' => ['required', 'string', 'max:200'],
+            'message' => ['required', 'string', 'max:3000'],
+            'privacy_consent' => ['required', 'accepted'],
+        ], [
+            'name.required' => 'Nama lengkap wajib diisi.',
+            'name.max' => 'Nama lengkap tidak boleh lebih dari 150 karakter.',
+            'email.required' => 'Alamat email wajib diisi.',
+            'email.email' => 'Format alamat email tidak valid.',
+            'email.max' => 'Alamat email tidak boleh lebih dari 150 karakter.',
+            'phone.max' => 'Nomor telepon tidak boleh lebih dari 30 karakter.',
+            'category.required' => 'Kategori pesan wajib dipilih.',
+            'category.in' => 'Kategori pesan yang dipilih tidak valid.',
+            'subject.required' => 'Subjek pesan wajib diisi.',
+            'subject.max' => 'Subjek pesan tidak boleh lebih dari 200 karakter.',
+            'message.required' => 'Isi pesan wajib diisi.',
+            'message.max' => 'Isi pesan tidak boleh lebih dari 3000 karakter.',
+            'privacy_consent.required' => 'Anda wajib menyetujui pernyataan privasi.',
+            'privacy_consent.accepted' => 'Anda wajib menyetujui pernyataan privasi.',
+        ]);
+
+        $referenceNumber = SchoolMessage::generateReferenceNumber();
+
+        // Safe persistence tied strictly to route tenant school_id
+        $schoolMessage = SchoolMessage::create([
+            'school_id' => $school->id,
+            'reference_number' => $referenceNumber,
+            'name' => strip_tags(trim($validated['name'])),
+            'email' => trim(strtolower($validated['email'])),
+            'phone' => ! empty($validated['phone']) ? trim($validated['phone']) : null,
+            'category' => $validated['category'],
+            'subject' => strip_tags(trim($validated['subject'])),
+            'message' => trim($validated['message']),
+            'status' => SchoolMessage::STATUS_NEW,
+            'is_read' => false,
+            'ip_address' => $request->ip(),
+            'user_agent' => substr((string) $request->userAgent(), 0, 500),
+        ]);
+
+        // Attempt email notification resiliently without breaking message submission
+        try {
+            if ($school->email) {
+                Mail::to($school->email)->send(new NewContactMessageMail($schoolMessage));
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Gagal mengirim email notifikasi pesan kontak baru: '.$e->getMessage(), [
+                'school_id' => $school->id,
+                'message_id' => $schoolMessage->id,
+            ]);
+        }
+
+        return redirect()
+            ->route('school.public.contact', ['school' => $school->slug])
+            ->with('contact_success', true)
+            ->with('reference_number', $referenceNumber);
+    }
+
+    /**
      * Protected Preview of Full Landing Page (including Drafts).
      */
     public function preview(School $school): View
@@ -450,6 +547,12 @@ class SchoolPublicController extends Controller
                 'lastmod' => now()->toAtomString(),
                 'changefreq' => 'weekly',
                 'priority' => '0.6',
+            ],
+            [
+                'loc' => route('school.public.contact', ['school' => $school->slug]),
+                'lastmod' => now()->toAtomString(),
+                'changefreq' => 'monthly',
+                'priority' => '0.7',
             ],
         ];
 

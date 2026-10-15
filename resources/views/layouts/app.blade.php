@@ -146,8 +146,9 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                     </svg>
-                    <!-- Red Counter Badge in Eduvia Red -->
-                    <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-brand-600 ring-2 ring-white"></span>
+                    @if (auth()->check() && auth()->user()->unreadNotifications->count() > 0)
+                        <span class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-brand-600 ring-2 ring-white animate-pulse"></span>
+                    @endif
                 </button>
 
                 <!-- Notifications Dropdown Menu -->
@@ -159,41 +160,43 @@
                     x-transition:leave="transition ease-in duration-75"
                     x-transition:leave-start="opacity-100 scale-100"
                     x-transition:leave-end="opacity-0 scale-95"
-                    class="absolute right-0 mt-2 w-72 bg-white rounded-xl border border-zinc-200 shadow-lg py-2 z-50 text-xs"
+                    class="absolute right-0 mt-2 w-80 bg-white rounded-xl border border-zinc-200 shadow-xl py-2 z-50 text-xs"
                     style="display: none;"
                 >
                     <div class="px-4 py-2 border-b border-zinc-100 font-bold text-zinc-900 flex items-center justify-between">
-                        <span>Pemberitahuan Sistem</span>
-                        <span class="text-[10px] font-normal text-brand-600">Terbaru</span>
+                        <span>Pemberitahuan</span>
+                        @if (auth()->check() && auth()->user()->unreadNotifications->count() > 0)
+                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-rose-50 text-brand-600">
+                                {{ auth()->user()->unreadNotifications->count() }} baru
+                            </span>
+                        @endif
                     </div>
-                    <div class="py-1">
-                        @if (auth()->check() && auth()->user()->hasRole(\App\Enums\UserRole::SUPER_ADMIN, \App\Enums\UserRole::SCHOOL_ADMIN))
-                            <a href="{{ route('settings.system') }}" class="block px-4 py-2.5 hover:bg-zinc-50 transition-colors">
-                                <p class="font-semibold text-zinc-800">Modul 1 Siap Digunakan</p>
-                                <p class="text-[11px] text-zinc-500 mt-0.5">Konfigurasi sekolah dan tahun ajaran aktif.</p>
-                            </a>
-                            <a href="{{ route('school.profile') }}" class="block px-4 py-2.5 hover:bg-zinc-50 transition-colors">
-                                <p class="font-semibold text-zinc-800">Profil Sekolah Terverifikasi</p>
-                                <p class="text-[11px] text-zinc-500 mt-0.5">{{ $currentSchool?->name }} (NPSN: {{ $currentSchool?->npsn ?? 'Aktif' }})</p>
-                            </a>
-                        @elseif (auth()->check() && auth()->user()->hasRole(\App\Enums\UserRole::TEACHER))
-                            <a href="{{ route('attendance-sessions.index') }}" class="block px-4 py-2.5 hover:bg-zinc-50 transition-colors">
-                                <p class="font-semibold text-zinc-800">Presensi Sesi Pertemuan</p>
-                                <p class="text-[11px] text-zinc-500 mt-0.5">Kelola sesi dan kehadiran siswa di kelas.</p>
-                            </a>
-                            <a href="{{ route('attendance.report') }}" class="block px-4 py-2.5 hover:bg-zinc-50 transition-colors">
-                                <p class="font-semibold text-zinc-800">Rekapitulasi Kehadiran</p>
-                                <p class="text-[11px] text-zinc-500 mt-0.5">Pantau persentase kehadiran belajar siswa.</p>
-                            </a>
-                        @elseif (auth()->check() && auth()->user()->hasRole(\App\Enums\UserRole::STUDENT))
-                            <a href="{{ route('attendance.my') }}" class="block px-4 py-2.5 hover:bg-zinc-50 transition-colors">
-                                <p class="font-semibold text-zinc-800">Presensi Kehadiran Siswa</p>
-                                <p class="text-[11px] text-zinc-500 mt-0.5">Periksa riwayat dan status kehadiran Anda.</p>
-                            </a>
-                            <div class="px-4 py-2.5 bg-zinc-50/50">
-                                <p class="font-semibold text-zinc-800">Periode Akademik Aktif</p>
-                                <p class="text-[11px] text-zinc-500 mt-0.5">{{ $activeYear?->name ?? 'Tahun Ajaran' }} &bull; {{ $activeSemester?->name ?? 'Semester Aktif' }}</p>
+                    <div class="py-1 max-h-72 overflow-y-auto">
+                        @if (auth()->check() && auth()->user()->unreadNotifications->isNotEmpty())
+                            @foreach (auth()->user()->unreadNotifications->take(4) as $notif)
+                                <form action="{{ route('notifications.read', $notif->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="w-full text-left px-4 py-2.5 hover:bg-zinc-50 border-b border-zinc-50 transition-colors block">
+                                        <p class="font-semibold text-zinc-800 line-clamp-1">{{ $notif->data['title'] ?? 'Pemberitahuan Eduvia' }}</p>
+                                        <p class="text-[11px] text-zinc-500 mt-0.5 line-clamp-2">{{ $notif->data['message'] ?? '' }}</p>
+                                        <span class="text-[10px] text-zinc-400 mt-1 block">{{ $notif->created_at->diffForHumans() }}</span>
+                                    </button>
+                                </form>
+                            @endforeach
+                        @else
+                            <div class="px-4 py-6 text-center text-zinc-400">
+                                <svg class="w-8 h-8 mx-auto mb-1.5 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                                <p class="text-xs text-zinc-500 font-medium">Tidak ada pemberitahuan baru</p>
                             </div>
+                        @endif
+                    </div>
+                    <div class="px-4 pt-2 border-t border-zinc-100 flex items-center justify-between text-[11px]">
+                        <a href="{{ route('notifications.index') }}" class="font-bold text-brand-600 hover:text-brand-700">Lihat Semua</a>
+                        @if (auth()->check() && auth()->user()->unreadNotifications->count() > 0)
+                            <form action="{{ route('notifications.mark-all-read') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="text-zinc-500 hover:text-zinc-800">Tandai semua dibaca</button>
+                            </form>
                         @endif
                     </div>
                 </div>
@@ -489,6 +492,28 @@
                     <span x-show="!sidebarCollapsed" class="truncate">Rombongan Belajar</span>
                 </a>
 
+                <a
+                    href="{{ route('schedules.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('schedules.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Jadwal Pelajaran' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Jadwal Pelajaran</span>
+                </a>
+
+                <a
+                    href="{{ route('subjects.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('subjects.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Mata Pelajaran' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Mata Pelajaran</span>
+                </a>
+
                 <!-- Section: Kepegawaian (Pendidik & Staf) -->
                 <div class="pt-4 pb-1 px-2" x-show="!sidebarCollapsed">
                     <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Kepegawaian</span>
@@ -530,6 +555,17 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                     </svg>
                     <span x-show="!sidebarCollapsed" class="truncate">Data Siswa</span>
+                </a>
+
+                <a
+                    href="{{ route('students.import.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('students.import.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Impor Siswa (CSV)' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Impor Siswa (CSV)</span>
                 </a>
 
                 <a
@@ -665,13 +701,161 @@
                     </svg>
                     <span x-show="!sidebarCollapsed" class="truncate">Galeri Media</span>
                 </a>
+
+                <a
+                    href="{{ route('website.messages.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('website.messages.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Pesan Pengunjung' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Pesan & Buku Tamu</span>
+                </a>
             @endif
+
+            <!-- Section: Modul Keuangan Sekolah (Fase 9) -->
+            @if (auth()->check() && auth()->user()->hasRole(\App\Enums\UserRole::SUPER_ADMIN, \App\Enums\UserRole::SCHOOL_ADMIN, \App\Enums\UserRole::STAFF))
+                <div class="pt-4 pb-1 px-2" x-show="!sidebarCollapsed">
+                    <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Keuangan Sekolah</span>
+                </div>
+
+                <a
+                    href="{{ route('finance.invoices.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('finance.invoices.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Tagihan Siswa' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Tagihan Siswa</span>
+                </a>
+
+                <a
+                    href="{{ route('finance.payments.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('finance.payments.index') || request()->routeIs('finance.payments.create') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Riwayat Pembayaran' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Riwayat Pembayaran</span>
+                </a>
+
+                <a
+                    href="{{ route('finance.payments.queue') }}"
+                    class="metis-nav-item {{ request()->routeIs('finance.payments.queue') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Verifikasi Pembayaran' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Verifikasi Pembayaran</span>
+                </a>
+
+                <a
+                    href="{{ route('finance.categories.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('finance.categories.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Tarif & Beasiswa' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Tarif & Beasiswa</span>
+                </a>
+
+                <a
+                    href="{{ route('finance.reports.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('finance.reports.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Laporan Keuangan' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Laporan Keuangan</span>
+                </a>
+            @endif
+
+            <!-- Section: Operasional Sekolah (Phase 10) for Admins & Staff -->
+            @if (auth()->check() && auth()->user()->hasRole(\App\Enums\UserRole::SUPER_ADMIN, \App\Enums\UserRole::SCHOOL_ADMIN, \App\Enums\UserRole::STAFF))
+                <div class="pt-4 pb-1 px-2" x-show="!sidebarCollapsed">
+                    <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Operasional Sekolah</span>
+                </div>
+
+                <a
+                    href="{{ route('operations.dashboard') }}"
+                    class="metis-nav-item {{ request()->routeIs('operations.dashboard') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Pusat Operasional' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Pusat Operasional</span>
+                </a>
+
+                <a
+                    href="{{ route('operations.library.books.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('operations.library.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Perpustakaan' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Perpustakaan</span>
+                </a>
+
+                <a
+                    href="{{ route('operations.inventory.assets.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('operations.inventory.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Aset & Sarpras' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Aset & Sarpras</span>
+                </a>
+
+                <a
+                    href="{{ route('operations.facilities.rooms.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('operations.facilities.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Fasilitas & Lab' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Fasilitas & Lab</span>
+                </a>
+
+                <a
+                    href="{{ route('operations.correspondence.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('operations.correspondence.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Persuratan TU' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Persuratan TU</span>
+                </a>
+            @endif
+
 
             <!-- Section: Pembelajaran & Tugas for Teachers and Admins -->
             @if (auth()->check() && auth()->user()->hasRole(\App\Enums\UserRole::SUPER_ADMIN, \App\Enums\UserRole::SCHOOL_ADMIN, \App\Enums\UserRole::TEACHER))
                 <div class="pt-4 pb-1 px-2" x-show="!sidebarCollapsed">
                     <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Pembelajaran & Tugas</span>
                 </div>
+
+                <a
+                    href="{{ route('teacher.schedule.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('teacher.schedule.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Jadwal Mengajar' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Jadwal Mengajar</span>
+                </a>
 
                 <a
                     href="{{ route('learning-materials.index') }}"
@@ -693,6 +877,33 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
                     </svg>
                     <span x-show="!sidebarCollapsed" class="truncate">Tugas & Penilaian</span>
+                </a>
+
+                <!-- Section: Modul CBT & Bank Soal -->
+                <div class="pt-4 pb-1 px-2" x-show="!sidebarCollapsed">
+                    <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Ujian CBT & Asesmen</span>
+                </div>
+
+                <a
+                    href="{{ route('exams.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('exams.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Ujian CBT' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Ujian CBT</span>
+                </a>
+
+                <a
+                    href="{{ route('exam-questions.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('exam-questions.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Bank Soal' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Bank Soal</span>
                 </a>
 
                 <!-- Section: Modul 11 (Presensi & Kehadiran) for Teachers and Admins -->
@@ -721,6 +932,33 @@
                     </svg>
                     <span x-show="!sidebarCollapsed" class="truncate">Rekap Presensi</span>
                 </a>
+
+                <!-- Section: E-Rapor & Penilaian Semester -->
+                <div class="pt-4 pb-1 px-2" x-show="!sidebarCollapsed">
+                    <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">E-Rapor & Penilaian</span>
+                </div>
+
+                <a
+                    href="{{ route('reports.gradebook.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('reports.gradebook.*') || request()->routeIs('reports.weights.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Buku Nilai (Gradebook)' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Buku Nilai Mapel</span>
+                </a>
+
+                <a
+                    href="{{ route('reports.cards.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('reports.cards.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'E-Rapor Kelas' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">E-Rapor Digital</span>
+                </a>
             @endif
 
             <!-- Section: Fitur Siswa (Aktivitas Belajar) -->
@@ -728,6 +966,17 @@
                 <div class="pt-4 pb-1 px-2" x-show="!sidebarCollapsed">
                     <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Aktivitas Belajar</span>
                 </div>
+
+                <a
+                    href="{{ route('student.schedule.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('student.schedule.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Jadwal Pelajaran' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Jadwal Pelajaran</span>
+                </a>
 
                 <a
                     href="{{ route('student.materials.index') }}"
@@ -752,6 +1001,17 @@
                 </a>
 
                 <a
+                    href="{{ route('student.exams.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('student.exams.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Ujian CBT' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Ujian CBT</span>
+                </a>
+
+                <a
                     href="{{ route('attendance.my') }}"
                     class="metis-nav-item {{ request()->routeIs('attendance.my') ? 'active' : '' }}"
                     :title="sidebarCollapsed ? 'Presensi Saya' : ''"
@@ -760,6 +1020,156 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                     <span x-show="!sidebarCollapsed" class="truncate">Presensi Saya</span>
+                </a>
+
+                <a
+                    href="{{ route('student.reports.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('student.reports.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Rapor Belajar Saya' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Rapor Saya</span>
+                </a>
+
+                <a
+                    href="{{ route('student.finance.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('student.finance.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Tagihan Saya' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Tagihan Saya</span>
+                </a>
+            @endif
+
+
+            <!-- Section: Fitur Orang Tua / Wali Murid (Fase 7) -->
+            @if (auth()->check() && auth()->user()->hasRole(\App\Enums\UserRole::PARENT))
+                <div class="pt-4 pb-1 px-2" x-show="!sidebarCollapsed">
+                    <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Portal Orang Tua</span>
+                </div>
+
+                <a
+                    href="{{ route('parent.dashboard') }}"
+                    class="metis-nav-item {{ request()->routeIs('parent.dashboard') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Dashboard Pantauan' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Dashboard Anak</span>
+                </a>
+
+                <a
+                    href="{{ route('parent.attendance') }}"
+                    class="metis-nav-item {{ request()->routeIs('parent.attendance') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Presensi Anak' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Presensi Kehadiran</span>
+                </a>
+
+                <a
+                    href="{{ route('parent.assignments') }}"
+                    class="metis-nav-item {{ request()->routeIs('parent.assignments') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Tugas Anak' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Tugas & Evaluasi</span>
+                </a>
+
+                <a
+                    href="{{ route('parent.grades') }}"
+                    class="metis-nav-item {{ request()->routeIs('parent.grades') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Nilai & CBT' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Nilai & Ujian CBT</span>
+                </a>
+
+                <a
+                    href="{{ route('parent.reports') }}"
+                    class="metis-nav-item {{ request()->routeIs('parent.reports*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'E-Rapor Anak' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">E-Rapor Digital</span>
+                </a>
+
+                <a
+                    href="{{ route('parent.children.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('parent.children.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Tautkan Akun Anak' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Data Anak Saya</span>
+                </a>
+
+                <a
+                    href="{{ route('parent.finance.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('parent.finance.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Keuangan & SPP' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Keuangan & SPP</span>
+                </a>
+            @endif
+
+
+            <!-- Section: Komunikasi & Pengumuman Sekolah -->
+            <div class="pt-4 pb-1 px-2" x-show="!sidebarCollapsed">
+                <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Komunikasi Sekolah</span>
+            </div>
+
+            <a
+                href="{{ route('announcements.index') }}"
+                class="metis-nav-item {{ request()->routeIs('announcements.*') ? 'active' : '' }}"
+                :title="sidebarCollapsed ? 'Pengumuman' : ''"
+            >
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+                </svg>
+                <span x-show="!sidebarCollapsed" class="truncate">Pengumuman</span>
+            </a>
+
+            @if (auth()->check() && ! auth()->user()->hasRole(\App\Enums\UserRole::STUDENT))
+                <a
+                    href="{{ route('conversations.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('conversations.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Pesan Konsultasi' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Pesan Konsultasi</span>
+                </a>
+            @endif
+
+            @if (auth()->check() && auth()->user()->hasRole(\App\Enums\UserRole::SUPER_ADMIN, \App\Enums\UserRole::SCHOOL_ADMIN))
+                <a
+                    href="{{ route('admin.parents.index') }}"
+                    class="metis-nav-item {{ request()->routeIs('admin.parents.*') ? 'active' : '' }}"
+                    :title="sidebarCollapsed ? 'Relasi Orang Tua' : ''"
+                >
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                    <span x-show="!sidebarCollapsed" class="truncate">Relasi Orang Tua</span>
                 </a>
             @endif
 

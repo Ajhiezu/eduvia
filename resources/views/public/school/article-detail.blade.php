@@ -6,7 +6,7 @@
             
             <!-- Breadcrumbs -->
             <nav class="flex items-center gap-2 text-xs text-zinc-500 mb-6">
-                <a href="{{ route('school.public.home', ['school' => $school->slug]) }}" class="hover:text-zinc-900">Beranda</a>
+                <a href="{{ $school->slug === 'nusantara-utama' ? route('home') : route('school.public.home', ['school' => $school->slug]) }}" class="hover:text-zinc-900">Beranda</a>
                 <span>/</span>
                 <a href="{{ route('school.public.articles', ['school' => $school->slug]) }}" class="hover:text-zinc-900">Warta Berita</a>
                 <span>/</span>

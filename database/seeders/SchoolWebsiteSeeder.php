@@ -6,6 +6,7 @@ use App\Models\School;
 use App\Models\SchoolExtracurricular;
 use App\Models\SchoolFacility;
 use App\Models\SchoolGallery;
+use App\Models\SchoolMessage;
 use App\Models\SchoolPost;
 use App\Models\SchoolWebsiteSetting;
 use Illuminate\Database\Seeder;
@@ -368,6 +369,59 @@ Acara ini ditutup dengan pergelaran teater musikal yang mengangkat cerita rakyat
                     'title' => $gallery['title'],
                 ],
                 $gallery
+            );
+        }
+
+        // 6. Guest Contact Messages
+        $messages = [
+            [
+                'reference_number' => 'MSG-20261014-NUSA01',
+                'name' => 'Budi Prasetyo, S.T.',
+                'email' => 'budi.prasetyo@gmail.com',
+                'phone' => '081288991234',
+                'category' => 'ppdb',
+                'subject' => 'Informasi Jalur Prestasi PPDB Tahun Ajaran 2026/2027',
+                'message' => 'Selamat pagi Bapak/Ibu Panitia PPDB, saya ingin menanyakan perihal syarat sertifikat OSN tingkat kabupaten untuk pendaftaran jalur prestasi sains. Apakah sertifikat juara 2 dapat diajukan? Terima kasih.',
+                'status' => SchoolMessage::STATUS_NEW,
+                'is_read' => false,
+                'internal_notes' => null,
+            ],
+            [
+                'reference_number' => 'MSG-20261014-NUSA02',
+                'name' => 'Siti Nurhaliza',
+                'email' => 'siti.nurhaliza@yahoo.com',
+                'phone' => '081399887766',
+                'category' => 'ekstrakurikuler',
+                'subject' => 'Pendaftaran Klub Robotika untuk Siswa Baru',
+                'message' => 'Halo, apakah ekstrakurikuler robotika terbuka untuk siswa yang belum memiliki dasar pemrograman sebelumnya? Apakah ada seleksi masuk khusus?',
+                'status' => SchoolMessage::STATUS_IN_PROGRESS,
+                'is_read' => true,
+                'read_at' => now()->subHours(5),
+                'internal_notes' => 'Telah dihubungi pembina robotika Bapak Hendra via email, siswa disarankan mengikuti pertemuan orientasi perdana.',
+            ],
+            [
+                'reference_number' => 'MSG-20261014-NUSA03',
+                'name' => 'PT Solusi Teknologi Bersama',
+                'email' => 'partnership@solusiteknologi.co.id',
+                'phone' => '0217890123',
+                'category' => 'kerjasama',
+                'subject' => 'Penawaran Program Magang Industri & Kunjungan Lapangan',
+                'message' => 'Kepada Yth. Kepala Sekolah Nusantara Utama, kami dari PT Solusi Teknologi Bersama bermaksud menjalin kemitraan dalam penyelenggaraan program industri teknologi bagi siswa peminatan sains & komputer.',
+                'status' => SchoolMessage::STATUS_RESOLVED,
+                'is_read' => true,
+                'read_at' => now()->subDays(2),
+                'resolved_at' => now()->subDay(),
+                'internal_notes' => 'Proposal telah diterima dan dijadwalkan pertemuan audiensi pada Jumat depan.',
+            ],
+        ];
+
+        foreach ($messages as $msg) {
+            SchoolMessage::updateOrCreate(
+                [
+                    'school_id' => $school->id,
+                    'reference_number' => $msg['reference_number'],
+                ],
+                $msg
             );
         }
     }

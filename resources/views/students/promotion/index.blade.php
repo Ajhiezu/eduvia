@@ -84,7 +84,7 @@
                             <!-- Jenis Aksi -->
                             <div>
                                 <label class="block text-xs font-bold text-zinc-700 mb-1">Jenis Aksi Pemrosesan</label>
-                                <div class="grid grid-cols-2 gap-2">
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                     <label class="cursor-pointer border border-zinc-300 rounded-lg p-2.5 text-xs flex items-center gap-2 has-checked:border-brand-500 has-checked:bg-brand-50/40">
                                         <input
                                             type="radio"
@@ -100,11 +100,33 @@
                                         <input
                                             type="radio"
                                             name="action"
+                                            value="retain"
+                                            x-model="action"
+                                            class="text-brand-600 focus:ring-brand-500"
+                                        >
+                                        <span class="font-bold text-zinc-800">Tinggal Kelas</span>
+                                    </label>
+
+                                    <label class="cursor-pointer border border-zinc-300 rounded-lg p-2.5 text-xs flex items-center gap-2 has-checked:border-brand-500 has-checked:bg-brand-50/40">
+                                        <input
+                                            type="radio"
+                                            name="action"
+                                            value="transfer_out"
+                                            x-model="action"
+                                            class="text-brand-600 focus:ring-brand-500"
+                                        >
+                                        <span class="font-bold text-zinc-800">Mutasi Keluar</span>
+                                    </label>
+
+                                    <label class="cursor-pointer border border-zinc-300 rounded-lg p-2.5 text-xs flex items-center gap-2 has-checked:border-brand-500 has-checked:bg-brand-50/40">
+                                        <input
+                                            type="radio"
+                                            name="action"
                                             value="graduate"
                                             x-model="action"
                                             class="text-brand-600 focus:ring-brand-500"
                                         >
-                                        <span class="font-bold text-zinc-800">Kelulusan Jenjang</span>
+                                        <span class="font-bold text-zinc-800">Kelulusan</span>
                                     </label>
                                 </div>
                             </div>
@@ -119,8 +141,8 @@
                             />
                         </div>
 
-                        <!-- Target Classroom & Year (Shown only when promote) -->
-                        <div x-show="action === 'promote'" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-zinc-100">
+                        <!-- Target Classroom & Year (Shown when promote or retain) -->
+                        <div x-show="action === 'promote' || action === 'retain'" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-zinc-100">
                             <x-select
                                 label="Tahun Ajaran Tujuan"
                                 name="target_academic_year_id"
@@ -137,7 +159,7 @@
                             <x-select
                                 label="Rombongan Belajar Tujuan"
                                 name="target_classroom_id"
-                                hint="Pilih kelas tujuan kenaikan kelas."
+                                hint="Pilih rombel tujuan penempatan."
                             >
                                 <option value="">-- Pilih Rombel Tujuan --</option>
                                 @foreach ($classrooms->where('id', '!=', $selectedClassroom->id) as $tc)
@@ -152,7 +174,7 @@
                         <x-input
                             label="Keterangan / Catatan Proses (Opsional)"
                             name="notes"
-                            placeholder="Contoh: Kenaikan kelas tahun ajaran 2026/2027..."
+                            placeholder="Contoh: Kenaikan kelas tahun ajaran baru berdasarkan rapat dewan guru..."
                         />
                     </div>
                 </x-card>
@@ -165,7 +187,7 @@
                                 Daftar Siswa Rombel {{ $selectedClassroom->name }} ({{ $students->count() }} Siswa)
                             </h3>
                             <p class="text-[11px] text-zinc-500">
-                                Beri centang pada peserta didik yang memenuhi syarat untuk diproses.
+                                Beri centang pada peserta didik yang memenuhi syarat untuk diproses berdasarkan presensi dan capaian akademik.
                             </p>
                         </div>
 
@@ -186,13 +208,16 @@
                         </div>
                     @else
                         <div class="overflow-x-auto" data-scrollable>
-                            <table class="w-full text-left text-xs text-zinc-600 min-w-[500px]">
+                            <table class="w-full text-left text-xs text-zinc-600 min-w-[700px]">
                                 <thead class="bg-zinc-50/80 text-zinc-500 font-semibold border-b border-zinc-200">
                                     <tr>
                                         <th class="py-3 px-4 w-12 text-center">Pilih</th>
                                         <th class="py-3 px-4">Nama Peserta Didik</th>
                                         <th class="py-3 px-4">NIS / NISN</th>
-                                        <th class="py-3 px-4">Status Saat Ini</th>
+                                        <th class="py-3 px-4 text-center">Presensi</th>
+                                        <th class="py-3 px-4 text-center">Asesmen CBT</th>
+                                        <th class="py-3 px-4 text-center">E-Rapor</th>
+                                        <th class="py-3 px-4 text-center">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-zinc-200">
@@ -213,7 +238,30 @@
                                             <td class="py-3 px-4 font-mono text-zinc-600">
                                                 {{ $student->studentProfile?->nis ?: '-' }} / {{ $student->studentProfile?->nisn ?: '-' }}
                                             </td>
-                                            <td class="py-3 px-4">
+                                            <td class="py-3 px-4 text-center">
+                                                <span class="font-bold font-mono text-zinc-900 {{ $student->attendance_rate >= 80 ? 'text-emerald-700' : 'text-amber-700' }}">
+                                                    {{ $student->attendance_rate }}%
+                                                </span>
+                                            </td>
+                                            <td class="py-3 px-4 text-center">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-zinc-100 text-zinc-700">
+                                                    {{ $student->cbt_attempts_count }} ujian selesai
+                                                </span>
+                                            </td>
+                                            <td class="py-3 px-4 text-center">
+                                                @if ($student->report_card_status === 'published')
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                                        Diterbitkan
+                                                    </span>
+                                                @elseif ($student->report_card_status === 'none')
+                                                    <span class="text-zinc-400 text-[11px]">-</span>
+                                                @else
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-800">
+                                                        {{ ucfirst($student->report_card_status) }}
+                                                    </span>
+                                                @endif
+                                            </td>
+                                            <td class="py-3 px-4 text-center">
                                                 <x-badge :variant="$student->studentProfile?->statusBadgeVariant() ?? 'success'" size="sm">
                                                     {{ $student->studentProfile?->statusLabel() ?? 'Aktif' }}
                                                 </x-badge>
@@ -224,8 +272,12 @@
                             </table>
                         </div>
 
-                        <div class="p-4 border-t border-zinc-200 bg-white flex items-center justify-end">
-                            <x-button type="submit" variant="primary" size="md" onclick="return confirm('Apakah Anda yakin ingin memproses data siswa terpilih secara massal?')">
+                        <div class="p-4 border-t border-zinc-200 bg-white flex items-center justify-between">
+                            <span class="text-xs text-zinc-500">
+                                Pastikan keputusan kenaikan/kelulusan telah diverifikasi oleh dewan guru.
+                            </span>
+
+                            <x-button type="submit" variant="primary" size="md" onclick="return confirm('Apakah Anda yakin ingin mengeksekusi pemrosesan akademik siswa terpilih secara massal?')">
                                 Eksekusi Pemrosesan Massal &rarr;
                             </x-button>
                         </div>

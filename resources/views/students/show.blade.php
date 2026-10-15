@@ -299,6 +299,195 @@
             </x-card>
         </div>
 
+        <!-- SECTION 4: AKUN ORANG TUA / WALI TERHUBUNG (PARENT PORTAL) -->
+        <div class="space-y-3 pt-2">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-base font-extrabold text-zinc-900 tracking-tight">
+                        Orang Tua / Wali Terverifikasi (Portal Wali)
+                    </h2>
+                    <p class="text-xs text-zinc-500">
+                        Akun orang tua yang telah terhubung dan memiliki akses pemantauan akademik di portal mandiri.
+                    </p>
+                </div>
+                <x-button href="{{ route('admin.parent-relations.index', ['student_id' => $student->id]) }}" variant="outline" size="sm">
+                    Kelola Relasi Wali
+                </x-button>
+            </div>
+
+            <x-card :padding="false">
+                @if ($linkedParents->isEmpty())
+                    <div class="p-6 text-center text-xs text-zinc-400">
+                        Belum ada akun orang tua/wali murid yang terhubung secara resmi ke akun peserta didik ini.
+                    </div>
+                @else
+                    <div class="overflow-x-auto" data-scrollable>
+                        <table class="w-full min-w-[550px] text-left text-xs text-zinc-600">
+                            <thead class="bg-zinc-50/80 text-zinc-500 font-semibold border-b border-zinc-200">
+                                <tr>
+                                    <th class="py-3 px-4">Nama Orang Tua</th>
+                                    <th class="py-3 px-4">Hubungan Keluarga</th>
+                                    <th class="py-3 px-4">Kontak (Email / Telepon)</th>
+                                    <th class="py-3 px-4 text-center">Kontak Utama</th>
+                                    <th class="py-3 px-4 text-center">Status Akses</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-zinc-200">
+                                @foreach ($linkedParents as $parent)
+                                    <tr class="hover:bg-zinc-50/50">
+                                        <td class="py-3 px-4 font-bold text-zinc-900">
+                                            {{ $parent->name }}
+                                        </td>
+                                        <td class="py-3 px-4 capitalize text-zinc-700">
+                                            {{ $parent->pivot->relationship_type ?? 'Orang Tua' }}
+                                        </td>
+                                        <td class="py-3 px-4 text-zinc-600 font-mono">
+                                            {{ $parent->email }}
+                                            @if ($parent->phone)
+                                                <span class="block text-[11px] text-zinc-400">{{ $parent->phone }}</span>
+                                            @endif
+                                        </td>
+                                        <td class="py-3 px-4 text-center">
+                                            @if ($parent->pivot->is_primary_contact)
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                                                    Utama
+                                                </span>
+                                            @else
+                                                <span class="text-zinc-400">-</span>
+                                            @endif
+                                        </td>
+                                        <td class="py-3 px-4 text-center">
+                                            <x-badge variant="success" size="sm">Terhubung Aktif</x-badge>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            </x-card>
+        </div>
+
+        <!-- SECTION 5: REKAM JEJAK UJIAN & CBT -->
+        <div class="space-y-3 pt-2">
+            <div>
+                <h2 class="text-base font-extrabold text-zinc-900 tracking-tight">
+                    Rekam Jejak Ujian CBT & Asesmen Digital
+                </h2>
+                <p class="text-xs text-zinc-500">
+                    Hasil pengerjaan asesmen, kuis daring, dan ujian berbasis komputer terkini.
+                </p>
+            </div>
+
+            <x-card :padding="false">
+                @if ($examAttempts->isEmpty())
+                    <div class="p-6 text-center text-xs text-zinc-400">
+                        Belum ada riwayat pengerjaan ujian berbasis komputer (CBT) untuk siswa ini.
+                    </div>
+                @else
+                    <div class="overflow-x-auto" data-scrollable>
+                        <table class="w-full min-w-[600px] text-left text-xs text-zinc-600">
+                            <thead class="bg-zinc-50/80 text-zinc-500 font-semibold border-b border-zinc-200">
+                                <tr>
+                                    <th class="py-3 px-4">Nama Ujian</th>
+                                    <th class="py-3 px-4">Mata Pelajaran</th>
+                                    <th class="py-3 px-4">Waktu Mulai</th>
+                                    <th class="py-3 px-4 text-center">Status</th>
+                                    <th class="py-3 px-4 text-center">Nilai Akhir</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-zinc-200">
+                                @foreach ($examAttempts as $attempt)
+                                    <tr class="hover:bg-zinc-50/50">
+                                        <td class="py-3 px-4 font-bold text-zinc-900">
+                                            {{ $attempt->exam?->title ?? 'Ujian' }}
+                                        </td>
+                                        <td class="py-3 px-4 text-zinc-700">
+                                            {{ $attempt->exam?->subject?->name ?? 'Umum' }}
+                                        </td>
+                                        <td class="py-3 px-4 text-zinc-500 font-mono">
+                                            {{ $attempt->started_at ? $attempt->started_at->translatedFormat('d M Y, H:i') : '-' }}
+                                        </td>
+                                        <td class="py-3 px-4 text-center">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold {{ $attempt->status === 'submitted' || $attempt->status === 'graded' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-zinc-100 text-zinc-600' }}">
+                                                {{ $attempt->status === 'graded' ? 'Dinilai' : ($attempt->status === 'submitted' ? 'Selesai' : 'Sedang Ujian') }}
+                                            </span>
+                                        </td>
+                                        <td class="py-3 px-4 text-center font-bold text-sm text-zinc-900 font-mono">
+                                            {{ $attempt->final_score !== null ? number_format($attempt->final_score, 1) : '-' }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            </x-card>
+        </div>
+
+        <!-- SECTION 6: E-RAPOR DIGITAL TERBIT -->
+        <div class="space-y-3 pt-2">
+            <div>
+                <h2 class="text-base font-extrabold text-zinc-900 tracking-tight">
+                    Rapor Digital (E-Rapor Terbit)
+                </h2>
+                <p class="text-xs text-zinc-500">
+                    Dokumen capaian hasil belajar resmi yang telah divalidasi dan diterbitkan wali kelas.
+                </p>
+            </div>
+
+            <x-card :padding="false">
+                @if ($reportCards->isEmpty())
+                    <div class="p-6 text-center text-xs text-zinc-400">
+                        Belum ada dokumen buku rapor digital yang diterbitkan untuk peserta didik ini.
+                    </div>
+                @else
+                    <div class="overflow-x-auto" data-scrollable>
+                        <table class="w-full min-w-[600px] text-left text-xs text-zinc-600">
+                            <thead class="bg-zinc-50/80 text-zinc-500 font-semibold border-b border-zinc-200">
+                                <tr>
+                                    <th class="py-3 px-4">Tahun Ajaran</th>
+                                    <th class="py-3 px-4">Semester</th>
+                                    <th class="py-3 px-4">Status Rapor</th>
+                                    <th class="py-3 px-4">Tanggal Terbit</th>
+                                    <th class="py-3 px-4">Catatan Wali Kelas</th>
+                                    <th class="py-3 px-4 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-zinc-200">
+                                @foreach ($reportCards as $reportCard)
+                                    <tr class="hover:bg-zinc-50/50">
+                                        <td class="py-3 px-4 font-bold text-zinc-900">
+                                            {{ $reportCard->academicYear?->name }}
+                                        </td>
+                                        <td class="py-3 px-4 text-zinc-700 capitalize">
+                                            {{ $reportCard->semester?->name ?? 'Semester' }}
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold {{ $reportCard->status === 'published' ? 'bg-emerald-100 text-emerald-800' : 'bg-zinc-100 text-zinc-700' }}">
+                                                {{ $reportCard->status === 'published' ? 'Diterbitkan' : ucfirst($reportCard->status) }}
+                                            </span>
+                                        </td>
+                                        <td class="py-3 px-4 text-zinc-500 font-mono">
+                                            {{ $reportCard->published_at ? $reportCard->published_at->translatedFormat('d M Y') : '-' }}
+                                        </td>
+                                        <td class="py-3 px-4 text-zinc-600 italic max-w-xs truncate" title="{{ $reportCard->homeroom_notes }}">
+                                            {{ $reportCard->homeroom_notes ?: '-' }}
+                                        </td>
+                                        <td class="py-3 px-4 text-right">
+                                            <x-button href="{{ route('reports.cards.show', $reportCard) }}" variant="outline" size="sm">
+                                                Lihat Rapor
+                                            </x-button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            </x-card>
+        </div>
+
         <!-- ====================================================================== -->
         <!-- MODAL 1: UBAH STATUS SISWA                                             -->
         <!-- ====================================================================== -->

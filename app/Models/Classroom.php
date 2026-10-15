@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
-#[Fillable(['school_id', 'academic_year_id', 'grade_level_id', 'homeroom_teacher_id', 'name', 'code', 'capacity', 'is_active', 'notes'])]
+#[Fillable(['school_id', 'academic_year_id', 'grade_level_id', 'homeroom_teacher_id', 'name', 'code', 'capacity', 'academic_program', 'is_active', 'notes'])]
 class Classroom extends Model
 {
     /** @use HasFactory<ClassroomFactory> */
@@ -306,5 +306,25 @@ class Classroom extends Model
                     $teacherQuery->where('name', 'like', "%{$term}%");
                 });
         });
+    }
+
+    /**
+     * Subject gradebooks in this classroom.
+     *
+     * @return HasMany<SubjectGradebook, $this>
+     */
+    public function subjectGradebooks(): HasMany
+    {
+        return $this->hasMany(SubjectGradebook::class);
+    }
+
+    /**
+     * Student report cards in this classroom.
+     *
+     * @return HasMany<StudentReportCard, $this>
+     */
+    public function studentReportCards(): HasMany
+    {
+        return $this->hasMany(StudentReportCard::class);
     }
 }

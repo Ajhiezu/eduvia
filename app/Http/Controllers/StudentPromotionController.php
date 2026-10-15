@@ -39,10 +39,35 @@ class StudentPromotionController extends Controller
             ->get();
 
         if ($sourceClassroomId) {
-            $selectedClassroom = Classroom::with(['activeStudents.student.studentProfile', 'academicYear', 'gradeLevel'])
-                ->findOrFail($sourceClassroomId);
+            $selectedClassroom = Classroom::with([
+                'activeStudents.student.studentProfile',
+                'activeStudents.student.attendanceRecords',
+                'activeStudents.student.examAttempts',
+                'activeStudents.student.studentReportCards',
+                'academicYear',
+                'gradeLevel',
+            ])->findOrFail($sourceClassroomId);
 
-            $students = $selectedClassroom->activeStudents->map(fn ($enrollment) => $enrollment->student);
+            if ($schoolId && $selectedClassroom->school_id && $selectedClassroom->school_id !== $schoolId && ! $request->user()->isSuperAdmin()) {
+                abort(403, 'Akses ke rombongan belajar sekolah lain tidak diizinkan.');
+            }
+
+            $students = $selectedClassroom->activeStudents->map(function ($enrollment) {
+                $student = $enrollment->student;
+                $attendanceRecords = $student->attendanceRecords;
+                $presentCount = $attendanceRecords->whereIn('status', ['present', 'late'])->count();
+                $totalSessions = $attendanceRecords->count();
+                $attendanceRate = $totalSessions > 0 ? round(($presentCount / $totalSessions) * 100, 1) : 0.0;
+
+                $cbtAttemptsCount = $student->examAttempts->whereIn('status', ['submitted', 'graded'])->count();
+                $latestReport = $student->studentReportCards->sortByDesc('created_at')->first();
+
+                $student->attendance_rate = $attendanceRate;
+                $student->cbt_attempts_count = $cbtAttemptsCount;
+                $student->report_card_status = $latestReport?->status ?? 'none';
+
+                return $student;
+            });
         }
 
         return view('students.promotion.index', compact(
@@ -55,7 +80,7 @@ class StudentPromotionController extends Controller
     }
 
     /**
-     * Process batch promotion or graduation in atomic transaction.
+     * Process batch promotion, retention, transfer, or graduation in atomic transaction.
      */
     public function process(BatchPromotionRequest $request): RedirectResponse
     {
@@ -65,6 +90,12 @@ class StudentPromotionController extends Controller
         $studentIds = $request->input('student_ids', []);
         $effectiveDate = $request->input('effective_date');
         $notes = $request->input('notes') ?? 'Proses massal akhir tahun ajaran';
+
+        $school = School::current();
+        $schoolId = $school?->id ?? $actor?->school_id;
+        if ($schoolId && $sourceClassroom->school_id && $sourceClassroom->school_id !== $schoolId && ! $actor->isSuperAdmin()) {
+            abort(403, 'Akses ke rombongan belajar sekolah lain tidak diizinkan.');
+        }
 
         DB::transaction(function () use ($action, $sourceClassroom, $studentIds, $effectiveDate, $notes, $request, $actor) {
             $students = User::whereIn('id', $studentIds)->with('studentProfile')->get();
@@ -104,6 +135,64 @@ class StudentPromotionController extends Controller
                         );
                     }
                 }
+            } elseif ($action === 'retain') {
+                // Tinggal kelas: stay in target classroom (same level or repeat)
+                $targetClassroomId = $request->input('target_classroom_id');
+                $targetClassroom = $targetClassroomId ? Classroom::find($targetClassroomId) : null;
+
+                foreach ($students as $student) {
+                    $oldEnrollment = $sourceClassroom->activeStudents()
+                        ->where('student_id', $student->id)
+                        ->first();
+
+                    if ($oldEnrollment) {
+                        $oldEnrollment->update([
+                            'enrollment_status' => 'completed',
+                            'left_at' => $effectiveDate,
+                            'notes' => trim(($oldEnrollment->notes ?? '')."\n[Tinggal Kelas]: Mengulang di tingkat yang sama. {$notes}"),
+                        ]);
+                    }
+
+                    if ($targetClassroom) {
+                        ClassroomStudent::create([
+                            'classroom_id' => $targetClassroom->id,
+                            'student_id' => $student->id,
+                            'academic_year_id' => $targetClassroom->academic_year_id,
+                            'enrollment_status' => 'active',
+                            'joined_at' => $effectiveDate,
+                            'notes' => "Tinggal kelas dari rombel {$sourceClassroom->name}. {$notes}",
+                        ]);
+                    }
+
+                    $profile = $student->studentProfile;
+                    if ($profile) {
+                        $profile->changeStatus(
+                            'active',
+                            $effectiveDate,
+                            "Keputusan tinggal kelas pada rombel {$sourceClassroom->name}. {$notes}",
+                            $actor
+                        );
+                    }
+                }
+            } elseif ($action === 'transfer_out') {
+                // Mutasi keluar sekolah
+                foreach ($students as $student) {
+                    $sourceClassroom->removeStudent(
+                        $student,
+                        'transferred',
+                        "Mutasi keluar dari rombel {$sourceClassroom->name}. {$notes}"
+                    );
+
+                    $profile = $student->studentProfile;
+                    if ($profile) {
+                        $profile->changeStatus(
+                            'transferred',
+                            $effectiveDate,
+                            "Mutasi keluar dari rombel {$sourceClassroom->name}. {$notes}",
+                            $actor
+                        );
+                    }
+                }
             } elseif ($action === 'graduate') {
                 foreach ($students as $student) {
                     $sourceClassroom->removeStudent(
@@ -126,7 +215,13 @@ class StudentPromotionController extends Controller
         });
 
         $count = count($studentIds);
-        $actionLabel = $action === 'promote' ? 'Kenaikan kelas' : 'Kelulusan';
+        $actionLabels = [
+            'promote' => 'Kenaikan kelas',
+            'retain' => 'Tinggal kelas (Pengulangan)',
+            'transfer_out' => 'Mutasi keluar',
+            'graduate' => 'Kelulusan jenjang',
+        ];
+        $actionLabel = $actionLabels[$action] ?? 'Proses akademik';
 
         return redirect()->route('students.promotion.index', ['source_classroom_id' => $sourceClassroom->id])
             ->with('status', "Berhasil memproses {$actionLabel} untuk {$count} peserta didik.");

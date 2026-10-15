@@ -41,6 +41,26 @@ enum Permission: string
     case WEBSITE_MANAGE = 'website:manage';
     case WEBSITE_VIEW = 'website:view';
 
+    // School Finance Management (Phase 9)
+    case FINANCE_MANAGE = 'finance:manage';
+    case FINANCE_VIEW = 'finance:view';
+    case FINANCE_PAY = 'finance:pay';
+
+    // School Operations Management (Phase 10)
+    case OPERATIONS_MANAGE = 'operations:manage';
+    case OPERATIONS_VIEW = 'operations:view';
+    case ADMISSIONS_MANAGE = 'admissions:manage';
+    case ADMISSIONS_VIEW = 'admissions:view';
+    case LIBRARY_MANAGE = 'library:manage';
+    case LIBRARY_VIEW = 'library:view';
+    case ASSETS_MANAGE = 'assets:manage';
+    case ASSETS_VIEW = 'assets:view';
+    case FACILITIES_MANAGE = 'facilities:manage';
+    case FACILITIES_VIEW = 'facilities:view';
+    case FACILITIES_RESERVE = 'facilities:reserve';
+    case CORRESPONDENCE_MANAGE = 'correspondence:manage';
+    case CORRESPONDENCE_VIEW = 'correspondence:view';
+
     /**
      * Map default permissions by role.
      *
@@ -59,9 +79,25 @@ enum Permission: string
                 self::CLASSES_MANAGE,
                 self::CLASSES_VIEW,
                 self::LEARNING_VIEW,
+                self::EXAM_MANAGE,
                 self::REPORT_MANAGE,
                 self::WEBSITE_MANAGE,
                 self::WEBSITE_VIEW,
+                self::FINANCE_MANAGE,
+                self::FINANCE_VIEW,
+                self::OPERATIONS_MANAGE,
+                self::OPERATIONS_VIEW,
+                self::ADMISSIONS_MANAGE,
+                self::ADMISSIONS_VIEW,
+                self::LIBRARY_MANAGE,
+                self::LIBRARY_VIEW,
+                self::ASSETS_MANAGE,
+                self::ASSETS_VIEW,
+                self::FACILITIES_MANAGE,
+                self::FACILITIES_VIEW,
+                self::FACILITIES_RESERVE,
+                self::CORRESPONDENCE_MANAGE,
+                self::CORRESPONDENCE_VIEW,
             ],
             UserRole::TEACHER => [
                 self::CLASSES_VIEW,
@@ -71,11 +107,26 @@ enum Permission: string
                 self::ASSIGNMENT_GRADE,
                 self::EXAM_MANAGE,
                 self::REPORT_MANAGE,
+                self::LIBRARY_VIEW,
+                self::FACILITIES_VIEW,
+                self::FACILITIES_RESERVE,
             ],
             UserRole::STAFF => [
                 self::SCHOOL_VIEW,
                 self::USERS_VIEW,
                 self::CLASSES_VIEW,
+                self::FINANCE_VIEW,
+                self::OPERATIONS_VIEW,
+                self::ADMISSIONS_VIEW,
+                self::LIBRARY_VIEW,
+                self::LIBRARY_MANAGE,
+                self::ASSETS_VIEW,
+                self::ASSETS_MANAGE,
+                self::FACILITIES_VIEW,
+                self::FACILITIES_MANAGE,
+                self::FACILITIES_RESERVE,
+                self::CORRESPONDENCE_VIEW,
+                self::CORRESPONDENCE_MANAGE,
             ],
             UserRole::STUDENT => [
                 self::CLASSES_VIEW,
@@ -83,10 +134,14 @@ enum Permission: string
                 self::ASSIGNMENT_SUBMIT,
                 self::EXAM_TAKE,
                 self::REPORT_VIEW_OWN,
+                self::FINANCE_PAY,
+                self::LIBRARY_VIEW,
             ],
             UserRole::PARENT => [
                 self::CLASSES_VIEW,
                 self::REPORT_VIEW_OWN,
+                self::FINANCE_PAY,
+                self::LIBRARY_VIEW,
             ],
         };
     }

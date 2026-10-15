@@ -24,7 +24,7 @@ class BatchPromotionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'action' => ['required', 'in:promote,graduate'],
+            'action' => ['required', 'in:promote,retain,transfer_out,graduate'],
             'source_classroom_id' => ['required', 'exists:classrooms,id'],
             'target_classroom_id' => ['required_if:action,promote', 'nullable', 'exists:classrooms,id', 'different:source_classroom_id'],
             'target_academic_year_id' => ['required_if:action,promote', 'nullable', 'exists:academic_years,id'],

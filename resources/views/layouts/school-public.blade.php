@@ -144,7 +144,7 @@
             <div class="flex items-center justify-between h-20">
                 
                 <!-- School Brand Identity -->
-                <a href="{{ route('school.public.home', ['school' => $school->slug]) }}" class="flex items-center gap-3.5 group min-w-0 py-2">
+                <a href="{{ $school->slug === 'nusantara-utama' ? route('home') : route('school.public.home', ['school' => $school->slug]) }}" class="flex items-center gap-3.5 group min-w-0 py-2">
                     @if ($school->logo_path)
                         <img src="{{ $school->logoUrl() }}" alt="{{ $school->name }}" class="w-12 h-12 rounded-xl object-contain bg-zinc-50 border border-zinc-200/80 p-1 shrink-0 group-hover:scale-105 transition-transform">
                     @else
@@ -171,7 +171,7 @@
 
                 <!-- Desktop Navigation Links -->
                 <nav class="hidden lg:flex items-center gap-1 text-sm font-medium text-zinc-700">
-                    <a href="{{ route('school.public.home', ['school' => $school->slug]) }}" class="px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('school.public.home') ? 'text-[#E11D2E] font-bold bg-rose-50' : 'hover:text-zinc-900 hover:bg-zinc-100' }}">
+                    <a href="{{ $school->slug === 'nusantara-utama' ? route('home') : route('school.public.home', ['school' => $school->slug]) }}" class="px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('home', 'school.public.home') ? 'text-[#E11D2E] font-bold bg-rose-50' : 'hover:text-zinc-900 hover:bg-zinc-100' }}">
                         Beranda
                     </a>
                     <a href="{{ route('school.public.profile', ['school' => $school->slug]) }}" class="px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('school.public.profile') ? 'text-[#E11D2E] font-bold bg-rose-50' : 'hover:text-zinc-900 hover:bg-zinc-100' }}">
@@ -194,6 +194,9 @@
                     </a>
                     <a href="{{ route('school.public.gallery', ['school' => $school->slug]) }}" class="px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('school.public.gallery') ? 'text-[#E11D2E] font-bold bg-rose-50' : 'hover:text-zinc-900 hover:bg-zinc-100' }}">
                         Galeri
+                    </a>
+                    <a href="{{ route('school.public.contact', ['school' => $school->slug]) }}" class="px-3 py-2 rounded-lg transition-colors {{ request()->routeIs('school.public.contact') ? 'text-[#E11D2E] font-bold bg-rose-50' : 'hover:text-zinc-900 hover:bg-zinc-100' }}">
+                        Kontak
                     </a>
                 </nav>
 
@@ -232,7 +235,7 @@
 
         <!-- Mobile Navigation Menu -->
         <div x-show="mobileMenuOpen" x-transition class="lg:hidden border-t border-zinc-200 bg-white px-4 pt-3 pb-6 space-y-1 text-sm font-medium shadow-lg" style="display: none;">
-            <a href="{{ route('school.public.home', ['school' => $school->slug]) }}" class="block px-3 py-2 rounded-lg {{ request()->routeIs('school.public.home') ? 'bg-rose-50 text-[#E11D2E] font-bold' : 'text-zinc-700 hover:bg-zinc-50' }}">
+            <a href="{{ $school->slug === 'nusantara-utama' ? route('home') : route('school.public.home', ['school' => $school->slug]) }}" class="block px-3 py-2 rounded-lg {{ request()->routeIs('home', 'school.public.home') ? 'bg-rose-50 text-[#E11D2E] font-bold' : 'text-zinc-700 hover:bg-zinc-50' }}">
                 Beranda
             </a>
             <a href="{{ route('school.public.profile', ['school' => $school->slug]) }}" class="block px-3 py-2 rounded-lg {{ request()->routeIs('school.public.profile') ? 'bg-rose-50 text-[#E11D2E] font-bold' : 'text-zinc-700 hover:bg-zinc-50' }}">
@@ -255,6 +258,9 @@
             </a>
             <a href="{{ route('school.public.gallery', ['school' => $school->slug]) }}" class="block px-3 py-2 rounded-lg {{ request()->routeIs('school.public.gallery') ? 'bg-rose-50 text-[#E11D2E] font-bold' : 'text-zinc-700 hover:bg-zinc-50' }}">
                 Galeri Foto
+            </a>
+            <a href="{{ route('school.public.contact', ['school' => $school->slug]) }}" class="block px-3 py-2 rounded-lg {{ request()->routeIs('school.public.contact') ? 'bg-rose-50 text-[#E11D2E] font-bold' : 'text-zinc-700 hover:bg-zinc-50' }}">
+                Kontak & Buku Tamu
             </a>
 
             <div class="pt-4 border-t border-zinc-100 flex flex-col gap-2">
@@ -354,6 +360,12 @@
                         @if ($school->email)
                             <p><strong class="text-zinc-300">Email:</strong> {{ $school->email }}</p>
                         @endif
+                        <div class="pt-2">
+                            <a href="{{ route('school.public.contact', ['school' => $school->slug]) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-800 hover:bg-[#E11D2E] text-white transition-colors">
+                                <svg class="w-3.5 h-3.5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                <span>Kirim Pesan / Buku Tamu</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
 

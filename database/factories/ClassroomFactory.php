@@ -25,7 +25,7 @@ class ClassroomFactory extends Factory
         return [
             'school_id' => School::factory(),
             'academic_year_id' => AcademicYear::factory(),
-            'grade_level_id' => GradeLevel::factory(),
+            'grade_level_id' => fn () => GradeLevel::inRandomOrder()->first()?->id ?? GradeLevel::factory(),
             'homeroom_teacher_id' => null,
             'name' => fake()->unique()->randomElement(['VII-A', 'VII-B', 'VIII-A', 'VIII-B', 'IX-A', 'X-MIPA-1', 'XI-IPS-1', 'XII-IPA-2']),
             'code' => 'CLS-'.fake()->unique()->numerify('###'),

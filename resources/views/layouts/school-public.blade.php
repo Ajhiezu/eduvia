@@ -24,10 +24,10 @@
 
     <link rel="icon" type="image/x-icon" href="{{ asset('images/brand/eduvia-favicon.png') }}">
 
-    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <!-- Google Fonts: Plus Jakarta Sans, Inter & Playfair Display (Editorial High-School Aesthetic) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Tailwind & Vite Assets -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -52,6 +52,9 @@
             font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
             color: #1F2937;
             background-color: #F8FAFC;
+        }
+        .font-serif, .font-display {
+            font-family: 'Playfair Display', Georgia, Cambria, "Times New Roman", Times, serif;
         }
         .btn-brand-primary {
             background-color: var(--brand-primary) !important;

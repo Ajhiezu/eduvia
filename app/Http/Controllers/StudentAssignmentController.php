@@ -60,6 +60,7 @@ class StudentAssignmentController extends Controller
             ->get()
             ->keyBy('assignment_id');
 
+        $totalCount = $allAssignments->count();
         $pendingCount = 0;
         $submittedCount = 0;
         $gradedCount = 0;
@@ -78,9 +79,13 @@ class StudentAssignmentController extends Controller
             }
         }
 
+        $submissionsMap = $mySubmissions;
+
         return view('learning.student.assignments.index', compact(
             'assignments',
             'mySubmissions',
+            'submissionsMap',
+            'totalCount',
             'pendingCount',
             'submittedCount',
             'gradedCount',

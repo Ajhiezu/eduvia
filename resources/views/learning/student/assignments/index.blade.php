@@ -33,19 +33,19 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-4">
             <x-card padding class="border-zinc-200">
                 <div class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Total Tugas Diberikan</div>
-                <div class="mt-1 text-2xl font-extrabold text-zinc-900">{{ $totalCount }}</div>
+                <div class="mt-1 text-2xl font-extrabold text-zinc-900">{{ $totalCount ?? ($assignments->total() ?? 0) }}</div>
                 <div class="mt-1 text-xs text-zinc-400">Semua tugas aktif di kelasmu</div>
             </x-card>
 
             <x-card padding class="border-zinc-200">
                 <div class="text-[11px] font-bold uppercase tracking-wider text-amber-600">Perlu Dikerjakan</div>
-                <div class="mt-1 text-2xl font-extrabold text-amber-700">{{ $pendingCount }}</div>
+                <div class="mt-1 text-2xl font-extrabold text-amber-700">{{ $pendingCount ?? 0 }}</div>
                 <div class="mt-1 text-xs text-zinc-400">Belum dikirim atau perlu revisi</div>
             </x-card>
 
             <x-card padding class="border-zinc-200">
                 <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Sudah Terkumpul</div>
-                <div class="mt-1 text-2xl font-extrabold text-emerald-700">{{ $submittedCount }}</div>
+                <div class="mt-1 text-2xl font-extrabold text-emerald-700">{{ $submittedCount ?? 0 }}</div>
                 <div class="mt-1 text-xs text-zinc-400">Jawaban telah diserahkan ke guru</div>
             </x-card>
         </div>
@@ -109,7 +109,7 @@
                         <tbody class="divide-y divide-zinc-200">
                             @foreach ($assignments as $assignment)
                                 @php
-                                    $sub = $submissionsMap->get($assignment->id);
+                                    $sub = ($submissionsMap ?? $mySubmissions ?? collect())->get($assignment->id);
                                 @endphp
                                 <tr class="hover:bg-zinc-50/60 transition-colors">
                                     <td class="px-4 py-3">
@@ -119,9 +119,9 @@
                                             </a>
                                         </div>
                                         <div class="text-[11px] text-zinc-500 mt-0.5 flex items-center gap-2">
-                                            <span class="font-medium text-brand-600">{{ $assignment->teachingAssignment?->subject?->name }}</span>
+                                            <span class="font-medium text-brand-600">{{ $assignment->subject?->name ?? $assignment->teachingAssignment?->subject?->name ?? 'Mata Pelajaran' }}</span>
                                             <span>•</span>
-                                            <span>Guru: {{ $assignment->teacher?->name }}</span>
+                                            <span>Guru: {{ $assignment->teacher?->name ?? 'Guru Pengampu' }}</span>
                                         </div>
                                     </td>
 

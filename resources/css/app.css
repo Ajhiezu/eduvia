@@ -126,3 +126,91 @@
 .metis-nav-item.active svg {
     color: var(--color-brand-600);
 }
+
+/* ==========================================================================
+   Refined Form Inputs System — Dashboard & Modul (Landing Page Standard)
+   ========================================================================== */
+main form input[type="text"],
+main form input[type="email"],
+main form input[type="password"],
+main form input[type="number"],
+main form input[type="search"],
+main form input[type="tel"],
+main form input[type="url"],
+main form input[type="date"],
+main form input[type="datetime-local"],
+main form select,
+main form textarea {
+    font-size: 0.875rem !important; /* 14px text-sm minimum */
+    line-height: 1.5 !important;
+    padding: 0.6875rem 1rem !important; /* py-2.5 px-4 */
+    border-radius: 0.875rem !important; /* 14px rounded-xl */
+    border: 1px solid #e4e4e7 !important; /* zinc-200 */
+    background-color: #fafafa !important; /* zinc-50 */
+    color: #18181b !important; /* zinc-900 */
+    transition: all 0.15s ease-in-out !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02) !important;
+}
+
+@media (min-width: 640px) {
+    main form input[type="text"],
+    main form input[type="email"],
+    main form input[type="password"],
+    main form input[type="number"],
+    main form input[type="search"],
+    main form input[type="tel"],
+    main form input[type="url"],
+    main form input[type="date"],
+    main form input[type="datetime-local"],
+    main form select,
+    main form textarea {
+        font-size: 0.9375rem !important; /* 15px */
+        padding: 0.75rem 1.0625rem !important; /* py-3 px-4.25 */
+    }
+}
+
+main form input[type="text"]:hover,
+main form input[type="email"]:hover,
+main form input[type="password"]:hover,
+main form input[type="number"]:hover,
+main form input[type="search"]:hover,
+main form input[type="tel"]:hover,
+main form input[type="url"]:hover,
+main form select:hover,
+main form textarea:hover {
+    border-color: #d4d4d8 !important; /* zinc-300 */
+    background-color: #ffffff !important;
+}
+
+main form input[type="text"]:focus,
+main form input[type="email"]:focus,
+main form input[type="password"]:focus,
+main form input[type="number"]:focus,
+main form input[type="search"]:focus,
+main form input[type="tel"]:focus,
+main form input[type="url"]:focus,
+main form input[type="date"]:focus,
+main form input[type="datetime-local"]:focus,
+main form select:focus,
+main form textarea:focus {
+    background-color: #ffffff !important;
+    border-color: var(--color-brand-600, #e11d2e) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(225, 29, 46, 0.15) !important;
+}
+
+main form label {
+    display: block !important;
+    font-size: 0.8125rem !important; /* 13px sm */
+    font-weight: 700 !important;
+    color: #3f3f46 !important; /* zinc-700 */
+    margin-bottom: 0.5rem !important; /* 8px space to prevent dempet */
+    letter-spacing: 0.01em !important;
+}
+
+@media (min-width: 640px) {
+    main form label {
+        font-size: 0.875rem !important; /* 14px */
+    }
+}
+

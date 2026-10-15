@@ -14,30 +14,30 @@
     $errorMessage = $error ?? ($name ? $errors->first($name) : null);
 @endphp
 
-<div class="w-full flex flex-col gap-1.5 text-left">
+<div class="w-full flex flex-col gap-2 text-left">
     @if ($label)
-        <label for="{{ $selectId }}" class="text-sm font-semibold text-slate-700 flex items-center justify-between">
+        <label for="{{ $selectId }}" class="text-xs sm:text-sm font-bold text-zinc-700 flex items-center justify-between">
             <span>
                 {{ $label }}
                 @if ($required)
-                    <span class="text-rose-500 font-bold ml-0.5">*</span>
+                    <span class="text-[#E11D2E] font-bold ml-0.5">*</span>
                 @endif
             </span>
         </label>
     @endif
 
-    <div class="relative rounded-xl shadow-xs">
+    <div class="relative rounded-2xl shadow-2xs">
         <select
             id="{{ $selectId }}"
             name="{{ $name }}"
             {{ $required ? 'required' : '' }}
             {{ $disabled ? 'disabled' : '' }}
             {{ $attributes->merge([
-                'class' => 'w-full rounded-xl border bg-white text-slate-900 text-base sm:text-sm transition-colors py-2.5 px-3.5 pr-10 appearance-none '
+                'class' => 'w-full rounded-2xl border bg-zinc-50/70 hover:bg-white focus:bg-white text-zinc-900 text-sm sm:text-base transition-all py-3 sm:py-3.5 px-4 pr-10 appearance-none '
                     . ($hasError
                         ? 'border-rose-300 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
-                        : 'border-slate-300 hover:border-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100')
-                    . ($disabled ? ' bg-slate-50 text-slate-500 cursor-not-allowed' : '')
+                        : 'border-zinc-200 hover:border-zinc-300 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20')
+                    . ($disabled ? ' bg-zinc-100 text-zinc-400 cursor-not-allowed' : '')
             ]) }}
         >
             {{ $slot }}

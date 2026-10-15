@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -107,6 +108,35 @@ class User extends Authenticatable
     public function classroomEnrollments(): HasMany
     {
         return $this->hasMany(ClassroomStudent::class, 'student_id');
+    }
+
+    /**
+     * Current enrolled classroom for student.
+     *
+     * @return HasOneThrough<Classroom, ClassroomStudent, $this>
+     */
+    public function classroom(): HasOneThrough
+    {
+        return $this->hasOneThrough(
+            Classroom::class,
+            ClassroomStudent::class,
+            'student_id',
+            'id',
+            'id',
+            'classroom_id'
+        )->latest('classroom_students.id');
+    }
+
+    /**
+     * All classrooms enrolled by this student.
+     *
+     * @return BelongsToMany<Classroom, $this>
+     */
+    public function classrooms(): BelongsToMany
+    {
+        return $this->belongsToMany(Classroom::class, 'classroom_students', 'student_id', 'classroom_id')
+            ->withPivot(['id', 'academic_year_id', 'enrollment_status', 'joined_at', 'left_at', 'notes'])
+            ->withTimestamps();
     }
 
     /**

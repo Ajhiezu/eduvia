@@ -85,38 +85,38 @@
 
             <!-- Reply Box (If Active) -->
             @if ($conversation->status !== 'closed')
-                <div class="pt-6 border-t border-zinc-200 mt-6">
-                    <form action="{{ route('conversations.reply', $conversation) }}" method="POST" enctype="multipart/form-data" class="space-y-3">
+                <div class="pt-6 border-t border-zinc-200 mt-8">
+                    <form action="{{ route('conversations.reply', $conversation) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                         @csrf
                         <div>
-                            <label class="block text-xs font-bold text-zinc-700 mb-1">Kirim Balasan Pesan</label>
+                            <label class="block text-xs sm:text-sm font-bold text-zinc-700 mb-2">Kirim Balasan Pesan</label>
                             <textarea
                                 name="body"
-                                rows="3"
+                                rows="4"
                                 required
-                                placeholder="Ketik balasan pesan Anda..."
-                                class="w-full text-xs rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]"
+                                placeholder="Ketik balasan pesan Anda dengan jelas dan santun..."
+                                class="w-full text-sm sm:text-base rounded-2xl border border-zinc-200 bg-zinc-50/70 px-4 py-3 sm:py-3.5 text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-[#E11D2E] transition-all leading-relaxed"
                             ></textarea>
                             @error('body')
-                                <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                                <p class="text-xs text-rose-600 mt-1.5 font-medium">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <div>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="flex-1">
                                 <input
                                     type="file"
                                     name="attachment"
-                                    class="block w-full text-xs text-zinc-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[11px] file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200"
+                                    class="block w-full text-xs sm:text-sm text-zinc-500 rounded-2xl border border-dashed border-zinc-300 bg-zinc-50/70 p-2.5 hover:bg-zinc-50 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-zinc-800 file:text-white hover:file:bg-zinc-900 cursor-pointer transition-colors"
                                 >
                             </div>
 
                             <button
                                 type="submit"
-                                class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl text-xs font-bold bg-[#E11D2E] hover:bg-[#C81423] text-white shadow-xs transition-colors shrink-0"
+                                class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-xs sm:text-sm font-bold bg-[#E11D2E] hover:bg-[#C81423] text-white shadow-xs transition-colors shrink-0"
                             >
                                 <span>Kirim Balasan</span>
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                             </button>
                         </div>
                     </form>

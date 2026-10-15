@@ -48,7 +48,7 @@ class ExamGradingController extends Controller
             ->latest('started_at');
 
         if ($classroomId) {
-            $attemptsQuery->whereHas('student', function ($q) use ($classroomId) {
+            $attemptsQuery->whereHas('student.classroomEnrollments', function ($q) use ($classroomId) {
                 $q->where('classroom_id', (int) $classroomId);
             });
         }

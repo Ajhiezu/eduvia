@@ -21,7 +21,7 @@
 
             <div class="flex items-center gap-2">
                 <a
-                    href="{{ route('reports.pdf.stream', $reportCard) }}"
+                    href="{{ route('reports.cards.pdf', ['reportCard' => $reportCard, 'mode' => 'stream']) }}"
                     target="_blank"
                     class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border border-zinc-300 hover:bg-zinc-50 text-zinc-800 transition-colors"
                 >
@@ -29,7 +29,7 @@
                     <span>Pratinjau PDF</span>
                 </a>
                 <a
-                    href="{{ route('reports.pdf.download', $reportCard) }}"
+                    href="{{ route('reports.cards.pdf', ['reportCard' => $reportCard, 'mode' => 'download']) }}"
                     class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#E11D2E] hover:bg-[#C81423] text-white shadow-xs transition-colors"
                 >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>

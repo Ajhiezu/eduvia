@@ -54,6 +54,20 @@ class ReportCardPdfController extends Controller
             return;
         }
 
+        // Parent can only access published report cards of their verified active children
+        if ($user->isParent()) {
+            $isLinkedChild = $user->activeChildren()->where('users.id', $reportCard->student_id)->exists();
+            if (! $isLinkedChild) {
+                abort(403, 'Akses ditolak: Siswa ini bukan anak yang terhubung aktif dengan akun Anda.');
+            }
+
+            if (! $reportCard->isPublished()) {
+                abort(403, 'Akses ditolak: Rapor ini belum resmi diterbitkan.');
+            }
+
+            return;
+        }
+
         // Admin can access
         if ($user->isSchoolAdmin() || $user->isSuperAdmin()) {
             return;

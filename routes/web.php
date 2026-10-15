@@ -476,7 +476,7 @@ Route::middleware('auth')->group(function () {
     // =========================================================================
     // Modul Operasional Sekolah (Phase 10: School Operations Management)
     // =========================================================================
-    Route::prefix('operations')->name('operations.')->group(function () {
+    Route::middleware('role:super_admin,school_admin,staff')->prefix('operations')->name('operations.')->group(function () {
         // Operational Dashboard
         Route::get('/dashboard', [OperationsDashboardController::class, 'index'])->name('dashboard');
 

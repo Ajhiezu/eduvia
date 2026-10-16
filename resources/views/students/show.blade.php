@@ -310,7 +310,7 @@
                         Akun orang tua yang telah terhubung dan memiliki akses pemantauan akademik di portal mandiri.
                     </p>
                 </div>
-                <x-button href="{{ route('admin.parent-relations.index', ['student_id' => $student->id]) }}" variant="outline" size="sm">
+                <x-button href="{{ route('admin.parents.index', ['student_id' => $student->id]) }}" variant="outline" size="sm">
                     Kelola Relasi Wali
                 </x-button>
             </div>

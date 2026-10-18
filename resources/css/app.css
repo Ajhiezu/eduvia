@@ -152,6 +152,20 @@ main form textarea {
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02) !important;
 }
 
+main form input.has-prefix-icon,
+main form input[type="text"].has-prefix-icon,
+main form input[type="email"].has-prefix-icon,
+main form input[type="password"].has-prefix-icon {
+    padding-left: 2.75rem !important;
+}
+
+main form input.has-suffix-icon,
+main form input[type="text"].has-suffix-icon,
+main form input[type="email"].has-suffix-icon,
+main form input[type="password"].has-suffix-icon {
+    padding-right: 2.75rem !important;
+}
+
 @media (min-width: 640px) {
     main form input[type="text"],
     main form input[type="email"],

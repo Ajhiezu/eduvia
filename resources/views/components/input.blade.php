@@ -44,10 +44,17 @@
             placeholder="{{ $placeholder }}"
             {{ $required ? 'required' : '' }}
             {{ $disabled ? 'disabled' : '' }}
+            @if (isset($prefixIcon) && isset($suffixIcon))
+                style="padding-left: 2.75rem !important; padding-right: 2.75rem !important;"
+            @elseif (isset($prefixIcon))
+                style="padding-left: 2.75rem !important;"
+            @elseif (isset($suffixIcon))
+                style="padding-right: 2.75rem !important;"
+            @endif
             {{ $attributes->merge([
                 'class' => 'w-full rounded-2xl border bg-zinc-50/70 hover:bg-white focus:bg-white text-zinc-900 placeholder:text-zinc-400 text-sm sm:text-base transition-all py-3 sm:py-3.5 '
-                    . (isset($prefixIcon) ? 'pl-11 ' : 'px-4 ')
-                    . (isset($suffixIcon) ? 'pr-11 ' : 'pr-4 ')
+                    . (isset($prefixIcon) ? 'has-prefix-icon pl-11 !pl-11 ' : 'px-4 ')
+                    . (isset($suffixIcon) ? 'has-suffix-icon pr-11 !pr-11 ' : 'pr-4 ')
                     . ($hasError
                         ? 'border-rose-300 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
                         : 'border-zinc-200 hover:border-zinc-300 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20')

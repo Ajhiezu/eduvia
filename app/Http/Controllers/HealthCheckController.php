@@ -28,7 +28,37 @@ class HealthCheckController extends Controller
             $dbStatus = 'unhealthy';
         }
 
-        $isHealthy = ($dbStatus === 'healthy');
+        // Cache check
+        $cacheStatus = 'healthy';
+        try {
+            $testKey = 'health_ping_' . microtime(true);
+            \Illuminate\Support\Facades\Cache::put($testKey, 'ok', 10);
+            $cacheStatus = \Illuminate\Support\Facades\Cache::get($testKey) === 'ok' ? 'healthy' : 'unhealthy';
+            \Illuminate\Support\Facades\Cache::forget($testKey);
+        } catch (Throwable $e) {
+            $cacheStatus = 'unhealthy';
+        }
+
+        // Storage writeability check
+        $storageStatus = 'healthy';
+        try {
+            $disk = \Illuminate\Support\Facades\Storage::disk('local');
+            $testFile = 'health_check_' . microtime(true) . '.txt';
+            $disk->put($testFile, 'health-check');
+            $storageStatus = $disk->exists($testFile) ? 'healthy' : 'unhealthy';
+            $disk->delete($testFile);
+        } catch (Throwable $e) {
+            $storageStatus = 'unhealthy';
+        }
+
+        $activeSchoolsCount = 0;
+        try {
+            $activeSchoolsCount = \App\Models\School::withoutTenancy()->where('is_active', true)->count();
+        } catch (Throwable $e) {
+            //
+        }
+
+        $isHealthy = ($dbStatus === 'healthy' && $cacheStatus === 'healthy' && $storageStatus === 'healthy');
 
         $payload = [
             'status' => $isHealthy ? 'healthy' : 'degraded',
@@ -36,8 +66,8 @@ class HealthCheckController extends Controller
                 'name' => config('app.name', 'Eduvia'),
                 'env' => config('app.env'),
                 'debug' => config('app.debug'),
-                'version' => '1.0.0-phase0',
-                'framework' => 'Laravel '.app()->version(),
+                'version' => '1.0.0-phase1',
+                'framework' => 'Laravel ' . app()->version(),
                 'php' => PHP_VERSION,
             ],
             'services' => [
@@ -45,6 +75,18 @@ class HealthCheckController extends Controller
                     'connection' => config('database.default'),
                     'status' => $dbStatus,
                     'latency_ms' => $dbLatencyMs,
+                ],
+                'cache' => [
+                    'driver' => config('cache.default'),
+                    'status' => $cacheStatus,
+                ],
+                'storage' => [
+                    'disk' => 'local',
+                    'status' => $storageStatus,
+                ],
+                'multi_tenancy' => [
+                    'status' => 'operational',
+                    'active_schools_count' => $activeSchoolsCount,
                 ],
             ],
             'system' => [

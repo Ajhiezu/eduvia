@@ -33,6 +33,11 @@ use Laravel\Sanctum\HasApiTokens;
     'two_factor_secret',
     'two_factor_recovery_codes',
     'two_factor_confirmed_at',
+    'chat_service_hours_start',
+    'chat_service_hours_end',
+    'chat_service_days',
+    'chat_auto_reply_enabled',
+    'chat_auto_reply_message',
 ])]
 #[Hidden(['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'])]
 class User extends Authenticatable
@@ -53,6 +58,8 @@ class User extends Authenticatable
             'password' => 'hashed',
             'role' => UserRole::class,
             'is_active' => 'boolean',
+            'chat_service_days' => 'array',
+            'chat_auto_reply_enabled' => 'boolean',
         ];
     }
 

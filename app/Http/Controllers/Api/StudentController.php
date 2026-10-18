@@ -4,16 +4,24 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Assignment;
+use App\Models\AssignmentSubmission;
 use App\Models\Exam;
 use App\Models\ExamAnswer;
 use App\Models\ExamAttempt;
+use App\Models\ExamIntegrityLog;
 use App\Models\LearningMaterial;
+use App\Models\LearningMaterialAttachment;
+use App\Models\LearningMaterialProgress;
 use App\Models\LessonSchedule;
+use App\Models\ParentTeacherConversation;
 use App\Models\SchoolAnnouncement;
+use App\Models\StudentReportCard;
+use App\Services\SecureUploadService;
 use App\Traits\ApiResponse;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
 {
@@ -421,7 +429,7 @@ class StudentController extends Controller
 
         $isLate = $assignment->due_date && Carbon::parse($assignment->due_date)->isPast();
 
-        $submission = \App\Models\AssignmentSubmission::firstOrNew([
+        $submission = AssignmentSubmission::firstOrNew([
             'assignment_id' => $assignment->id,
             'student_id' => $user->id,
         ]);
@@ -445,7 +453,7 @@ class StudentController extends Controller
         $submission->save();
 
         if ($request->hasFile('file')) {
-            $uploadService = app(\App\Services\SecureUploadService::class);
+            $uploadService = app(SecureUploadService::class);
             $stored = $uploadService->validateAndStore(
                 $request->file('file'),
                 'assignments/submissions',
@@ -477,7 +485,7 @@ class StudentController extends Controller
     /**
      * Download learning material attachment securely.
      */
-    public function downloadMaterialAttachment(Request $request, LearningMaterial $material, \App\Models\LearningMaterialAttachment $attachment): mixed
+    public function downloadMaterialAttachment(Request $request, LearningMaterial $material, LearningMaterialAttachment $attachment): mixed
     {
         $user = $request->user();
 
@@ -491,16 +499,16 @@ class StudentController extends Controller
         }
 
         // Track learning progress
-        \App\Models\LearningMaterialProgress::updateOrCreate(
+        LearningMaterialProgress::updateOrCreate(
             ['learning_material_id' => $material->id, 'student_id' => $user->id],
             ['status' => 'completed', 'completed_at' => now(), 'last_accessed_at' => now()]
         );
 
-        if (! \Illuminate\Support\Facades\Storage::disk('local')->exists($attachment->file_path)) {
+        if (! Storage::disk('local')->exists($attachment->file_path)) {
             return $this->apiError('Berkas lampiran materi tidak ditemukan di penyimpanan server.', 404);
         }
 
-        return \Illuminate\Support\Facades\Storage::disk('local')->download($attachment->file_path, $attachment->file_name);
+        return Storage::disk('local')->download($attachment->file_path, $attachment->file_name);
     }
 
     /**
@@ -510,8 +518,8 @@ class StudentController extends Controller
     {
         $user = $request->user();
 
-        $reportCards = \App\Models\StudentReportCard::where('student_id', $user->id)
-            ->where('status', \App\Models\StudentReportCard::STATUS_PUBLISHED)
+        $reportCards = StudentReportCard::where('student_id', $user->id)
+            ->where('status', StudentReportCard::STATUS_PUBLISHED)
             ->with(['academicYear', 'semester', 'classroom', 'homeroomTeacher', 'items'])
             ->orderByDesc('id')
             ->get()
@@ -560,7 +568,7 @@ class StudentController extends Controller
     {
         $user = $request->user();
 
-        $conversations = \App\Models\ParentTeacherConversation::where('student_id', $user->id)
+        $conversations = ParentTeacherConversation::where('student_id', $user->id)
             ->with(['teacher', 'parent', 'latestMessage'])
             ->orderByDesc('last_message_at')
             ->get()
@@ -584,7 +592,7 @@ class StudentController extends Controller
     /**
      * Get messages in a conversation.
      */
-    public function conversationMessages(Request $request, \App\Models\ParentTeacherConversation $conversation): JsonResponse
+    public function conversationMessages(Request $request, ParentTeacherConversation $conversation): JsonResponse
     {
         $user = $request->user();
 
@@ -626,7 +634,7 @@ class StudentController extends Controller
     /**
      * Send message in a conversation.
      */
-    public function sendConversationMessage(Request $request, \App\Models\ParentTeacherConversation $conversation): JsonResponse
+    public function sendConversationMessage(Request $request, ParentTeacherConversation $conversation): JsonResponse
     {
         $user = $request->user();
 
@@ -654,5 +662,189 @@ class StudentController extends Controller
             ],
             message: 'Pesan berhasil dikirim.'
         );
+    }
+
+    /**
+     * Batch save CBT answers with client sequence & server-authoritative time.
+     */
+    public function saveBatchCbtAnswers(Request $request, Exam $exam): JsonResponse
+    {
+        $user = $request->user();
+        $validated = $request->validate([
+            'attempt_id' => 'required|integer',
+            'answers' => 'required|array|min:1',
+            'answers.*.question_id' => 'required|integer',
+            'answers.*.answer' => 'nullable',
+            'answers.*.is_flagged' => 'nullable|boolean',
+            'answers.*.client_sequence_id' => 'nullable|integer',
+            'answers.*.client_timestamp' => 'nullable|integer',
+        ]);
+
+        $attempt = ExamAttempt::where('id', $validated['attempt_id'])
+            ->where('exam_id', $exam->id)
+            ->where('student_id', $user->id)
+            ->firstOrFail();
+
+        if (! $attempt->isInProgress() || $attempt->isExpired()) {
+            return $this->apiError('Sesi ujian tidak aktif atau telah berakhir.', 400);
+        }
+
+        $syncedCount = 0;
+
+        foreach ($validated['answers'] as $item) {
+            $existing = ExamAnswer::where('exam_attempt_id', $attempt->id)
+                ->where('question_id', $item['question_id'])
+                ->first();
+
+            // Sequence-based conflict resolution: Ignore stale offline packets if a newer sequence exists
+            $incomingSeq = $item['client_sequence_id'] ?? null;
+            if ($existing && $existing->client_sequence_id !== null && $incomingSeq !== null && $incomingSeq < $existing->client_sequence_id) {
+                continue;
+            }
+
+            ExamAnswer::updateOrCreate(
+                [
+                    'exam_attempt_id' => $attempt->id,
+                    'question_id' => $item['question_id'],
+                ],
+                [
+                    'answer' => $item['answer'],
+                    'is_marked_for_review' => $item['is_flagged'] ?? false,
+                    'client_sequence_id' => $incomingSeq,
+                    'client_timestamp' => isset($item['client_timestamp']) ? Carbon::createFromTimestampMs($item['client_timestamp']) : now(),
+                    'saved_at' => now(),
+                ]
+            );
+
+            $syncedCount++;
+        }
+
+        return $this->apiSuccess(
+            data: [
+                'server_time' => now()->toIso8601String(),
+                'remaining_seconds' => $attempt->remainingSeconds(),
+                'synced_count' => $syncedCount,
+                'total_payload' => count($validated['answers']),
+            ],
+            message: 'Jawaban batch berhasil disinkronkan.'
+        );
+    }
+
+    /**
+     * Log CBT client integrity events (backgrounded, loss of connection, screen locked).
+     */
+    public function logIntegrityEvent(Request $request, Exam $exam): JsonResponse
+    {
+        $user = $request->user();
+        $validated = $request->validate([
+            'attempt_id' => 'required|integer',
+            'event_type' => 'required|string|in:app_backgrounded,app_resumed,network_lost,network_restored,screen_locked,split_screen_detected,fullscreen_exited,suspicious_touch',
+            'details' => 'nullable|array',
+            'client_timestamp' => 'nullable|date',
+        ]);
+
+        $attempt = ExamAttempt::where('id', $validated['attempt_id'])
+            ->where('exam_id', $exam->id)
+            ->where('student_id', $user->id)
+            ->firstOrFail();
+
+        $log = ExamIntegrityLog::create([
+            'exam_attempt_id' => $attempt->id,
+            'exam_id' => $exam->id,
+            'student_id' => $user->id,
+            'event_type' => $validated['event_type'],
+            'details' => $validated['details'] ?? [],
+            'client_timestamp' => $validated['client_timestamp'] ?? now(),
+            'recorded_at' => now(),
+        ]);
+
+        return $this->apiSuccess($log, 'Peristiwa integritas ujian berhasil dicatat.', 201);
+    }
+
+    /**
+     * Unified Student Agenda (Combines upcoming assignments, exams, and daily schedule).
+     */
+    public function agenda(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $classroom = $user->classroom;
+        $classroomId = $classroom?->id;
+        $now = Carbon::now();
+        $endDate = $now->copy()->addDays(14);
+
+        $agendaItems = collect();
+
+        // 1. Upcoming assignments
+        if ($classroomId) {
+            $assignments = Assignment::where('classroom_id', $classroomId)
+                ->where('status', 'published')
+                ->whereBetween('due_date', [$now->copy()->subDay(), $endDate])
+                ->with('subject:id,name')
+                ->get();
+
+            foreach ($assignments as $asg) {
+                $agendaItems->push([
+                    'id' => 'asg-'.$asg->id,
+                    'type' => 'assignment',
+                    'title' => $asg->title,
+                    'subject' => $asg->subject?->name ?? 'Tugas',
+                    'date' => Carbon::parse($asg->due_date)->toDateString(),
+                    'time' => Carbon::parse($asg->due_date)->format('H:i'),
+                    'datetime' => Carbon::parse($asg->due_date)->toIso8601String(),
+                    'is_urgent' => Carbon::parse($asg->due_date)->diffInHours($now) <= 24,
+                ]);
+            }
+        }
+
+        // 2. Upcoming CBT Exams
+        $exams = Exam::where('status', 'published')
+            ->where('school_id', $user->school_id)
+            ->whereBetween('start_time', [$now->copy()->subDay(), $endDate])
+            ->with('subject:id,name')
+            ->get();
+
+        foreach ($exams as $ex) {
+            $agendaItems->push([
+                'id' => 'exam-'.$ex->id,
+                'type' => 'exam',
+                'title' => $ex->title,
+                'subject' => $ex->subject?->name ?? 'Ujian',
+                'date' => Carbon::parse($ex->start_time)->toDateString(),
+                'time' => Carbon::parse($ex->start_time)->format('H:i'),
+                'datetime' => Carbon::parse($ex->start_time)->toIso8601String(),
+                'is_urgent' => Carbon::parse($ex->start_time)->diffInHours($now) <= 24,
+            ]);
+        }
+
+        // 3. Class schedules for the next 7 days
+        if ($classroomId) {
+            for ($i = 0; $i < 7; $i++) {
+                $cursor = $now->copy()->addDays($i);
+                $dayIso = $cursor->dayOfWeekIso;
+
+                $schedules = LessonSchedule::where('is_active', true)
+                    ->where('day_of_week', $dayIso)
+                    ->whereHas('teachingAssignment', fn ($q) => $q->where('classroom_id', $classroomId))
+                    ->with(['teachingAssignment.subject'])
+                    ->get();
+
+                foreach ($schedules as $sc) {
+                    $agendaItems->push([
+                        'id' => 'sch-'.$sc->id.'-'.$cursor->format('Ymd'),
+                        'type' => 'schedule',
+                        'title' => $sc->teachingAssignment?->subject?->name ?? 'Jadwal Pelajaran',
+                        'subject' => $sc->room ?? 'Ruang Kelas',
+                        'date' => $cursor->toDateString(),
+                        'time' => Carbon::parse($sc->start_time)->format('H:i'),
+                        'datetime' => $cursor->format('Y-m-d').'T'.Carbon::parse($sc->start_time)->format('H:i:s'),
+                        'is_urgent' => false,
+                    ]);
+                }
+            }
+        }
+
+        $sorted = $agendaItems->sortBy('datetime')->values();
+
+        return $this->apiSuccess($sorted, 'Agenda terpadu siswa berhasil dimuat.');
     }
 }

@@ -26,6 +26,8 @@ class ExamAnswer extends Model
         'graded_at',
         'graded_by',
         'saved_at',
+        'client_sequence_id',
+        'client_timestamp',
     ];
 
     /**
@@ -53,6 +55,8 @@ class ExamAnswer extends Model
         'score' => 'decimal:2',
         'graded_at' => 'datetime',
         'saved_at' => 'datetime',
+        'client_sequence_id' => 'integer',
+        'client_timestamp' => 'datetime',
     ];
 
     /**

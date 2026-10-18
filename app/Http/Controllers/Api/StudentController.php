@@ -393,4 +393,266 @@ class StudentController extends Controller
             message: 'Ujian berhasil dikumpulkan.'
         );
     }
+
+    /**
+     * Submit assignment with optional file upload and text notes.
+     */
+    public function submitAssignment(Request $request, Assignment $assignment): JsonResponse
+    {
+        $user = $request->user();
+
+        // Tenant & Classroom verification
+        if ($assignment->school_id !== $user->school_id) {
+            return $this->apiError('Tugas tidak ditemukan.', 404);
+        }
+
+        if ($user->classroom_id && $assignment->classroom_id !== $user->classroom_id) {
+            return $this->apiError('Anda tidak terdaftar dalam kelas tugas ini.', 403);
+        }
+
+        $request->validate([
+            'content' => 'nullable|string',
+            'file' => 'nullable|file|max:20480', // 20MB max
+        ]);
+
+        if (empty($request->input('content')) && ! $request->hasFile('file')) {
+            return $this->apiError('Mohon sertakan catatan teks atau unggah berkas tugas.', 422);
+        }
+
+        $isLate = $assignment->due_date && Carbon::parse($assignment->due_date)->isPast();
+
+        $submission = \App\Models\AssignmentSubmission::firstOrNew([
+            'assignment_id' => $assignment->id,
+            'student_id' => $user->id,
+        ]);
+
+        if ($submission->exists && $submission->isGraded()) {
+            return $this->apiError('Tugas telah dinilai oleh guru dan tidak dapat diubah.', 400);
+        }
+
+        if ($submission->exists) {
+            $submission->snapshotHistory();
+            $submission->attempt_number = ($submission->attempt_number ?? 1) + 1;
+            $submission->status = $isLate ? 'late' : 'resubmitted';
+        } else {
+            $submission->attempt_number = 1;
+            $submission->status = $isLate ? 'late' : 'submitted';
+        }
+
+        $submission->content = $request->input('content', $submission->content);
+        $submission->is_late = $isLate;
+        $submission->submitted_at = now();
+        $submission->save();
+
+        if ($request->hasFile('file')) {
+            $uploadService = app(\App\Services\SecureUploadService::class);
+            $stored = $uploadService->validateAndStore(
+                $request->file('file'),
+                'assignments/submissions',
+                'local'
+            );
+
+            $submission->attachments()->create([
+                'file_path' => $stored['path'],
+                'file_name' => $stored['original_name'],
+                'file_size' => $stored['size'],
+                'mime_type' => $stored['mime_type'],
+            ]);
+        }
+
+        return $this->apiSuccess(
+            data: [
+                'submission_id' => $submission->id,
+                'assignment_id' => $assignment->id,
+                'status' => $submission->status,
+                'status_label' => $submission->statusLabel(),
+                'is_late' => $submission->is_late,
+                'submitted_at' => $submission->submitted_at->toIso8601String(),
+                'attempt_number' => $submission->attempt_number,
+            ],
+            message: $isLate ? 'Tugas berhasil dikumpulkan (terlambat).' : 'Tugas berhasil dikumpulkan tepat waktu.'
+        );
+    }
+
+    /**
+     * Download learning material attachment securely.
+     */
+    public function downloadMaterialAttachment(Request $request, LearningMaterial $material, \App\Models\LearningMaterialAttachment $attachment): mixed
+    {
+        $user = $request->user();
+
+        // Tenant and scope verification
+        if ($material->school_id !== $user->school_id || $attachment->learning_material_id !== $material->id) {
+            return $this->apiError('Lampiran tidak ditemukan atau tidak memiliki akses.', 404);
+        }
+
+        if ($user->classroom_id && $material->classroom_id !== $user->classroom_id) {
+            return $this->apiError('Anda tidak memiliki akses ke materi kelas ini.', 403);
+        }
+
+        // Track learning progress
+        \App\Models\LearningMaterialProgress::updateOrCreate(
+            ['learning_material_id' => $material->id, 'student_id' => $user->id],
+            ['status' => 'completed', 'completed_at' => now(), 'last_accessed_at' => now()]
+        );
+
+        if (! \Illuminate\Support\Facades\Storage::disk('local')->exists($attachment->file_path)) {
+            return $this->apiError('Berkas lampiran materi tidak ditemukan di penyimpanan server.', 404);
+        }
+
+        return \Illuminate\Support\Facades\Storage::disk('local')->download($attachment->file_path, $attachment->file_name);
+    }
+
+    /**
+     * Get published report cards for this student.
+     */
+    public function reports(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $reportCards = \App\Models\StudentReportCard::where('student_id', $user->id)
+            ->where('status', \App\Models\StudentReportCard::STATUS_PUBLISHED)
+            ->with(['academicYear', 'semester', 'classroom', 'homeroomTeacher', 'items'])
+            ->orderByDesc('id')
+            ->get()
+            ->map(function ($rc) {
+                $avgScore = $rc->calculateAverageScore();
+
+                return [
+                    'id' => $rc->id,
+                    'academic_year' => $rc->academicYear?->name ?? 'Tahun Ajaran',
+                    'semester' => $rc->semester?->name ?? 'Semester',
+                    'classroom' => $rc->classroom?->name ?? 'Kelas',
+                    'homeroom_teacher' => $rc->homeroomTeacher?->name ?? 'Wali Kelas',
+                    'status' => $rc->status,
+                    'status_label' => $rc->statusLabel(),
+                    'average_score' => $avgScore,
+                    'attendance_summary' => $rc->attendance_summary ?? [
+                        'present' => 0,
+                        'sick' => 0,
+                        'permit' => 0,
+                        'absent' => 0,
+                    ],
+                    'homeroom_notes' => $rc->homeroom_notes ?? 'Siswa menunjukkan dedikasi belajar yang baik.',
+                    'grades' => $rc->items->map(fn ($item) => [
+                        'id' => $item->id,
+                        'subject' => $item->subject_name,
+                        'teacher' => $item->teacher_name,
+                        'score' => (float) $item->final_score,
+                        'passing_grade' => (float) $item->passing_grade,
+                        'grade' => $item->predicate,
+                        'is_passed' => (bool) $item->is_passed,
+                        'description' => $item->achievement_description ?? '',
+                    ]),
+                ];
+            });
+
+        return $this->apiSuccess(
+            data: $reportCards,
+            message: 'Data rapor akademik siswa berhasil dimuat.'
+        );
+    }
+
+    /**
+     * Get counseling & teacher conversations for this student.
+     */
+    public function conversations(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $conversations = \App\Models\ParentTeacherConversation::where('student_id', $user->id)
+            ->with(['teacher', 'parent', 'latestMessage'])
+            ->orderByDesc('last_message_at')
+            ->get()
+            ->map(fn ($c) => [
+                'id' => $c->id,
+                'subject' => $c->subject,
+                'teacher_name' => $c->teacher?->name ?? 'Guru / Konselor',
+                'parent_name' => $c->parent?->name ?? 'Orang Tua',
+                'last_message' => $c->latestMessage?->body ?? 'Belum ada pesan',
+                'last_message_time' => $c->last_message_at ? $c->last_message_at->translatedFormat('d M H:i') : null,
+                'unread_count' => $c->unreadCountFor($user),
+                'status' => $c->status,
+            ]);
+
+        return $this->apiSuccess(
+            data: $conversations,
+            message: 'Daftar pesan dan konseling berhasil dimuat.'
+        );
+    }
+
+    /**
+     * Get messages in a conversation.
+     */
+    public function conversationMessages(Request $request, \App\Models\ParentTeacherConversation $conversation): JsonResponse
+    {
+        $user = $request->user();
+
+        if ($conversation->student_id !== $user->id && ! $conversation->hasParticipant($user)) {
+            return $this->apiError('Anda tidak memiliki akses ke percakapan ini.', 403);
+        }
+
+        $messages = $conversation->messages()->with('sender')->get()->map(function ($m) use ($user) {
+            if ($m->sender_id !== $user->id && ! $m->is_read) {
+                $m->markAsRead();
+            }
+
+            return [
+                'id' => $m->id,
+                'sender_id' => $m->sender_id,
+                'sender_name' => $m->sender?->name ?? 'Pengguna',
+                'is_me' => $m->sender_id === $user->id,
+                'body' => $m->body,
+                'attachment_url' => $m->attachmentUrl(),
+                'attachment_name' => $m->attachment_name,
+                'is_read' => $m->is_read,
+                'created_at' => $m->created_at->translatedFormat('d M Y, H:i'),
+            ];
+        });
+
+        return $this->apiSuccess(
+            data: [
+                'conversation' => [
+                    'id' => $conversation->id,
+                    'subject' => $conversation->subject,
+                    'teacher' => $conversation->teacher?->name,
+                ],
+                'messages' => $messages,
+            ],
+            message: 'Pesan percakapan berhasil dimuat.'
+        );
+    }
+
+    /**
+     * Send message in a conversation.
+     */
+    public function sendConversationMessage(Request $request, \App\Models\ParentTeacherConversation $conversation): JsonResponse
+    {
+        $user = $request->user();
+
+        if ($conversation->student_id !== $user->id && ! $conversation->hasParticipant($user)) {
+            return $this->apiError('Anda tidak memiliki akses ke percakapan ini.', 403);
+        }
+
+        $validated = $request->validate([
+            'body' => 'required|string|max:2000',
+        ]);
+
+        $message = $conversation->messages()->create([
+            'sender_id' => $user->id,
+            'body' => $validated['body'],
+            'is_read' => false,
+        ]);
+
+        $conversation->update(['last_message_at' => now()]);
+
+        return $this->apiSuccess(
+            data: [
+                'id' => $message->id,
+                'body' => $message->body,
+                'created_at' => $message->created_at->toIso8601String(),
+            ],
+            message: 'Pesan berhasil dikirim.'
+        );
+    }
 }

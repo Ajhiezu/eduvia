@@ -369,7 +369,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/children', [ParentChildLinkController::class, 'index'])->name('children.index');
         Route::post('/children/claim-code', [ParentChildLinkController::class, 'claimCode'])
             ->name('children.claim-code')
-            ->middleware('throttle:10,1');
+            ->middleware('throttle:5,1');
     });
 
     // =========================================================================

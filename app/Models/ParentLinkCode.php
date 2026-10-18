@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToSchool;
 use Database\Factories\ParentLinkCodeFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,7 +13,7 @@ use Illuminate\Support\Str;
 class ParentLinkCode extends Model
 {
     /** @use HasFactory<ParentLinkCodeFactory> */
-    use HasFactory;
+    use BelongsToSchool, HasFactory;
 
     /**
      * The attributes that are mass assignable.

@@ -11,6 +11,7 @@ use App\Models\AdmissionTrack;
 use App\Models\ApplicantDocument;
 use App\Models\Classroom;
 use App\Models\School;
+use App\Services\TenantManager;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -79,11 +80,26 @@ class AdmissionApplicantController extends Controller
         ));
     }
 
+    protected function authorizeTenant(AdmissionApplicant $applicant): void
+    {
+        $schoolId = app(TenantManager::class)->getSchoolId();
+        if (! $schoolId) {
+            return;
+        }
+
+        $period = AdmissionPeriod::withoutTenancy()->find($applicant->admission_period_id);
+        if ($period && (int) $period->school_id !== (int) $schoolId) {
+            abort(404, 'Data pendaftar tidak ditemukan pada sekolah Anda.');
+        }
+    }
+
     /**
      * Display detailed dossier of a specific applicant.
      */
     public function show(AdmissionApplicant $applicant): View
     {
+        $this->authorizeTenant($applicant);
+
         $applicant->load([
             'admissionPeriod.academicYear',
             'admissionTrack',
@@ -114,6 +130,8 @@ class AdmissionApplicantController extends Controller
         AdmissionApplicant $applicant,
         ApplicantDocument $document
     ): RedirectResponse {
+        $this->authorizeTenant($applicant);
+
         $document->update([
             'status' => $request->input('status'),
             'review_notes' => $request->input('review_notes'),
@@ -137,6 +155,8 @@ class AdmissionApplicantController extends Controller
         UpdateApplicantStatusRequest $request,
         AdmissionApplicant $applicant
     ): RedirectResponse {
+        $this->authorizeTenant($applicant);
+
         $applicant->update([
             'status' => $request->input('status'),
             'selection_score' => $request->input('selection_score'),
@@ -153,6 +173,8 @@ class AdmissionApplicantController extends Controller
      */
     public function reRegister(Request $request, AdmissionApplicant $applicant): RedirectResponse
     {
+        $this->authorizeTenant($applicant);
+
         if (! in_array($applicant->status, ['accepted', 're_registered'], true)) {
             return redirect()->back()
                 ->with('error', 'Hanya calon siswa yang dinyatakan diterima yang dapat melakukan daftar ulang.');
@@ -172,6 +194,8 @@ class AdmissionApplicantController extends Controller
      */
     public function convert(ConvertApplicantRequest $request, AdmissionApplicant $applicant): RedirectResponse
     {
+        $this->authorizeTenant($applicant);
+
         $classroomId = $request->input('classroom_id');
 
         $studentUser = $applicant->convertToActiveStudent($classroomId, $request->user());
@@ -185,6 +209,10 @@ class AdmissionApplicantController extends Controller
      */
     public function downloadDocument(ApplicantDocument $document): StreamedResponse|RedirectResponse
     {
+        if ($document->admissionApplicant) {
+            $this->authorizeTenant($document->admissionApplicant);
+        }
+
         if (! Storage::disk('local')->exists($document->file_path)) {
             return redirect()->back()->with('error', 'File berkas tidak ditemukan di penyimpanan server.');
         }

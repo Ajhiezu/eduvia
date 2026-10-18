@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToSchool;
 use Database\Factories\StudentReportCardFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class StudentReportCard extends Model
 {
     /** @use HasFactory<StudentReportCardFactory> */
-    use HasFactory;
+    use BelongsToSchool, HasFactory;
 
     public const STATUS_DRAFT = 'draft';
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToSchool;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ use Illuminate\Validation\ValidationException;
 
 class AttendanceSession extends Model
 {
-    use HasFactory;
+    use BelongsToSchool, HasFactory;
 
     /**
      * The attributes that are mass assignable.

@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Enums\StaffPosition;
+use App\Traits\BelongsToSchool;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class StaffProfile extends Model
 {
-    use HasFactory;
+    use BelongsToSchool, HasFactory;
 
     /**
      * The attributes that are mass assignable.

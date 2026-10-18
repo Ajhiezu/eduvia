@@ -18,6 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
             SecurityHeadersMiddleware::class,
+            EnsureSchoolTenant::class,
+        ]);
+
+        $middleware->api(append: [
+            EnsureSchoolTenant::class,
         ]);
 
         $middleware->alias([

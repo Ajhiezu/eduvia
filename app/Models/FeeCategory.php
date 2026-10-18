@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToSchool;
 use Database\Factories\FeeCategoryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,7 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class FeeCategory extends Model
 {
     /** @use HasFactory<FeeCategoryFactory> */
-    use HasFactory;
+    use BelongsToSchool, HasFactory;
 
     public const TYPE_RECURRING = 'recurring';
 

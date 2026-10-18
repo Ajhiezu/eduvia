@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToSchool;
 use Database\Factories\AdmissionPeriodFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -29,7 +30,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class AdmissionPeriod extends Model
 {
     /** @use HasFactory<AdmissionPeriodFactory> */
-    use HasFactory;
+    use BelongsToSchool, HasFactory;
 
     /**
      * Get the attributes that should be cast.

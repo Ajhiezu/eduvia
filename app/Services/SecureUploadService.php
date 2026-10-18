@@ -79,6 +79,21 @@ class SecureUploadService
     }
 
     /**
+     * Alias for storeSecurely.
+     *
+     * @return array{path: string, original_name: string, mime_type: string, size: int}
+     */
+    public function validateAndStore(
+        UploadedFile $file,
+        string $category = 'general',
+        string $disk = 'local',
+        ?int $schoolId = null,
+        int $maxKilobytes = 10240
+    ): array {
+        return $this->storeSecurely($file, $category, $disk, $schoolId, $maxKilobytes);
+    }
+
+    /**
      * Perform deep security inspection on the uploaded file.
      */
     public function validateFileSecurity(UploadedFile $file, int $maxKilobytes = 10240): void

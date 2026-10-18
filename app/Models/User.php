@@ -247,6 +247,30 @@ class User extends Authenticatable
     }
 
     /**
+     * Active classroom enrollment for student.
+     */
+    public function classroomEnrollment(): HasOne
+    {
+        return $this->hasOne(ClassroomStudent::class, 'student_id')->where('enrollment_status', 'active')->latest('id');
+    }
+
+    /**
+     * Current active classroom for student.
+     */
+    public function getClassroomAttribute(): ?Classroom
+    {
+        return $this->classroomEnrollment?->classroom;
+    }
+
+    /**
+     * Current active classroom ID for student.
+     */
+    public function getClassroomIdAttribute(): ?int
+    {
+        return $this->classroomEnrollment?->classroom_id;
+    }
+
+    /**
      * Status change histories for student.
      */
     public function studentStatusHistories(): HasMany

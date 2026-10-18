@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LeaveRequestController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ParentController;
+use App\Http\Controllers\Api\PaymentGatewayController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\HealthCheckController;
@@ -129,5 +130,17 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::get('/leaves', [LeaveRequestController::class, 'teacherIndex'])->name('leaves.index');
             Route::post('/leaves/{leave}/review', [LeaveRequestController::class, 'teacherReview'])->name('leaves.review');
         });
+
+        // Automated Payment Gateway & Financial Ledger (Step 3C)
+        Route::prefix('payments')->name('payments.')->group(function () {
+            Route::post('/checkout', [PaymentGatewayController::class, 'checkout'])->name('checkout');
+            Route::get('/status/{orderId}', [PaymentGatewayController::class, 'checkStatus'])->name('status');
+            Route::post('/reconcile', [PaymentGatewayController::class, 'reconcile'])->name('reconcile');
+            Route::get('/ledger', [PaymentGatewayController::class, 'ledger'])->name('ledger');
+        });
     });
+
+    // Public Midtrans Webhook (Unauthenticated, Signature-verified)
+    Route::post('/webhooks/payment-gateway', [PaymentGatewayController::class, 'handleWebhook'])
+        ->name('webhooks.payment_gateway');
 });

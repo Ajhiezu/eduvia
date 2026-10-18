@@ -150,6 +150,64 @@ class User extends Authenticatable
     }
 
     /**
+     * Determine if this user is a homeroom teacher (optionally for a specific classroom).
+     */
+    public function isHomeroomTeacher(?Classroom $classroom = null): bool
+    {
+        if (! $this->isTeacher()) {
+            return false;
+        }
+
+        if ($classroom) {
+            return (int) $classroom->homeroom_teacher_id === (int) $this->id;
+        }
+
+        return Classroom::where('homeroom_teacher_id', $this->id)->exists();
+    }
+
+    /**
+     * Determine if this teacher is the homeroom teacher of a specific student.
+     */
+    public function isHomeroomTeacherOf(User $student): bool
+    {
+        if (! $this->isTeacher()) {
+            return false;
+        }
+
+        return ClassroomStudent::where('student_id', $student->id)
+            ->where('enrollment_status', 'active')
+            ->whereHas('classroom', fn ($q) => $q->where('homeroom_teacher_id', $this->id))
+            ->exists();
+    }
+
+    /**
+     * Determine if this teacher teaches a specific student.
+     */
+    public function teachesStudent(User $student): bool
+    {
+        if (! $this->isTeacher()) {
+            return false;
+        }
+
+        if ($this->isHomeroomTeacherOf($student)) {
+            return true;
+        }
+
+        $studentClassroomIds = ClassroomStudent::where('student_id', $student->id)
+            ->where('enrollment_status', 'active')
+            ->pluck('classroom_id');
+
+        if ($studentClassroomIds->isEmpty()) {
+            return false;
+        }
+
+        return TeachingAssignment::where('teacher_id', $this->id)
+            ->where('is_active', true)
+            ->whereIn('classroom_id', $studentClassroomIds)
+            ->exists();
+    }
+
+    /**
      * Teaching assignments where this user is the teacher.
      */
     public function teachingAssignments(): HasMany
@@ -376,6 +434,21 @@ class User extends Authenticatable
     public function activeChildren(): BelongsToMany
     {
         return $this->linkedChildren()->wherePivot('status', ParentStudentRelation::STATUS_ACTIVE);
+    }
+
+    /**
+     * Check if this parent user is actively linked to a specific student.
+     */
+    public function isParentOf(User $student): bool
+    {
+        if (! $this->isParent()) {
+            return false;
+        }
+
+        return ParentStudentRelation::where('parent_id', $this->id)
+            ->where('student_id', $student->id)
+            ->where('status', ParentStudentRelation::STATUS_ACTIVE)
+            ->exists();
     }
 
     /**

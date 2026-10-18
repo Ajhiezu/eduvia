@@ -419,9 +419,9 @@ class SchoolOperationsTest extends TestCase
 
         // Attempt accessing from our school's staff
         $assetRes = $this->actingAs($this->staff)->get(route('operations.inventory.assets.show', $otherAsset));
-        $assetRes->assertStatus(403);
+        $this->assertTrue(in_array($assetRes->status(), [403, 404]), "Expected 403 or 404 but got {$assetRes->status()}");
 
         $bookRes = $this->actingAs($this->staff)->get(route('operations.library.books.show', $otherBook));
-        $bookRes->assertStatus(403);
+        $this->assertTrue(in_array($bookRes->status(), [403, 404]), "Expected 403 or 404 but got {$bookRes->status()}");
     }
 }

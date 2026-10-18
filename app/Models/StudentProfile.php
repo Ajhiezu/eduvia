@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Auditable;
 use App\Traits\BelongsToSchool;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class StudentProfile extends Model
 {
-    use BelongsToSchool, HasFactory;
+    use Auditable, BelongsToSchool, HasFactory;
 
     /**
      * The attributes that are mass assignable.

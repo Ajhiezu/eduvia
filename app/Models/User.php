@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\Permission;
 use App\Enums\StaffPosition;
 use App\Enums\UserRole;
+use App\Traits\Auditable;
 use App\Traits\BelongsToSchool;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -24,7 +25,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use BelongsToSchool, HasApiTokens, HasFactory, Notifiable;
+    use Auditable, BelongsToSchool, HasApiTokens, HasFactory, Notifiable;
 
     /**
      * Get the attributes that should be cast.

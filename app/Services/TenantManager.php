@@ -11,17 +11,31 @@ class TenantManager
 {
     protected ?School $currentSchool = null;
 
-    protected ?int $currentSchoolId = null;
+    protected ?int $explicitSchoolId = null;
+
+    protected ?School $explicitSchool = null;
 
     protected bool $bypass = false;
+
+    /**
+     * Reset tenant state to pristine condition (useful between requests/tests).
+     */
+    public function reset(): void
+    {
+        $this->currentSchool = null;
+        $this->explicitSchoolId = null;
+        $this->explicitSchool = null;
+        $this->bypass = false;
+    }
 
     /**
      * Set the active school tenant explicitly.
      */
     public function setSchool(?School $school): self
     {
+        $this->explicitSchool = $school;
+        $this->explicitSchoolId = $school?->id;
         $this->currentSchool = $school;
-        $this->currentSchoolId = $school?->id;
 
         return $this;
     }
@@ -31,12 +45,13 @@ class TenantManager
      */
     public function setSchoolId(?int $schoolId): self
     {
-        $this->currentSchoolId = $schoolId;
+        $this->explicitSchoolId = $schoolId;
 
         if ($schoolId && (! $this->currentSchool || $this->currentSchool->id !== $schoolId)) {
             $this->currentSchool = School::find($schoolId);
         } elseif (! $schoolId) {
             $this->currentSchool = null;
+            $this->explicitSchool = null;
         }
 
         return $this;
@@ -51,8 +66,8 @@ class TenantManager
             return null;
         }
 
-        if ($this->currentSchoolId !== null) {
-            return $this->currentSchoolId;
+        if ($this->explicitSchoolId !== null) {
+            return $this->explicitSchoolId;
         }
 
         // 1. Authenticated user's school context
@@ -61,9 +76,7 @@ class TenantManager
             if ($user->hasRole(UserRole::SUPER_ADMIN)) {
                 // If super admin has switched to a specific school via session/header
                 if (session()->has('active_school_id')) {
-                    $this->currentSchoolId = (int) session('active_school_id');
-
-                    return $this->currentSchoolId;
+                    return (int) session('active_school_id');
                 }
 
                 // Super Admin has global scope unless explicit tenant selected
@@ -71,17 +84,13 @@ class TenantManager
             }
 
             if ($user->school_id) {
-                $this->currentSchoolId = (int) $user->school_id;
-
-                return $this->currentSchoolId;
+                return (int) $user->school_id;
             }
         }
 
         // 2. Active school selected in session (e.g. for multi-school switchers)
         if (session()->has('current_school_id')) {
-            $this->currentSchoolId = (int) session('current_school_id');
-
-            return $this->currentSchoolId;
+            return (int) session('current_school_id');
         }
 
         return null;

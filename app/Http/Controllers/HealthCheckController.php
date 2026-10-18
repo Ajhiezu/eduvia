@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\School;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Throwable;
 
 class HealthCheckController extends Controller
@@ -31,10 +34,10 @@ class HealthCheckController extends Controller
         // Cache check
         $cacheStatus = 'healthy';
         try {
-            $testKey = 'health_ping_' . microtime(true);
-            \Illuminate\Support\Facades\Cache::put($testKey, 'ok', 10);
-            $cacheStatus = \Illuminate\Support\Facades\Cache::get($testKey) === 'ok' ? 'healthy' : 'unhealthy';
-            \Illuminate\Support\Facades\Cache::forget($testKey);
+            $testKey = 'health_ping_'.microtime(true);
+            Cache::put($testKey, 'ok', 10);
+            $cacheStatus = Cache::get($testKey) === 'ok' ? 'healthy' : 'unhealthy';
+            Cache::forget($testKey);
         } catch (Throwable $e) {
             $cacheStatus = 'unhealthy';
         }
@@ -42,8 +45,8 @@ class HealthCheckController extends Controller
         // Storage writeability check
         $storageStatus = 'healthy';
         try {
-            $disk = \Illuminate\Support\Facades\Storage::disk('local');
-            $testFile = 'health_check_' . microtime(true) . '.txt';
+            $disk = Storage::disk('local');
+            $testFile = 'health_check_'.microtime(true).'.txt';
             $disk->put($testFile, 'health-check');
             $storageStatus = $disk->exists($testFile) ? 'healthy' : 'unhealthy';
             $disk->delete($testFile);
@@ -53,7 +56,7 @@ class HealthCheckController extends Controller
 
         $activeSchoolsCount = 0;
         try {
-            $activeSchoolsCount = \App\Models\School::withoutTenancy()->where('is_active', true)->count();
+            $activeSchoolsCount = School::where('is_active', true)->count();
         } catch (Throwable $e) {
             //
         }
@@ -67,7 +70,7 @@ class HealthCheckController extends Controller
                 'env' => config('app.env'),
                 'debug' => config('app.debug'),
                 'version' => '1.0.0-phase1',
-                'framework' => 'Laravel ' . app()->version(),
+                'framework' => 'Laravel '.app()->version(),
                 'php' => PHP_VERSION,
             ],
             'services' => [

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ApprovalWorkflowController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LeaveRequestController;
 use App\Http\Controllers\Api\NotificationController;
@@ -61,6 +62,19 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::get('/preferences', [NotificationController::class, 'getPreferences'])->name('preferences.get');
             Route::put('/preferences', [NotificationController::class, 'updatePreferences'])->name('preferences.update');
             Route::get('/logs', [NotificationController::class, 'getLogs'])->name('logs');
+        });
+
+        // Universal Approval Workflow Engine (Fee relief, letters, leave, etc.)
+        Route::prefix('approvals')->name('approvals.')->group(function () {
+            Route::get('/pending', [ApprovalWorkflowController::class, 'pendingInbox'])->name('pending');
+            Route::get('/my-requests', [ApprovalWorkflowController::class, 'myRequests'])->name('my_requests');
+            Route::get('/delegations', [ApprovalWorkflowController::class, 'listDelegations'])->name('delegations.index');
+            Route::post('/delegations', [ApprovalWorkflowController::class, 'storeDelegation'])->name('delegations.store');
+            Route::post('/fee-relief', [ApprovalWorkflowController::class, 'submitFeeRelief'])->name('fee_relief.submit');
+            Route::get('/{approvalRequest}', [ApprovalWorkflowController::class, 'show'])->name('show');
+            Route::post('/{approvalRequest}/approve', [ApprovalWorkflowController::class, 'approve'])->name('approve');
+            Route::post('/{approvalRequest}/reject', [ApprovalWorkflowController::class, 'reject'])->name('reject');
+            Route::post('/{approvalRequest}/cancel', [ApprovalWorkflowController::class, 'cancel'])->name('cancel');
         });
 
         // Student Mobile App Endpoints (guarded with role:student ability)

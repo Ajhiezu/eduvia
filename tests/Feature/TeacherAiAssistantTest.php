@@ -13,6 +13,7 @@ use App\Models\SchoolAiQuota;
 use App\Models\Subject;
 use App\Models\User;
 use App\Services\AI\AiQuotaManager;
+use App\Services\AI\PiiScrubber;
 use App\Services\AI\PromptInjectionShield;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
@@ -356,5 +357,27 @@ class TeacherAiAssistantTest extends TestCase
                 'usage_percentage',
             ],
         ]);
+    }
+
+    public function test_pii_scrubber_detects_nisn_and_scrubs_student_names(): void
+    {
+        $scrubber = app(PiiScrubber::class);
+
+        // 1. Verify containsPii detects 10-digit NISN
+        $textWithNisn = 'Siswa dengan NISN 0081234567 telah menyelesaikan tugas.';
+        $this->assertTrue($scrubber->containsPii($textWithNisn), 'containsPii must return true for 10-digit NISN');
+
+        // 2. Verify scrubbing of NISN
+        $scrubbedNisn = $scrubber->scrub($textWithNisn);
+        $this->assertStringNotContainsString('0081234567', $scrubbedNisn);
+        $this->assertStringContainsString('[NISN_DISAMARKAN]', $scrubbedNisn);
+
+        // 3. Verify scrubbing of student and teacher names
+        $textWithNames = 'Siswa bernama Ahmad Dahlan dan Siti Rahma telah mengumpulkan esai kepada Pak Bambang.';
+        $scrubbedNames = $scrubber->scrub($textWithNames, ['Ahmad Dahlan', 'Siti Rahma', 'Pak Bambang']);
+        $this->assertStringNotContainsString('Ahmad Dahlan', $scrubbedNames);
+        $this->assertStringNotContainsString('Siti Rahma', $scrubbedNames);
+        $this->assertStringNotContainsString('Pak Bambang', $scrubbedNames);
+        $this->assertStringContainsString('[NAMA_DISAMARKAN]', $scrubbedNames);
     }
 }

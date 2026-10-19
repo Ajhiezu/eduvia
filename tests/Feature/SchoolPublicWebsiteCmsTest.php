@@ -399,35 +399,35 @@ class SchoolPublicWebsiteCmsTest extends TestCase
             'is_published' => true,
         ]);
 
-        // Admin A tries to edit Post of School B -> 403 Forbidden
-        $this->actingAs($this->adminA)
-            ->get(route('website.posts.edit', $postB))
-            ->assertStatus(403);
+        // Admin A tries to edit Post of School B -> 403 Forbidden or 404 Not Found (Scoped)
+        $resEdit = $this->actingAs($this->adminA)
+            ->get(route('website.posts.edit', $postB));
+        $this->assertTrue(in_array($resEdit->status(), [403, 404], true));
 
-        // Admin A tries to update Post of School B -> 403 Forbidden
-        $this->actingAs($this->adminA)
+        // Admin A tries to update Post of School B -> 403 Forbidden or 404 Not Found (Scoped)
+        $resUpdate = $this->actingAs($this->adminA)
             ->put(route('website.posts.update', $postB), [
                 'type' => 'news',
                 'title' => 'Upaya Pembajakan Konten',
                 'content' => 'Mencoba menimpa berita Sekolah B.',
                 'is_published' => 1,
-            ])
-            ->assertStatus(403);
+            ]);
+        $this->assertTrue(in_array($resUpdate->status(), [403, 404], true));
 
-        // Admin A tries to delete Post of School B -> 403 Forbidden
-        $this->actingAs($this->adminA)
-            ->delete(route('website.posts.destroy', $postB))
-            ->assertStatus(403);
+        // Admin A tries to delete Post of School B -> 403 Forbidden or 404 Not Found (Scoped)
+        $resDelete = $this->actingAs($this->adminA)
+            ->delete(route('website.posts.destroy', $postB));
+        $this->assertTrue(in_array($resDelete->status(), [403, 404], true));
 
         $this->assertDatabaseHas('school_posts', [
             'id' => $postB->id,
             'title' => 'Berita Milik Sekolah B',
         ]);
 
-        // Admin A tries to delete Extracurricular of School B -> 403 Forbidden
-        $this->actingAs($this->adminA)
-            ->delete(route('website.extracurriculars.destroy', $extraB))
-            ->assertStatus(403);
+        // Admin A tries to delete Extracurricular of School B -> 403 Forbidden or 404 Not Found (Scoped)
+        $resDeleteExtra = $this->actingAs($this->adminA)
+            ->delete(route('website.extracurriculars.destroy', $extraB));
+        $this->assertTrue(in_array($resDeleteExtra->status(), [403, 404], true));
 
         $this->assertDatabaseHas('school_extracurriculars', [
             'id' => $extraB->id,

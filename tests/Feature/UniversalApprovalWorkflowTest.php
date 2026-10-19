@@ -8,6 +8,7 @@ use App\Models\ApprovalHistory;
 use App\Models\ApprovalRequest;
 use App\Models\ApprovalWorkflow;
 use App\Models\Invoice;
+use App\Models\ParentStudentRelation;
 use App\Models\School;
 use App\Models\User;
 use App\Services\Workflow\ApprovalWorkflowService;
@@ -50,6 +51,14 @@ class UniversalApprovalWorkflowTest extends TestCase
             'school_id' => $this->school->id,
             'role' => 'parent',
             'name' => 'Bapak Pratama',
+        ]);
+
+        ParentStudentRelation::create([
+            'school_id' => $this->school->id,
+            'parent_id' => $this->parent->id,
+            'student_id' => $this->student->id,
+            'relationship_type' => 'father',
+            'status' => 'active',
         ]);
 
         $this->teacher = User::factory()->create([

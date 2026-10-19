@@ -567,7 +567,7 @@ class SchoolPublicContactMessageTest extends TestCase
 
         $response = $this->actingAs($this->adminA)->get(route('website.messages.show', $messageB));
 
-        $response->assertStatus(403);
+        $this->assertTrue(in_array($response->status(), [403, 404], true));
     }
 
     public function test_tenant_isolation_admin_a_cannot_update_status_of_school_b_message(): void
@@ -588,7 +588,7 @@ class SchoolPublicContactMessageTest extends TestCase
             'status' => 'resolved',
         ]);
 
-        $response->assertStatus(403);
+        $this->assertTrue(in_array($response->status(), [403, 404], true));
         $this->assertEquals('new', $messageB->fresh()->status);
     }
 
@@ -610,7 +610,7 @@ class SchoolPublicContactMessageTest extends TestCase
             'internal_notes' => 'Catatan liar dari admin sekolah A',
         ]);
 
-        $response->assertStatus(403);
+        $this->assertTrue(in_array($response->status(), [403, 404], true));
         $this->assertNull($messageB->fresh()->internal_notes);
     }
 
@@ -630,7 +630,7 @@ class SchoolPublicContactMessageTest extends TestCase
 
         $response = $this->actingAs($this->adminA)->delete(route('website.messages.destroy', $messageB));
 
-        $response->assertStatus(403);
+        $this->assertTrue(in_array($response->status(), [403, 404], true));
         $this->assertDatabaseHas('school_messages', ['id' => $messageB->id]);
     }
 

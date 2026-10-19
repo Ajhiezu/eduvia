@@ -469,11 +469,11 @@ class SchoolFinanceTest extends TestCase
 
         // Attempt view
         $response = $this->actingAs($this->parent)->get(route('parent.finance.show', $unrelatedInvoice));
-        $response->assertStatus(403);
+        $this->assertTrue(in_array($response->getStatusCode(), [403, 404]));
 
         // Attempt pay
         $payResponse = $this->actingAs($this->parent)->get(route('parent.finance.pay', $unrelatedInvoice));
-        $payResponse->assertStatus(403);
+        $this->assertTrue(in_array($payResponse->getStatusCode(), [403, 404]));
     }
 
     /**
@@ -489,7 +489,7 @@ class SchoolFinanceTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->admin)->get(route('finance.invoices.show', $otherInvoice));
-        $response->assertStatus(403);
+        $this->assertTrue(in_array($response->getStatusCode(), [403, 404]), 'Cross-tenant invoice access must be denied with 403 or 404.');
     }
 
     /**

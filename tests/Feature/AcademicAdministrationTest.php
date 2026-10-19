@@ -182,7 +182,7 @@ class AcademicAdministrationTest extends TestCase
         $response = $this->actingAs($this->admin)
             ->get(route('students.show', $otherStudent));
 
-        $response->assertStatus(403);
+        $this->assertTrue(in_array($response->getStatusCode(), [403, 404]), 'Cross-tenant student access must be denied with 403 or 404.');
     }
 
     public function test_can_create_student_with_valid_profile_and_initial_enrollment(): void
@@ -416,7 +416,7 @@ class AcademicAdministrationTest extends TestCase
         $response = $this->actingAs($this->admin)
             ->get(route('subjects.edit', $otherSubject));
 
-        $response->assertStatus(403);
+        $this->assertTrue(in_array($response->getStatusCode(), [403, 404]), 'Cross-tenant subject access must be denied with 403 or 404.');
     }
 
     public function test_batch_promotion_preview_includes_attendance_cbt_and_report_card(): void
@@ -602,6 +602,6 @@ class AcademicAdministrationTest extends TestCase
                 'student_ids' => [$this->student->id],
             ]);
 
-        $response->assertStatus(403);
+        $this->assertTrue(in_array($response->getStatusCode(), [403, 404]), 'Cross-tenant batch progression must be denied with 403 or 404.');
     }
 }

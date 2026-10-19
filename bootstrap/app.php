@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureSchoolTenant;
+use App\Http\Middleware\EnsureTenantAiEnabled;
 use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Middleware\SecurityHeadersMiddleware;
 use Illuminate\Foundation\Application;
@@ -30,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => EnsureUserHasRole::class,
             'tenant' => EnsureSchoolTenant::class,
+            'tenant.ai' => EnsureTenantAiEnabled::class,
             'abilities' => CheckAbilities::class,
             'ability' => CheckForAnyAbility::class,
         ]);

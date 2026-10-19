@@ -61,6 +61,7 @@ use App\Http\Controllers\StudentScheduleController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SubjectGradebookController;
 use App\Http\Controllers\SystemSettingController;
+use App\Http\Controllers\Teacher\TeacherAiAssistantController;
 use App\Http\Controllers\TeacherParentCommunicationController;
 use App\Http\Controllers\TeacherScheduleController;
 use App\Models\School;
@@ -573,6 +574,24 @@ Route::middleware('auth')->group(function () {
             Route::get('/certificate/create', [CorrespondenceController::class, 'createCertificate'])->name('certificate.create');
             Route::post('/certificate/pdf', [CorrespondenceController::class, 'generateCertificatePdf'])->name('certificate.pdf');
         });
+    });
+
+    // =========================================================================
+    // ASISTEN AI GURU (Phase 4B - Guarded by role & tenant.ai)
+    // =========================================================================
+    Route::middleware(['role:super_admin,school_admin,teacher', 'tenant.ai'])->prefix('teacher/ai')->name('teacher.ai.')->group(function () {
+        Route::get('/', [TeacherAiAssistantController::class, 'index'])->name('index');
+        Route::get('/lesson-plan', [TeacherAiAssistantController::class, 'lessonPlan'])->name('lesson_plan');
+        Route::post('/lesson-plan', [TeacherAiAssistantController::class, 'storeLessonPlan'])->name('lesson_plan.store');
+        Route::get('/questions', [TeacherAiAssistantController::class, 'questions'])->name('questions');
+        Route::post('/questions', [TeacherAiAssistantController::class, 'storeQuestions'])->name('questions.store');
+        Route::get('/rubrics', [TeacherAiAssistantController::class, 'rubrics'])->name('rubrics');
+        Route::post('/rubrics', [TeacherAiAssistantController::class, 'storeRubric'])->name('rubrics.store');
+        Route::get('/essay-feedback', [TeacherAiAssistantController::class, 'essayFeedback'])->name('essay_feedback');
+        Route::post('/essay-feedback', [TeacherAiAssistantController::class, 'storeEssayFeedback'])->name('essay_feedback.store');
+        Route::get('/drafts/{draft}', [TeacherAiAssistantController::class, 'show'])->name('drafts.show');
+        Route::match(['put', 'post'], '/drafts/{draft}', [TeacherAiAssistantController::class, 'update'])->name('drafts.update');
+        Route::post('/drafts/{draft}/import-to-cbt', [TeacherAiAssistantController::class, 'importToCbt'])->name('drafts.import_cbt');
     });
 });
 

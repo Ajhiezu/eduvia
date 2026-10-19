@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ParentController;
 use App\Http\Controllers\Api\PaymentGatewayController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TeacherController;
+use App\Http\Controllers\Api\V1\Teacher\TeacherAiApiController;
 use App\Http\Controllers\HealthCheckController;
 use Illuminate\Support\Facades\Route;
 
@@ -129,6 +130,18 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::put('/chat-settings', [TeacherController::class, 'updateChatSettings'])->name('chat_settings.update');
             Route::get('/leaves', [LeaveRequestController::class, 'teacherIndex'])->name('leaves.index');
             Route::post('/leaves/{leave}/review', [LeaveRequestController::class, 'teacherReview'])->name('leaves.review');
+
+            // AI Teacher Assistant Endpoints (Phase 4B - guarded by tenant.ai)
+            Route::middleware('tenant.ai')->prefix('ai')->name('ai.')->group(function () {
+                Route::get('/quota', [TeacherAiApiController::class, 'quota'])->name('quota');
+                Route::get('/drafts', [TeacherAiApiController::class, 'drafts'])->name('drafts');
+                Route::post('/generate-lesson-plan', [TeacherAiApiController::class, 'generateLessonPlan'])->name('generate_lesson_plan');
+                Route::post('/generate-questions', [TeacherAiApiController::class, 'generateQuestions'])->name('generate_questions');
+                Route::post('/generate-rubric', [TeacherAiApiController::class, 'generateRubric'])->name('generate_rubric');
+                Route::post('/generate-essay-feedback', [TeacherAiApiController::class, 'generateEssayFeedback'])->name('generate_essay_feedback');
+                Route::get('/drafts/{draft}', [TeacherAiApiController::class, 'show'])->name('drafts.show');
+                Route::put('/drafts/{draft}', [TeacherAiApiController::class, 'update'])->name('drafts.update');
+            });
         });
 
         // Automated Payment Gateway & Financial Ledger (Step 3C)

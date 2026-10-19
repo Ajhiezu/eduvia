@@ -7,12 +7,14 @@ use App\Models\ApprovalDelegation;
 use App\Models\ApprovalRequest;
 use App\Models\ApprovalWorkflow;
 use App\Models\Invoice;
+use App\Models\ParentStudentRelation;
 use App\Models\User;
 use App\Services\Workflow\ApprovalWorkflowService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class ApprovalWorkflowController extends Controller
 {
@@ -133,6 +135,21 @@ class ApprovalWorkflowController extends Controller
     public function submitFeeRelief(Request $request): JsonResponse
     {
         $user = $request->user();
+        $studentId = (int) $request->input('student_id');
+
+        // Parent-Student & Student authorization check
+        $roleStr = is_string($user->role) ? $user->role : ($user->role?->value ?? (string) $user->role);
+        if ($roleStr === 'parent') {
+            $isChild = ParentStudentRelation::where('parent_id', $user->id)
+                ->where('student_id', $studentId)
+                ->where('status', ParentStudentRelation::STATUS_ACTIVE)
+                ->exists();
+            if (! $isChild) {
+                return $this->apiError('Anda tidak memiliki otorisasi untuk mengajukan keringanan bagi siswa ini.', 403);
+            }
+        } elseif ($roleStr === 'student' && $user->id !== $studentId) {
+            return $this->apiError('Siswa hanya dapat mengajukan keringanan atas nama diri sendiri.', 403);
+        }
 
         $validated = $request->validate([
             'student_id' => 'required|exists:users,id',
@@ -276,9 +293,22 @@ class ApprovalWorkflowController extends Controller
     public function storeDelegation(Request $request): JsonResponse
     {
         $user = $request->user();
+        $roleStr = is_string($user->role) ? $user->role : ($user->role?->value ?? (string) $user->role);
+
+        if (! in_array($roleStr, ['super_admin', 'superadmin', 'school_admin', 'staff', 'teacher'])) {
+            return $this->apiError('Hanya staf atau guru yang memiliki wewenang persetujuan yang dapat mendelegasikan wewenang.', 403);
+        }
 
         $validated = $request->validate([
-            'delegatee_id' => 'required|exists:users,id|different:user_id',
+            'delegatee_id' => [
+                'required',
+                'different:user_id',
+                Rule::exists('users', 'id')->where(function ($query) use ($user) {
+                    if ($user->school_id) {
+                        $query->where('school_id', $user->school_id);
+                    }
+                }),
+            ],
             'start_date' => 'required|date|after_or_equal:today',
             'end_date' => 'required|date|after_or_equal:start_date',
             'reason' => 'required|string|max:255',
@@ -311,6 +341,11 @@ class ApprovalWorkflowController extends Controller
     public function listDelegations(Request $request): JsonResponse
     {
         $user = $request->user();
+        $roleStr = is_string($user->role) ? $user->role : ($user->role?->value ?? (string) $user->role);
+
+        if (! in_array($roleStr, ['super_admin', 'superadmin', 'school_admin', 'staff', 'teacher'])) {
+            return $this->apiError('Akses ditolak: Hanya staf atau guru yang dapat melihat daftar delegasi.', 403);
+        }
 
         $delegations = ApprovalDelegation::where('school_id', $user->school_id)
             ->with(['delegator', 'delegatee'])

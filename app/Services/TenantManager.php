@@ -17,6 +17,8 @@ class TenantManager
 
     protected bool $bypass = false;
 
+    protected bool $resolving = false;
+
     /**
      * Reset tenant state to pristine condition (useful between requests/tests).
      */
@@ -26,6 +28,7 @@ class TenantManager
         $this->explicitSchoolId = null;
         $this->explicitSchool = null;
         $this->bypass = false;
+        $this->resolving = false;
     }
 
     /**
@@ -62,7 +65,7 @@ class TenantManager
      */
     public function getSchoolId(): ?int
     {
-        if ($this->bypass) {
+        if ($this->bypass || $this->resolving) {
             return null;
         }
 
@@ -70,30 +73,45 @@ class TenantManager
             return $this->explicitSchoolId;
         }
 
-        // 1. Authenticated user's school context
-        $user = auth()->user();
-        if ($user) {
-            if ($user->hasRole(UserRole::SUPER_ADMIN)) {
-                // If super admin has switched to a specific school via session/header
-                if (session()->has('active_school_id')) {
-                    return (int) session('active_school_id');
+        if (app()->runningInConsole() && ! app()->bound('request')) {
+            return null;
+        }
+
+        $this->resolving = true;
+
+        try {
+            // 1. Authenticated user's school context
+            try {
+                $user = auth()->user();
+            } catch (\Throwable) {
+                $user = null;
+            }
+
+            if ($user) {
+                if ($user->hasRole(UserRole::SUPER_ADMIN)) {
+                    // If super admin has switched to a specific school via session/header
+                    if (app()->bound('request') && request()->hasSession() && session()->has('active_school_id')) {
+                        return (int) session('active_school_id');
+                    }
+
+                    // Super Admin has global scope unless explicit tenant selected
+                    return null;
                 }
 
-                // Super Admin has global scope unless explicit tenant selected
-                return null;
+                if ($user->school_id) {
+                    return (int) $user->school_id;
+                }
             }
 
-            if ($user->school_id) {
-                return (int) $user->school_id;
+            // 2. Active school selected in session (e.g. for multi-school switchers)
+            if (app()->bound('request') && request()->hasSession() && session()->has('current_school_id')) {
+                return (int) session('current_school_id');
             }
-        }
 
-        // 2. Active school selected in session (e.g. for multi-school switchers)
-        if (session()->has('current_school_id')) {
-            return (int) session('current_school_id');
+            return null;
+        } finally {
+            $this->resolving = false;
         }
-
-        return null;
     }
 
     /**
@@ -135,9 +153,20 @@ class TenantManager
         $previousBypass = $this->bypass;
         $this->bypass = true;
 
+        $currentUserId = null;
+        $currentUserRole = 'cli/system';
+        try {
+            if (auth()->check()) {
+                $currentUserId = auth()->id();
+                $currentUserRole = auth()->user()?->role?->value ?? 'authenticated';
+            }
+        } catch (\Throwable) {
+            // CLI or uninitialized guard context
+        }
+
         Log::info("Tenant isolation bypassed: {$reason}", [
-            'user_id' => auth()->id(),
-            'role' => auth()->user()?->role?->value ?? 'cli/system',
+            'user_id' => $currentUserId,
+            'role' => $currentUserRole,
             'timestamp' => now()->toIso8601String(),
         ]);
 

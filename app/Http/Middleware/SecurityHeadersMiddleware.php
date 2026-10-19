@@ -35,6 +35,9 @@ class SecurityHeadersMiddleware
         // Enforce HTTPS HSTS only in production environments
         if (app()->environment('production')) {
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+        } else {
+            // Prevent Windows PHP CLI server keep-alive socket deadlocks
+            $response->headers->set('Connection', 'close');
         }
 
         return $response;

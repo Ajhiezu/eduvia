@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToSchool;
 use Database\Factories\ParentStudentRelationFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ParentStudentRelation extends Model
 {
+    use BelongsToSchool;
+
     /** @use HasFactory<ParentStudentRelationFactory> */
     use HasFactory;
 

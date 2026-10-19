@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToSchool;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,6 +26,7 @@ use Illuminate\Support\Facades\Storage;
 ])]
 class SchoolExtracurricular extends Model
 {
+    use BelongsToSchool;
     use HasFactory;
 
     protected function casts(): array

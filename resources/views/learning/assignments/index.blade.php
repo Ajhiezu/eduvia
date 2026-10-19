@@ -69,7 +69,7 @@
                         name="search"
                         value="{{ request('search') }}"
                         placeholder="Cari judul tugas atau instruksi..."
-                        class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3.5 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
                     />
                 </div>
 
@@ -78,9 +78,9 @@
                     <select
                         name="teaching_assignment_id"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
-                        <option value="">-- Semua Mapel & Rombel --</option>
+                        <option value="">Semua Mapel & Rombel</option>
                         @foreach ($teachingAssignments as $ta)
                             <option value="{{ $ta->id }}" {{ request('teaching_assignment_id') == $ta->id ? 'selected' : '' }}>
                                 {{ $ta->subject?->name }} ({{ $ta->classroom?->name }})
@@ -94,15 +94,15 @@
                     <select
                         name="status"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
-                        <option value="">-- Semua Status --</option>
+                        <option value="">Semua Status</option>
                         <option value="published" {{ request('status') === 'published' ? 'selected' : '' }}>Terbit</option>
                         <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draft</option>
                         <option value="archived" {{ request('status') === 'archived' ? 'selected' : '' }}>Diarsipkan</option>
                     </select>
 
-                    <x-button type="submit" variant="secondary" size="sm" class="shrink-0">
+                    <x-button type="submit" variant="secondary" size="md" class="shrink-0">
                         Cari
                     </x-button>
                 </div>

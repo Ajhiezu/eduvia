@@ -7,13 +7,13 @@
         <div class="w-full max-w-md">
 
             <!-- Card Container -->
-            <x-card padding class="shadow-xl border-slate-200">
+            <x-card padding class="shadow-xl border-zinc-200 rounded-xl">
                 <div class="text-center mb-6">
                     <x-application-logo variant="vertical" size="md" class="justify-center mb-4" />
-                    <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
                         Masuk ke Akun Anda
                     </h2>
-                    <p class="text-xs text-slate-500 mt-1">
+                    <p class="text-sm text-zinc-500 mt-1">
                         Masukkan kredensial terdaftar untuk mengakses platform pembelajaran.
                     </p>
                 </div>
@@ -33,7 +33,7 @@
                 @endif
 
                 <!-- Login Form -->
-                <form method="POST" action="{{ route('login') }}" class="space-y-4" id="loginForm">
+                <form method="POST" action="{{ route('login') }}" class="space-y-5" id="loginForm">
                     @csrf
 
                     <x-input
@@ -70,14 +70,14 @@
                         </x-input>
                     </div>
 
-                    <div class="flex items-center justify-between text-xs">
+                    <div class="flex items-center justify-between text-sm">
                         <label class="flex items-center gap-2 cursor-pointer select-none">
                             <input
                                 type="checkbox"
                                 name="remember"
-                                class="w-4 h-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+                                class="w-4 h-4 rounded border-zinc-300 text-brand-600 focus:ring-brand-500"
                             >
-                            <span class="text-slate-600 font-medium">Ingat saya</span>
+                            <span class="text-zinc-700 font-medium">Ingat saya</span>
                         </label>
                     </div>
 

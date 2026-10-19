@@ -74,9 +74,9 @@
                     <select
                         name="classroom_id"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
-                        <option value="">-- Semua Kelas --</option>
+                        <option value="">Semua Kelas</option>
                         @foreach ($classrooms as $c)
                             <option value="{{ $c->id }}" {{ $classroomId == $c->id ? 'selected' : '' }}>
                                 {{ $c->name }}
@@ -90,9 +90,9 @@
                     <select
                         name="teaching_assignment_id"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
-                        <option value="">-- Semua Mata Pelajaran / Rombel --</option>
+                        <option value="">Semua Mata Pelajaran / Rombel</option>
                         @foreach ($assignments as $a)
                             <option value="{{ $a->id }}" {{ $assignmentId == $a->id ? 'selected' : '' }}>
                                 {{ $a->subject?->name }} ({{ $a->classroom?->name }})
@@ -106,9 +106,9 @@
                     <select
                         name="status"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
-                        <option value="">-- Semua Status --</option>
+                        <option value="">Semua Status</option>
                         <option value="draft" {{ $status === 'draft' ? 'selected' : '' }}>Draft</option>
                         <option value="finalized" {{ $status === 'finalized' ? 'selected' : '' }}>Terfinalisasi</option>
                     </select>
@@ -121,7 +121,7 @@
                         name="date"
                         value="{{ $date }}"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
                 </div>
             </form>

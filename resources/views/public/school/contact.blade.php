@@ -237,7 +237,7 @@
                                 <!-- Name & Email (2 cols) -->
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 font-sans">
                                     <div>
-                                        <label for="name" class="block text-xs font-bold text-zinc-700 mb-1.5">
+                                        <label for="name" class="block text-sm font-medium text-zinc-700 mb-1.5">
                                             Nama Lengkap <span class="text-rose-500">*</span>
                                         </label>
                                         <input
@@ -248,15 +248,15 @@
                                             required
                                             maxlength="150"
                                             placeholder="Masukkan nama lengkap Anda"
-                                            class="w-full text-xs sm:text-sm rounded-2xl border border-zinc-200 bg-zinc-50/50 px-4 py-3 text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all"
+                                            class="w-full text-base rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 min-h-[44px] h-[44px] text-zinc-900 placeholder:text-zinc-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-100 transition-all"
                                         >
                                         @error('name')
-                                            <p class="text-[11px] text-rose-600 mt-1">{{ $message }}</p>
+                                            <p class="text-[13px] font-medium text-rose-600 mt-1.5">{{ $message }}</p>
                                         @enderror
                                     </div>
 
                                     <div>
-                                        <label for="email" class="block text-xs font-bold text-zinc-700 mb-1.5">
+                                        <label for="email" class="block text-sm font-medium text-zinc-700 mb-1.5">
                                             Alamat Email <span class="text-rose-500">*</span>
                                         </label>
                                         <input
@@ -267,10 +267,10 @@
                                             required
                                             maxlength="150"
                                             placeholder="nama@email.com"
-                                            class="w-full text-xs sm:text-sm rounded-2xl border border-zinc-200 bg-zinc-50/50 px-4 py-3 text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all"
+                                            class="w-full text-base rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 min-h-[44px] h-[44px] text-zinc-900 placeholder:text-zinc-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-100 transition-all"
                                         >
                                         @error('email')
-                                            <p class="text-[11px] text-rose-600 mt-1">{{ $message }}</p>
+                                            <p class="text-[13px] font-medium text-rose-600 mt-1.5">{{ $message }}</p>
                                         @enderror
                                     </div>
                                 </div>
@@ -278,7 +278,7 @@
                                 <!-- Phone & Category (2 cols) -->
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 font-sans">
                                     <div>
-                                        <label for="phone" class="block text-xs font-bold text-zinc-700 mb-1.5">
+                                        <label for="phone" class="block text-sm font-medium text-zinc-700 mb-1.5">
                                             Nomor Telepon / WhatsApp <span class="text-zinc-400 font-normal">(Opsional)</span>
                                         </label>
                                         <input
@@ -288,22 +288,22 @@
                                             value="{{ old('phone') }}"
                                             maxlength="30"
                                             placeholder="Contoh: 08123456789"
-                                            class="w-full text-xs sm:text-sm rounded-2xl border border-zinc-200 bg-zinc-50/50 px-4 py-3 text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all"
+                                            class="w-full text-base rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 min-h-[44px] h-[44px] text-zinc-900 placeholder:text-zinc-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-100 transition-all"
                                         >
                                         @error('phone')
-                                            <p class="text-[11px] text-rose-600 mt-1">{{ $message }}</p>
+                                            <p class="text-[13px] font-medium text-rose-600 mt-1.5">{{ $message }}</p>
                                         @enderror
                                     </div>
 
                                     <div>
-                                        <label for="category" class="block text-xs font-bold text-zinc-700 mb-1.5">
+                                        <label for="category" class="block text-sm font-medium text-zinc-700 mb-1.5">
                                             Kategori Pesan <span class="text-rose-500">*</span>
                                         </label>
                                         <select
                                             id="category"
                                             name="category"
                                             required
-                                            class="w-full text-xs sm:text-sm rounded-2xl border border-zinc-200 bg-zinc-50/50 px-4 py-3 text-zinc-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all"
+                                            class="w-full text-base rounded-lg border border-zinc-200 bg-white pl-3.5 pr-11 py-2.5 min-h-[44px] h-[44px] text-zinc-900 focus:border-brand-600 focus:ring-2 focus:ring-brand-100 transition-all"
                                         >
                                             <option value="" disabled {{ old('category') ? '' : 'selected' }}>Pilih kategori pesan...</option>
                                             @foreach (\App\Models\SchoolMessage::CATEGORIES as $key => $label)
@@ -313,14 +313,14 @@
                                             @endforeach
                                         </select>
                                         @error('category')
-                                            <p class="text-[11px] text-rose-600 mt-1">{{ $message }}</p>
+                                            <p class="text-[13px] font-medium text-rose-600 mt-1.5">{{ $message }}</p>
                                         @enderror
                                     </div>
                                 </div>
 
                                 <!-- Subject -->
                                 <div class="font-sans">
-                                    <label for="subject" class="block text-xs font-bold text-zinc-700 mb-1.5">
+                                    <label for="subject" class="block text-sm font-medium text-zinc-700 mb-1.5">
                                         Subjek Pesan <span class="text-rose-500">*</span>
                                     </label>
                                     <input
@@ -331,16 +331,16 @@
                                         required
                                         maxlength="200"
                                         placeholder="Tuliskan pokok atau topik pesan Anda"
-                                        class="w-full text-xs sm:text-sm rounded-2xl border border-zinc-200 bg-zinc-50/50 px-4 py-3 text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all"
+                                        class="w-full text-base rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 min-h-[44px] h-[44px] text-zinc-900 placeholder:text-zinc-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-100 transition-all"
                                     >
                                     @error('subject')
-                                        <p class="text-[11px] text-rose-600 mt-1">{{ $message }}</p>
+                                        <p class="text-[13px] font-medium text-rose-600 mt-1.5">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 <!-- Message Content -->
                                 <div class="font-sans">
-                                    <label for="message" class="block text-xs font-bold text-zinc-700 mb-1.5">
+                                    <label for="message" class="block text-sm font-medium text-zinc-700 mb-1.5">
                                         Isi Pesan <span class="text-rose-500">*</span>
                                     </label>
                                     <textarea
@@ -350,13 +350,13 @@
                                         required
                                         maxlength="3000"
                                         placeholder="Tuliskan pertanyaan, tanggapan, atau kebutuhan informasi Anda secara jelas..."
-                                        class="w-full text-xs sm:text-sm rounded-2xl border border-zinc-200 bg-zinc-50/50 px-4 py-3 text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 transition-all leading-relaxed"
+                                        class="w-full text-base rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 min-h-[120px] text-zinc-900 placeholder:text-zinc-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-100 transition-all leading-relaxed"
                                     >{{ old('message') }}</textarea>
-                                    <div class="flex items-center justify-between text-[11px] text-zinc-400 mt-1.5">
+                                    <div class="flex items-center justify-between text-[13px] text-zinc-500 mt-1.5">
                                         <span>Teks biasa &bull; Maksimal 3.000 karakter</span>
                                     </div>
                                     @error('message')
-                                        <p class="text-[11px] text-rose-600 mt-1">{{ $message }}</p>
+                                        <p class="text-[13px] font-medium text-rose-600 mt-1.5">{{ $message }}</p>
                                     @enderror
                                 </div>
 

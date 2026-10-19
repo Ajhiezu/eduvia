@@ -48,9 +48,9 @@
                     <select
                         name="academic_year_id"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
-                        <option value="">-- Semua Tahun Ajaran --</option>
+                        <option value="">Semua Tahun Ajaran</option>
                         @foreach ($academicYears as $year)
                             <option value="{{ $year->id }}" {{ $academicYearId == $year->id ? 'selected' : '' }}>
                                 Tahun Ajaran {{ $year->name }} {{ $year->is_active ? '(Aktif Saat Ini)' : '' }}

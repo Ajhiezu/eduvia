@@ -128,103 +128,267 @@
 }
 
 /* ==========================================================================
-   Refined Form Inputs System — Dashboard & Modul (Landing Page Standard)
+   GLOBAL UI/UX CONSISTENCY STANDARDS — FORM CONTROLS & TYPOGRAPHY
+   Aligned strictly with Single Source of Truth (SSOT) Guidelines
    ========================================================================== */
-main form input[type="text"],
-main form input[type="email"],
-main form input[type="password"],
-main form input[type="number"],
-main form input[type="search"],
-main form input[type="tel"],
-main form input[type="url"],
-main form input[type="date"],
-main form input[type="datetime-local"],
-main form select,
-main form textarea {
-    font-size: 0.875rem !important; /* 14px text-sm minimum */
+
+/* Universal Form Controls Baseline (All Pages, Dashboards, Modals, Public) */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+input[type="date"],
+input[type="datetime-local"],
+select,
+textarea {
+    font-family: var(--font-sans);
+    font-size: 1rem !important; /* 16px baseline */
+    font-weight: 400 !important;
+    line-height: 1.5 !important; /* 24px line-box: prevents letter/caret clipping */
+    color: var(--color-dark-text, #1f2937) !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e4e4e7 !important; /* 1px hairline neutral border (zinc-200) */
+    border-radius: 0.5rem !important; /* 8px rounded-lg standard */
+    box-sizing: border-box !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03) !important;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease !important;
+    vertical-align: middle !important;
+}
+
+/* Single-line Inputs & Selects: Exactly ~44px Total Height (24px line-box + 18px padding + 2px border) */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+input[type="date"],
+input[type="datetime-local"],
+select {
+    min-height: 2.75rem !important; /* 44px */
+    height: 2.75rem !important;
+    padding-top: 0.5625rem !important; /* 9px */
+    padding-bottom: 0.5625rem !important; /* 9px */
+    padding-left: 0.875rem !important; /* 14px */
+    padding-right: 0.875rem !important; /* 14px */
+}
+
+/* Select Dropdowns: Custom arrow with optimal 34px right clearance and ellipsis support */
+select {
+    padding-left: 0.75rem !important; /* 12px */
+    padding-right: 2.125rem !important; /* 34px clearance: eliminates text collision with chevron */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+    background-position: right 0.75rem center !important;
+    background-repeat: no-repeat !important;
+    background-size: 1.125rem 1.125rem !important;
+    cursor: pointer !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+}
+
+select option {
+    font-size: 0.875rem !important;
+    padding: 0.5rem 0.75rem !important;
+    color: #1f2937 !important;
+    background-color: #ffffff !important;
+}
+
+/* Administrative & Table Filter Toolbar Controls: 14px Typography to prevent text clipping */
+form[method="GET"] select,
+form[method="GET"] input:not([type="checkbox"]):not([type="radio"]),
+.filter-select,
+.table-filter select,
+select.text-sm {
+    font-size: 0.875rem !important; /* 14px administrative baseline */
+    line-height: 1.4 !important;
+    padding-left: 0.75rem !important; /* 12px */
+    padding-right: 2.125rem !important; /* 34px */
+}
+
+form[method="GET"] input::placeholder {
+    font-size: 0.875rem !important;
+}
+
+/* Multi-line Textarea: Resizable, min 96px, 14px padding */
+textarea {
+    min-height: 6rem !important; /* 96px */
+    padding: 0.625rem 0.875rem !important; /* 10px vertical, 14px horizontal */
+    resize: vertical !important;
+}
+
+/* Placeholder Styling: 16px default, muted zinc-400 */
+input::placeholder,
+textarea::placeholder {
+    color: #9ca3af !important; /* zinc-400 */
+    opacity: 1 !important;
+    font-size: 1rem !important;
     line-height: 1.5 !important;
-    padding: 0.6875rem 1rem !important; /* py-2.5 px-4 */
-    border-radius: 0.875rem !important; /* 14px rounded-xl */
-    border: 1px solid #e4e4e7 !important; /* zinc-200 */
-    background-color: #fafafa !important; /* zinc-50 */
-    color: #18181b !important; /* zinc-900 */
-    transition: all 0.15s ease-in-out !important;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02) !important;
 }
 
-main form input.has-prefix-icon,
-main form input[type="text"].has-prefix-icon,
-main form input[type="email"].has-prefix-icon,
-main form input[type="password"].has-prefix-icon {
-    padding-left: 2.75rem !important;
-}
-
-main form input.has-suffix-icon,
-main form input[type="text"].has-suffix-icon,
-main form input[type="email"].has-suffix-icon,
-main form input[type="password"].has-suffix-icon {
-    padding-right: 2.75rem !important;
-}
-
-@media (min-width: 640px) {
-    main form input[type="text"],
-    main form input[type="email"],
-    main form input[type="password"],
-    main form input[type="number"],
-    main form input[type="search"],
-    main form input[type="tel"],
-    main form input[type="url"],
-    main form input[type="date"],
-    main form input[type="datetime-local"],
-    main form select,
-    main form textarea {
-        font-size: 0.9375rem !important; /* 15px */
-        padding: 0.75rem 1.0625rem !important; /* py-3 px-4.25 */
-    }
-}
-
-main form input[type="text"]:hover,
-main form input[type="email"]:hover,
-main form input[type="password"]:hover,
-main form input[type="number"]:hover,
-main form input[type="search"]:hover,
-main form input[type="tel"]:hover,
-main form input[type="url"]:hover,
-main form select:hover,
-main form textarea:hover {
+/* Hover State: Maintain 1px border */
+input[type="text"]:hover:not(:disabled):not([readonly]),
+input[type="email"]:hover:not(:disabled):not([readonly]),
+input[type="password"]:hover:not(:disabled):not([readonly]),
+input[type="number"]:hover:not(:disabled):not([readonly]),
+input[type="search"]:hover:not(:disabled):not([readonly]),
+input[type="tel"]:hover:not(:disabled):not([readonly]),
+input[type="url"]:hover:not(:disabled):not([readonly]),
+input[type="date"]:hover:not(:disabled):not([readonly]),
+input[type="datetime-local"]:hover:not(:disabled):not([readonly]),
+select:hover:not(:disabled):not([readonly]),
+textarea:hover:not(:disabled):not([readonly]) {
     border-color: #d4d4d8 !important; /* zinc-300 */
     background-color: #ffffff !important;
 }
 
-main form input[type="text"]:focus,
-main form input[type="email"]:focus,
-main form input[type="password"]:focus,
-main form input[type="number"]:focus,
-main form input[type="search"]:focus,
-main form input[type="tel"]:focus,
-main form input[type="url"]:focus,
-main form input[type="date"]:focus,
-main form input[type="datetime-local"]:focus,
-main form select:focus,
-main form textarea:focus {
-    background-color: #ffffff !important;
+/* Focus & Focus-Visible State: Crisp halo ring, NO layout shift, NO border clipping */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="date"]:focus,
+input[type="datetime-local"]:focus,
+select:focus,
+textarea:focus,
+input[type="text"]:focus-visible,
+input[type="email"]:focus-visible,
+input[type="password"]:focus-visible,
+input[type="number"]:focus-visible,
+input[type="search"]:focus-visible,
+input[type="tel"]:focus-visible,
+input[type="url"]:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
     border-color: var(--color-brand-600, #e11d2e) !important;
+    border-width: 1px !important;
     outline: none !important;
     box-shadow: 0 0 0 3px rgba(225, 29, 46, 0.15) !important;
+    background-color: #ffffff !important;
 }
 
-main form label {
-    display: block !important;
-    font-size: 0.8125rem !important; /* 13px sm */
-    font-weight: 700 !important;
-    color: #3f3f46 !important; /* zinc-700 */
-    margin-bottom: 0.5rem !important; /* 8px space to prevent dempet */
-    letter-spacing: 0.01em !important;
+/* Disabled & Read-only State */
+input:disabled,
+select:disabled,
+textarea:disabled,
+input[readonly],
+textarea[readonly] {
+    background-color: #f4f4f5 !important; /* zinc-100 */
+    border-color: #e4e4e7 !important;
+    color: #9ca3af !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
 }
 
-@media (min-width: 640px) {
-    main form label {
-        font-size: 0.875rem !important; /* 14px */
-    }
+/* Icon Offset Clearances (Never collide with text or caret) */
+.has-prefix-icon,
+input.has-prefix-icon {
+    padding-left: 2.75rem !important; /* 44px */
+}
+
+.has-suffix-icon,
+input.has-suffix-icon {
+    padding-right: 2.75rem !important; /* 44px */
+}
+
+/* Checkbox & Radio Controls */
+input[type="checkbox"],
+input[type="radio"] {
+    width: 1.125rem !important; /* 18px */
+    height: 1.125rem !important;
+    min-height: 1.125rem !important;
+    border-radius: 0.25rem !important;
+    border: 1.5px solid #d4d4d8 !important;
+    accent-color: var(--color-brand-600, #e11d2e) !important;
+    cursor: pointer !important;
+    margin: 0 !important;
+    vertical-align: middle !important;
+}
+
+input[type="radio"] {
+    border-radius: 9999px !important;
+}
+
+input[type="checkbox"]:focus-visible,
+input[type="radio"]:focus-visible {
+    outline: 2px solid var(--color-brand-600, #e11d2e) !important;
+    outline-offset: 2px !important;
+}
+
+/* Form Labels: 14px, weight 500, spacing 6-8px */
+label.form-label,
+.form-group > label,
+form label:not(.checkbox-label):not(.radio-label):not(.inline-flex):not(.flex):not([for^="remember"]):not(.cursor-pointer) {
+    display: block;
+    font-size: 0.875rem !important; /* 14px */
+    font-weight: 500 !important; /* font-medium */
+    color: #374151 !important; /* zinc-700 */
+    margin-bottom: 0.375rem !important; /* 6px */
+    line-height: 1.4 !important;
+}
+
+/* Form Helper Hints: 13px */
+.form-hint,
+p.form-hint,
+span.form-hint {
+    font-size: 0.8125rem !important; /* 13px */
+    color: #6b7280 !important; /* zinc-500 */
+    margin-top: 0.375rem !important; /* 6px */
+    line-height: 1.4 !important;
+}
+
+/* Form Validation Errors: 13px, weight 500, brand red */
+.form-error,
+p.form-error,
+span.form-error {
+    font-size: 0.8125rem !important; /* 13px */
+    font-weight: 500 !important;
+    color: #e11d2e !important;
+    margin-top: 0.375rem !important; /* 6px */
+    line-height: 1.4 !important;
+}
+
+/* Data Tables: 14px typography */
+table,
+.table {
+    font-size: 0.875rem !important; /* 14px */
+}
+
+table th {
+    font-size: 0.75rem !important; /* 12px uppercase */
+    font-weight: 600 !important;
+    letter-spacing: 0.05em !important;
+    padding: 0.75rem 1rem !important;
+}
+
+table td {
+    font-size: 0.875rem !important; /* 14px */
+    padding: 0.875rem 1rem !important; /* 14px top/bottom, 16px left/right */
+    line-height: 1.5 !important;
+}
+
+/* Primary and Main Action Buttons: 40-44px Height, 14-16px Typography, 8px Radius */
+.btn-primary,
+button.btn-primary,
+a.btn-primary,
+.btn-secondary,
+button.btn-secondary,
+a.btn-secondary,
+button[type="submit"]:not(.inline-action):not([class*="p-1"]):not([class*="p-0"]):not([class*="text-rose-"]):not([class*="text-red-"]):not([class*="hover:text-red"]):not([class*="cursor-pointer"]):not([title*="Hapus"]):not([title*="Delete"]) {
+    min-height: 2.75rem; /* 44px */
+    font-size: 0.9375rem; /* 15px */
+    font-weight: 600;
+    line-height: 1.5;
+    border-radius: 0.5rem; /* 8px */
+    transition: all 0.15s ease-in-out;
 }
 

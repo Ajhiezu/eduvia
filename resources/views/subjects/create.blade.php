@@ -41,11 +41,11 @@
                     </p>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <!-- Code -->
                     <div>
-                        <label for="code" class="block text-xs font-semibold text-zinc-700 mb-1">
-                            Kode Mata Pelajaran <span class="text-zinc-400 font-normal">(Opsional)</span>
+                        <label for="code" class="block text-sm font-medium text-zinc-700 mb-1.5">
+                            Kode Mata Pelajaran <span class="text-zinc-400 font-normal text-xs">(Opsional)</span>
                         </label>
                         <input
                             type="text"
@@ -53,14 +53,14 @@
                             name="code"
                             value="{{ old('code') }}"
                             placeholder="Contoh: MAT-10, BIND-7"
-                            class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 placeholder-zinc-400 font-mono"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 px-3.5 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400 font-mono"
                         >
                     </div>
 
                     <!-- Name -->
                     <div>
-                        <label for="name" class="block text-xs font-semibold text-zinc-700 mb-1">
-                            Nama Mata Pelajaran <span class="text-brand-600">*</span>
+                        <label for="name" class="block text-sm font-medium text-zinc-700 mb-1.5">
+                            Nama Mata Pelajaran <span class="text-[#E11D2E]">*</span>
                         </label>
                         <input
                             type="text"
@@ -69,20 +69,20 @@
                             value="{{ old('name') }}"
                             required
                             placeholder="Contoh: Matematika, Bahasa Indonesia"
-                            class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 placeholder-zinc-400"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 px-3.5 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
                         >
                     </div>
 
                     <!-- Group -->
                     <div>
-                        <label for="group" class="block text-xs font-semibold text-zinc-700 mb-1">
-                            Kelompok Mata Pelajaran <span class="text-brand-600">*</span>
+                        <label for="group" class="block text-sm font-medium text-zinc-700 mb-1.5">
+                            Kelompok Mata Pelajaran <span class="text-[#E11D2E]">*</span>
                         </label>
                         <select
                             id="group"
                             name="group"
                             required
-                            class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 pl-3.5 pr-11 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
                         >
                             <option value="Umum" @selected(old('group') === 'Umum')>Umum / Inti Nasional</option>
                             <option value="Peminatan" @selected(old('group') === 'Peminatan')>Peminatan (MIPA / IPS / Bahasa - SMA)</option>
@@ -93,13 +93,13 @@
 
                     <!-- Educational Level -->
                     <div>
-                        <label for="educational_level" class="block text-xs font-semibold text-zinc-700 mb-1">
+                        <label for="educational_level" class="block text-sm font-medium text-zinc-700 mb-1.5">
                             Jenjang Sekolah
                         </label>
                         <select
                             id="educational_level"
                             name="educational_level"
-                            class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 pl-3.5 pr-11 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
                         >
                             <option value="">Semua Jenjang</option>
                             <option value="sd" @selected(old('educational_level') === 'sd')>SD / MI</option>
@@ -111,13 +111,13 @@
 
                     <!-- Curriculum -->
                     <div>
-                        <label for="curriculum" class="block text-xs font-semibold text-zinc-700 mb-1">
+                        <label for="curriculum" class="block text-sm font-medium text-zinc-700 mb-1.5">
                             Kurikulum
                         </label>
                         <select
                             id="curriculum"
                             name="curriculum"
-                            class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 pl-3.5 pr-11 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
                         >
                             <option value="merdeka" @selected(old('curriculum', 'merdeka') === 'merdeka')>Kurikulum Merdeka</option>
                             <option value="k13" @selected(old('curriculum') === 'k13')>Kurikulum 2013 (K-13)</option>
@@ -127,8 +127,8 @@
 
                     <!-- Credit Hours -->
                     <div>
-                        <label for="credit_hours" class="block text-xs font-semibold text-zinc-700 mb-1">
-                            Beban Belajar Mingguan (JP) <span class="text-brand-600">*</span>
+                        <label for="credit_hours" class="block text-sm font-medium text-zinc-700 mb-1.5">
+                            Beban Belajar Mingguan (JP) <span class="text-[#E11D2E]">*</span>
                         </label>
                         <input
                             type="number"
@@ -138,14 +138,14 @@
                             max="20"
                             value="{{ old('credit_hours', 2) }}"
                             required
-                            class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 font-mono"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 px-3.5 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 font-mono"
                         >
                     </div>
 
                     <!-- Academic Program (SMA/SMK Specific) -->
                     <div class="sm:col-span-2">
-                        <label for="academic_program" class="block text-xs font-semibold text-zinc-700 mb-1">
-                            Peminatan / Konsentrasi Keahlian <span class="text-zinc-400 font-normal">(Khusus SMA / SMK, misal: MIPA, IPS, TKJ, RPL)</span>
+                        <label for="academic_program" class="block text-sm font-medium text-zinc-700 mb-1.5">
+                            Peminatan / Konsentrasi Keahlian <span class="text-zinc-400 font-normal text-xs">(Khusus SMA / SMK, misal: MIPA, IPS, TKJ, RPL)</span>
                         </label>
                         <input
                             type="text"
@@ -153,13 +153,13 @@
                             name="academic_program"
                             value="{{ old('academic_program') }}"
                             placeholder="Contoh: MIPA, Teknik Komputer dan Jaringan, Otomatisasi Tata Kelola Perkantoran"
-                            class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 placeholder-zinc-400"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 px-3.5 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
                         >
                     </div>
 
                     <!-- Order -->
                     <div>
-                        <label for="order" class="block text-xs font-semibold text-zinc-700 mb-1">
+                        <label for="order" class="block text-sm font-medium text-zinc-700 mb-1.5">
                             Urutan Tampilan
                         </label>
                         <input
@@ -168,7 +168,7 @@
                             name="order"
                             min="0"
                             value="{{ old('order', 0) }}"
-                            class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 font-mono"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 px-3.5 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 font-mono"
                         >
                     </div>
 
@@ -183,30 +183,30 @@
                                 @checked(old('is_active', true))
                             >
                             <div class="w-9 h-5 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
-                            <span class="ml-3 text-xs font-semibold text-zinc-700">Mata Pelajaran Aktif</span>
+                            <span class="ml-3 text-sm font-medium text-zinc-700">Mata Pelajaran Aktif</span>
                         </label>
                     </div>
 
                     <!-- Description / Learning Outcomes -->
                     <div class="sm:col-span-2">
-                        <label for="description" class="block text-xs font-semibold text-zinc-700 mb-1">
-                            Deskripsi / Capaian Pembelajaran <span class="text-zinc-400 font-normal">(Opsional)</span>
+                        <label for="description" class="block text-sm font-medium text-zinc-700 mb-1.5">
+                            Deskripsi / Capaian Pembelajaran <span class="text-zinc-400 font-normal text-xs">(Opsional)</span>
                         </label>
                         <textarea
                             id="description"
                             name="description"
                             rows="3"
                             placeholder="Ringkasan ruang lingkup materi atau capaian pembelajaran mata pelajaran..."
-                            class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 placeholder-zinc-400"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 px-3.5 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400 min-h-[96px]"
                         >{{ old('description') }}</textarea>
                     </div>
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-zinc-200">
-                    <x-button href="{{ route('subjects.index') }}" variant="outline" size="sm">
+                    <x-button href="{{ route('subjects.index') }}" variant="outline" size="md">
                         Batal
                     </x-button>
-                    <x-button type="submit" variant="primary" size="sm">
+                    <x-button type="submit" variant="primary" size="md">
                         Simpan Mata Pelajaran
                     </x-button>
                 </div>

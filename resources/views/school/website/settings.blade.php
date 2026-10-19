@@ -53,7 +53,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold text-zinc-700 mb-1">
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">
                         Slug Alamat Website <span class="text-rose-500">*</span>
                     </label>
                     <div class="flex items-center">
@@ -62,11 +62,11 @@
                         </span>
                         <input type="text" name="slug" value="{{ old('slug', $school->slug) }}" required pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$" class="w-full px-3 py-2 text-xs rounded-r-xl border border-zinc-200 focus:outline-none focus:border-[#E11D2E] focus:ring-1 focus:ring-[#E11D2E] font-mono">
                     </div>
-                    <span class="text-[11px] text-zinc-400 mt-1 block">Hanya huruf kecil, angka, dan tanda hubung (-). Contoh: <code>nusantara-utama</code></span>
+                    <span class="text-[13px] text-zinc-500 mt-1.5 block">Hanya huruf kecil, angka, dan tanda hubung (-). Contoh: <code>nusantara-utama</code></span>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-zinc-700 mb-1">
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">
                         Status Keterlihatan Publik <span class="text-rose-500">*</span>
                     </label>
                     <select name="public_website_enabled" class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200 focus:outline-none focus:border-[#E11D2E] focus:ring-1 focus:ring-[#E11D2E]">
@@ -77,13 +77,13 @@
                             Nonaktif (Hanya administrator yang dapat melihat pratinjau)
                         </option>
                     </select>
-                    <span class="text-[11px] text-zinc-400 mt-1 block">Jika nonaktif, pengunjung anonim tidak dapat melihat data internal sekolah.</span>
+                    <span class="text-[13px] text-zinc-500 mt-1.5 block">Jika nonaktif, pengunjung anonim tidak dapat melihat data internal sekolah.</span>
                 </div>
             </div>
 
             <!-- Theme Color Setting -->
             <div class="pt-4 border-t border-zinc-100">
-                <label class="block text-xs font-bold text-zinc-700 mb-1">
+                <label class="block text-sm font-medium text-zinc-700 mb-1.5">
                     Tema Warna Publik Sekolah (Brand Accent)
                 </label>
                 <div class="flex items-center gap-3">
@@ -97,7 +97,7 @@
                         <button type="button" onclick="document.getElementById('theme_color_input').value = '#0F766E'; document.getElementById('theme_color_picker').value = '#0F766E';" class="w-6 h-6 rounded-full bg-[#0F766E] border-2 border-white shadow-2xs hover:scale-110 transition-transform" title="Teal"></button>
                     </div>
                 </div>
-                <span class="text-[11px] text-zinc-400 mt-1 block">Warna aksen utama yang tampil pada tombol, badge, dan highlight navigasi halaman publik sekolah Anda.</span>
+                <span class="text-[13px] text-zinc-500 mt-1.5 block">Warna aksen utama yang tampil pada tombol, badge, dan highlight navigasi halaman publik sekolah Anda.</span>
             </div>
         </div>
 
@@ -110,33 +110,33 @@
 
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-zinc-700 mb-1">Judul / Headline Utama</label>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Judul / Headline Utama</label>
                     <input type="text" name="hero_headline" value="{{ old('hero_headline', $setting->hero_headline) }}" placeholder="Mewujudkan Generasi Unggul, Berkarakter..." class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200 focus:outline-none focus:border-[#E11D2E]">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-zinc-700 mb-1">Subjudul / Deskripsi Pendukung</label>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Subjudul / Deskripsi Pendukung</label>
                     <textarea name="hero_subheadline" rows="2" placeholder="Penjelasan singkat visi dan lingkungan belajar sekolah..." class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200 focus:outline-none focus:border-[#E11D2E]">{{ old('hero_subheadline', $setting->hero_subheadline) }}</textarea>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-zinc-700 mb-1">Teks Tombol CTA</label>
+                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">Teks Tombol CTA</label>
                         <input type="text" name="hero_cta_text" value="{{ old('hero_cta_text', $setting->hero_cta_text) }}" placeholder="Jelajahi Profil Sekolah" class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-zinc-700 mb-1">Tautan / Target Tombol CTA</label>
+                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">Tautan / Target Tombol CTA</label>
                         <input type="text" name="hero_cta_url" value="{{ old('hero_cta_url', $setting->hero_cta_url) }}" placeholder="#profil atau /s/nama-sekolah/profile" class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                     <div>
-                        <label class="block text-xs font-bold text-zinc-700 mb-1">Tautan Video Profil (Opsional)</label>
+                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">Tautan Video Profil (Opsional)</label>
                         <input type="url" name="hero_video_url" value="{{ old('hero_video_url', $setting->hero_video_url) }}" placeholder="https://youtube.com/watch?v=..." class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-zinc-700 mb-1">Unggah Gambar Latar Hero (Maks 3MB)</label>
+                        <label class="block text-sm font-medium text-zinc-700 mb-1.5">Unggah Gambar Latar Hero (Maks 3MB)</label>
                         <input type="file" name="hero_image" accept="image/jpeg,image/png,image/webp" class="w-full text-xs text-zinc-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200">
                         @if ($setting->heroImageUrl())
                             <div class="mt-2 flex items-center justify-between p-2 rounded-xl bg-zinc-50 border border-zinc-200">
@@ -164,22 +164,22 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold text-zinc-700 mb-1">Nama Lengkap & Gelar</label>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Nama Lengkap & Gelar</label>
                     <input type="text" name="principal_name" value="{{ old('principal_name', $setting->principal_name) }}" placeholder="Drs. H. Mulyadi Kartodirdjo, M.Pd." class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-zinc-700 mb-1">Jabatan Resmi</label>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Jabatan Resmi</label>
                     <input type="text" name="principal_title" value="{{ old('principal_title', $setting->principal_title) }}" placeholder="Ketua Yayasan / Direktur Pendidikan Nusantara Utama" class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200">
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
                 <div class="md:col-span-2">
-                    <label class="block text-xs font-bold text-zinc-700 mb-1">Teks Sambutan</label>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Teks Sambutan</label>
                     <textarea name="welcome_message" rows="5" placeholder="Pesan sambutan resmi untuk menyambut siswa baru dan wali murid..." class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200 leading-relaxed">{{ old('welcome_message', $setting->welcome_message) }}</textarea>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-zinc-700 mb-1">Foto Formal Kepala Sekolah</label>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Foto Formal Kepala Sekolah</label>
                     <input type="file" name="principal_photo" accept="image/jpeg,image/png,image/webp" class="w-full text-xs text-zinc-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200">
                     @if ($setting->principalPhotoUrl())
                         <div class="mt-2 flex items-center justify-between p-2 rounded-xl bg-zinc-50 border border-zinc-200">
@@ -205,23 +205,23 @@
             </h2>
 
             <div>
-                <label class="block text-xs font-bold text-zinc-700 mb-1">Visi Sekolah</label>
+                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Visi Sekolah</label>
                 <textarea name="vision" rows="2" class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200 leading-relaxed">{{ old('vision', $setting->vision) }}</textarea>
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-zinc-700 mb-1">
+                <label class="block text-sm font-medium text-zinc-700 mb-1.5">
                     Misi Sekolah (Tulis 1 poin misi per baris)
                 </label>
                 @php
                     $missionText = is_array($setting->mission) ? implode("\n", $setting->mission) : ($setting->mission ?? '');
                 @endphp
                 <textarea name="mission" rows="4" class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200 leading-relaxed font-sans" placeholder="Misi 1&#10;Misi 2&#10;Misi 3">{{ old('mission', $missionText) }}</textarea>
-                <span class="text-[11px] text-zinc-400 mt-1 block">Setiap baris baru akan otomatis dijadikan satu nomor butir misi.</span>
+                <span class="text-[13px] text-zinc-500 mt-1.5 block">Setiap baris baru akan otomatis dijadikan satu nomor butir misi.</span>
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-zinc-700 mb-1">Sejarah Singkat Lembaga</label>
+                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Sejarah Singkat Lembaga</label>
                 <textarea name="history" rows="4" class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200 leading-relaxed">{{ old('history', $setting->history) }}</textarea>
             </div>
         </div>
@@ -235,31 +235,31 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold text-zinc-700 mb-1">Predikat Akreditasi</label>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Predikat Akreditasi</label>
                     <input type="text" name="accreditation_grade" value="{{ old('accreditation_grade', $setting->accreditation_grade) }}" placeholder="Contoh: A (Unggul)" class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-zinc-700 mb-1">Nomor SK Akreditasi (Opsional)</label>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Nomor SK Akreditasi (Opsional)</label>
                     <input type="text" name="accreditation_no" value="{{ old('accreditation_no', $setting->accreditation_no) }}" placeholder="028/BAN-SM/SK/2023" class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200">
                 </div>
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-zinc-700 mb-1">Tautan Embed Google Maps (iframe src)</label>
+                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Tautan Embed Google Maps (iframe src)</label>
                 <input type="text" name="maps_embed_url" value="{{ old('maps_embed_url', $setting->maps_embed_url) }}" placeholder="https://www.google.com/maps/embed?pb=..." class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200 font-mono">
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-xs font-bold text-zinc-700 mb-1">Facebook URL</label>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Facebook URL</label>
                     <input type="url" name="facebook_url" value="{{ old('facebook_url', $setting->social_links['facebook'] ?? '') }}" placeholder="https://facebook.com/..." class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-zinc-700 mb-1">Instagram URL</label>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Instagram URL</label>
                     <input type="url" name="instagram_url" value="{{ old('instagram_url', $setting->social_links['instagram'] ?? '') }}" placeholder="https://instagram.com/..." class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-zinc-700 mb-1">YouTube URL</label>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">YouTube URL</label>
                     <input type="url" name="youtube_url" value="{{ old('youtube_url', $setting->social_links['youtube'] ?? '') }}" placeholder="https://youtube.com/@..." class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200">
                 </div>
             </div>
@@ -273,13 +273,13 @@
             </h2>
 
             <div>
-                <label class="block text-xs font-bold text-zinc-700 mb-1">Meta Description (Maks 300 Karakter)</label>
+                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Meta Description (Maks 300 Karakter)</label>
                 <textarea name="meta_description" rows="2" maxlength="300" class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200">{{ old('meta_description', $setting->meta_description) }}</textarea>
-                <span class="text-[11px] text-zinc-400 mt-1 block">Deskripsi yang muncul pada hasil pencarian Google & pratinjau tautan media sosial.</span>
+                <span class="text-[13px] text-zinc-500 mt-1.5 block">Deskripsi yang muncul pada hasil pencarian Google & pratinjau tautan media sosial.</span>
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-zinc-700 mb-1">Meta Kata Kunci (Keywords)</label>
+                <label class="block text-sm font-medium text-zinc-700 mb-1.5">Meta Kata Kunci (Keywords)</label>
                 <input type="text" name="meta_keywords" value="{{ old('meta_keywords', $setting->meta_keywords) }}" placeholder="SMP Terbaik Jakarta, PPDB Online..." class="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200">
             </div>
         </div>

@@ -52,7 +52,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="sm:col-span-2">
-                        <label for="name" class="block text-xs font-semibold text-zinc-700 mb-1">
+                        <label for="name" class="block text-sm font-medium text-zinc-700 mb-1.5">
                             Nama Lengkap & Gelar <span class="text-rose-500">*</span>
                         </label>
                         <input
@@ -66,7 +66,7 @@
                     </div>
 
                     <div>
-                        <label for="email" class="block text-xs font-semibold text-zinc-700 mb-1">
+                        <label for="email" class="block text-sm font-medium text-zinc-700 mb-1.5">
                             Alamat Email <span class="text-rose-500">*</span>
                         </label>
                         <input
@@ -80,7 +80,7 @@
                     </div>
 
                     <div>
-                        <label for="phone" class="block text-xs font-semibold text-zinc-700 mb-1">
+                        <label for="phone" class="block text-sm font-medium text-zinc-700 mb-1.5">
                             Nomor Telepon / WhatsApp
                         </label>
                         <input
@@ -93,7 +93,7 @@
                     </div>
 
                     <div>
-                        <label for="role" class="block text-xs font-semibold text-zinc-700 mb-1">
+                        <label for="role" class="block text-sm font-medium text-zinc-700 mb-1.5">
                             Peran Akses Sistem (Role) <span class="text-rose-500">*</span>
                         </label>
                         <select
@@ -116,7 +116,7 @@
                     </div>
 
                     <div>
-                        <label for="position" class="block text-xs font-semibold text-zinc-700 mb-1">
+                        <label for="position" class="block text-sm font-medium text-zinc-700 mb-1.5">
                             Jabatan Kepegawaian <span class="text-rose-500">*</span>
                         </label>
                         <select
@@ -134,7 +134,7 @@
                     </div>
 
                     <div>
-                        <label for="work_unit" class="block text-xs font-semibold text-zinc-700 mb-1">
+                        <label for="work_unit" class="block text-sm font-medium text-zinc-700 mb-1.5">
                             Unit Kerja / Divisi
                         </label>
                         <input
@@ -147,7 +147,7 @@
                     </div>
 
                     <div>
-                        <label for="status" class="block text-xs font-semibold text-zinc-700 mb-1">
+                        <label for="status" class="block text-sm font-medium text-zinc-700 mb-1.5">
                             Status Keaktifan Akun <span class="text-rose-500">*</span>
                         </label>
                         <select
@@ -175,7 +175,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                        <label for="nip" class="block text-xs font-semibold text-zinc-700 mb-1">NIP</label>
+                        <label for="nip" class="block text-sm font-medium text-zinc-700 mb-1.5">NIP</label>
                         <input
                             type="text"
                             name="nip"
@@ -186,7 +186,7 @@
                     </div>
 
                     <div>
-                        <label for="nuptk" class="block text-xs font-semibold text-zinc-700 mb-1">NUPTK</label>
+                        <label for="nuptk" class="block text-sm font-medium text-zinc-700 mb-1.5">NUPTK</label>
                         <input
                             type="text"
                             name="nuptk"
@@ -197,7 +197,7 @@
                     </div>
 
                     <div>
-                        <label for="nik" class="block text-xs font-semibold text-zinc-700 mb-1">NIK</label>
+                        <label for="nik" class="block text-sm font-medium text-zinc-700 mb-1.5">NIK</label>
                         <input
                             type="text"
                             name="nik"
@@ -208,7 +208,7 @@
                     </div>
 
                     <div>
-                        <label for="gender" class="block text-xs font-semibold text-zinc-700 mb-1">Jenis Kelamin <span class="text-rose-500">*</span></label>
+                        <label for="gender" class="block text-sm font-medium text-zinc-700 mb-1.5">Jenis Kelamin <span class="text-rose-500">*</span></label>
                         <select
                             name="gender"
                             id="gender"
@@ -221,7 +221,7 @@
                     </div>
 
                     <div>
-                        <label for="birth_place" class="block text-xs font-semibold text-zinc-700 mb-1">Tempat Lahir</label>
+                        <label for="birth_place" class="block text-sm font-medium text-zinc-700 mb-1.5">Tempat Lahir</label>
                         <input
                             type="text"
                             name="birth_place"
@@ -232,7 +232,7 @@
                     </div>
 
                     <div>
-                        <label for="birth_date" class="block text-xs font-semibold text-zinc-700 mb-1">Tanggal Lahir</label>
+                        <label for="birth_date" class="block text-sm font-medium text-zinc-700 mb-1.5">Tanggal Lahir</label>
                         <input
                             type="date"
                             name="birth_date"
@@ -243,7 +243,7 @@
                     </div>
 
                     <div>
-                        <label for="employment_status" class="block text-xs font-semibold text-zinc-700 mb-1">Status Kepegawaian <span class="text-rose-500">*</span></label>
+                        <label for="employment_status" class="block text-sm font-medium text-zinc-700 mb-1.5">Status Kepegawaian <span class="text-rose-500">*</span></label>
                         <select
                             name="employment_status"
                             id="employment_status"
@@ -261,7 +261,7 @@
                     </div>
 
                     <div>
-                        <label for="join_date" class="block text-xs font-semibold text-zinc-700 mb-1">Tanggal Mulai Tugas</label>
+                        <label for="join_date" class="block text-sm font-medium text-zinc-700 mb-1.5">Tanggal Mulai Tugas</label>
                         <input
                             type="date"
                             name="join_date"
@@ -272,7 +272,7 @@
                     </div>
 
                     <div>
-                        <label for="last_education" class="block text-xs font-semibold text-zinc-700 mb-1">Pendidikan Terakhir</label>
+                        <label for="last_education" class="block text-sm font-medium text-zinc-700 mb-1.5">Pendidikan Terakhir</label>
                         <input
                             type="text"
                             name="last_education"
@@ -283,7 +283,7 @@
                     </div>
 
                     <div class="sm:col-span-3">
-                        <label for="address" class="block text-xs font-semibold text-zinc-700 mb-1">Alamat Domisili</label>
+                        <label for="address" class="block text-sm font-medium text-zinc-700 mb-1.5">Alamat Domisili</label>
                         <textarea
                             name="address"
                             id="address"
@@ -293,7 +293,7 @@
                     </div>
 
                     <div class="sm:col-span-3">
-                        <label for="notes" class="block text-xs font-semibold text-zinc-700 mb-1">Catatan Tambahan</label>
+                        <label for="notes" class="block text-sm font-medium text-zinc-700 mb-1.5">Catatan Tambahan</label>
                         <textarea
                             name="notes"
                             id="notes"
@@ -324,7 +324,7 @@
 
                 <div x-show="changePassword" x-transition class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label for="password" class="block text-xs font-semibold text-zinc-700 mb-1">
+                        <label for="password" class="block text-sm font-medium text-zinc-700 mb-1.5">
                             Kata Sandi Baru <span class="text-rose-500">*</span>
                         </label>
                         <input
@@ -337,7 +337,7 @@
                     </div>
 
                     <div>
-                        <label for="password_confirmation" class="block text-xs font-semibold text-zinc-700 mb-1">
+                        <label for="password_confirmation" class="block text-sm font-medium text-zinc-700 mb-1.5">
                             Konfirmasi Kata Sandi Baru <span class="text-rose-500">*</span>
                         </label>
                         <input

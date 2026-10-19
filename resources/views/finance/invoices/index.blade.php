@@ -63,19 +63,19 @@
         <form method="GET" action="{{ route('finance.invoices.index') }}" class="bg-white p-4 rounded-2xl border border-zinc-200 shadow-xs space-y-3">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
                 <div>
-                    <label class="block font-semibold text-zinc-700 mb-1">Cari Siswa / Nomor Tagihan</label>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Cari Siswa / Nomor Tagihan</label>
                     <input
                         type="text"
                         name="search"
                         value="{{ request('search') }}"
                         placeholder="Ketik nama siswa, NIS, atau no INV..."
-                        class="w-full px-3 py-2 rounded-lg border border-zinc-300 focus:ring-2 focus:ring-brand-500"
+                        class="w-full px-3.5 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
                     >
                 </div>
                 <div>
-                    <label class="block font-semibold text-zinc-700 mb-1">Status Pembayaran</label>
-                    <select name="status" class="w-full px-3 py-2 rounded-lg border border-zinc-300 focus:ring-2 focus:ring-brand-500">
-                        <option value="">-- Semua Status --</option>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Status Pembayaran</label>
+                    <select name="status" class="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20">
+                        <option value="">Semua Status</option>
                         <option value="issued" {{ request('status') === 'issued' ? 'selected' : '' }}>Diterbitkan (Belum Bayar)</option>
                         <option value="partially_paid" {{ request('status') === 'partially_paid' ? 'selected' : '' }}>Sebagian Dibayar</option>
                         <option value="paid" {{ request('status') === 'paid' ? 'selected' : '' }}>Lunas</option>
@@ -85,27 +85,27 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block font-semibold text-zinc-700 mb-1">Tahun Ajaran</label>
-                    <select name="academic_year_id" class="w-full px-3 py-2 rounded-lg border border-zinc-300 focus:ring-2 focus:ring-brand-500">
-                        <option value="">-- Semua Tahun Ajaran --</option>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Tahun Ajaran</label>
+                    <select name="academic_year_id" class="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20">
+                        <option value="">Semua Tahun Ajaran</option>
                         @foreach ($academicYears as $ay)
                             <option value="{{ $ay->id }}" {{ request('academic_year_id') == $ay->id ? 'selected' : '' }}>{{ $ay->name }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
-                    <label class="block font-semibold text-zinc-700 mb-1">Kelas / Rombel</label>
-                    <select name="classroom_id" class="w-full px-3 py-2 rounded-lg border border-zinc-300 focus:ring-2 focus:ring-brand-500">
-                        <option value="">-- Semua Kelas --</option>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Kelas / Rombel</label>
+                    <select name="classroom_id" class="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20">
+                        <option value="">Semua Kelas</option>
                         @foreach ($classrooms as $cr)
                             <option value="{{ $cr->id }}" {{ request('classroom_id') == $cr->id ? 'selected' : '' }}>Kelas {{ $cr->name }}</option>
                         @endforeach
                     </select>
                 </div>
             </div>
-            <div class="flex items-center justify-end gap-2 pt-2 border-t border-zinc-100">
-                <a href="{{ route('finance.invoices.index') }}" class="px-3 py-1.5 rounded-lg border border-zinc-300 text-zinc-600 text-xs font-semibold hover:bg-zinc-50">Reset</a>
-                <button type="submit" class="px-4 py-1.5 rounded-lg bg-zinc-900 text-white text-xs font-semibold hover:bg-zinc-800">Terapkan Filter</button>
+            <div class="flex items-center justify-end gap-3 pt-3 border-t border-zinc-100">
+                <a href="{{ route('finance.invoices.index') }}" class="px-4 py-2.5 rounded-lg border border-zinc-200 text-zinc-600 text-sm font-medium hover:bg-zinc-50 transition-colors">Reset</a>
+                <button type="submit" class="px-5 py-2.5 rounded-lg bg-zinc-900 text-white text-sm font-semibold hover:bg-zinc-800 transition-colors">Terapkan Filter</button>
             </div>
         </form>
 

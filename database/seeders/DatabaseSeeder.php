@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $defaultPassword = Hash::make('Password123!');
+        $defaultPassword = Hash::make('password');
 
         // 1. Super Admin Platform
         User::firstOrCreate(

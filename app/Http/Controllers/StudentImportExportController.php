@@ -7,6 +7,7 @@ use App\Models\Classroom;
 use App\Models\School;
 use App\Models\StudentProfile;
 use App\Models\User;
+use App\Support\CsvSanitizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -374,7 +375,7 @@ class StudentImportExportController extends Controller
                         ->where('enrollment_status', 'active')
                         ->first();
 
-                    fputcsv($handle, [
+                    fputcsv($handle, CsvSanitizer::sanitizeRow([
                         $student->id,
                         $student->name,
                         $student->email,
@@ -388,7 +389,7 @@ class StudentImportExportController extends Controller
                         $profile?->parent_name ?? '-',
                         $profile?->parent_phone ?? '-',
                         $student->phone ?? '-',
-                    ]);
+                    ]));
                 }
             });
 

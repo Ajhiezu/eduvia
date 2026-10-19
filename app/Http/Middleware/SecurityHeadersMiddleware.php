@@ -32,6 +32,20 @@ class SecurityHeadersMiddleware
         // Restrict unnecessary browser device features
         $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
 
+        // Content Security Policy (CSP) Defense-in-Depth
+        $cspPolicy = implode('; ', [
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net",
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.bunny.net",
+            "font-src 'self' https://fonts.gstatic.com https://fonts.bunny.net data:",
+            "img-src 'self' data: https: blob:",
+            "connect-src 'self' https://app.sandbox.midtrans.com https://api.sandbox.midtrans.com https://app.midtrans.com https://api.midtrans.com",
+            "frame-src 'self' https://app.sandbox.midtrans.com https://app.midtrans.com",
+            "object-src 'none'",
+            "base-uri 'self'",
+        ]);
+        $response->headers->set('Content-Security-Policy', $cspPolicy);
+
         // Enforce HTTPS HSTS only in production environments
         if (app()->environment('production')) {
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');

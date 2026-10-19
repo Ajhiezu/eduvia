@@ -61,6 +61,25 @@ class HealthCheckController extends Controller
             //
         }
 
+        $queueStatus = 'healthy';
+        $queuePendingJobs = 0;
+        try {
+            $queuePendingJobs = DB::table('jobs')->count();
+            if ($queuePendingJobs > 500) {
+                $queueStatus = 'degraded';
+            }
+        } catch (Throwable $e) {
+            $queueStatus = 'unhealthy';
+        }
+
+        $aiStatus = 'operational';
+        $activeAiQuotas = 0;
+        try {
+            $activeAiQuotas = DB::table('school_ai_quotas')->where('is_active', true)->count();
+        } catch (Throwable $e) {
+            //
+        }
+
         $isHealthy = ($dbStatus === 'healthy' && $cacheStatus === 'healthy' && $storageStatus === 'healthy');
 
         $payload = [
@@ -86,6 +105,15 @@ class HealthCheckController extends Controller
                 'storage' => [
                     'disk' => 'local',
                     'status' => $storageStatus,
+                ],
+                'queue' => [
+                    'connection' => config('queue.default'),
+                    'status' => $queueStatus,
+                    'pending_jobs' => $queuePendingJobs,
+                ],
+                'ai_engine' => [
+                    'status' => $aiStatus,
+                    'active_school_quotas' => $activeAiQuotas,
                 ],
                 'multi_tenancy' => [
                     'status' => 'operational',

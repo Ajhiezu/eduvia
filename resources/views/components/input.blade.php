@@ -29,9 +29,9 @@
         </label>
     @endif
 
-    <div class="relative rounded-2xl shadow-2xs">
+    <div class="relative rounded-2xl shadow-2xs group">
         @if (isset($prefixIcon))
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-zinc-400">
+            <div class="absolute inset-y-0 left-0 pl-3.5 sm:pl-4 flex items-center pointer-events-none text-zinc-400 group-focus-within:text-[#E11D2E] transition-colors z-10">
                 {{ $prefixIcon }}
             </div>
         @endif
@@ -42,12 +42,14 @@
             name="{{ $name }}"
             value="{{ old($name, $value) }}"
             placeholder="{{ $placeholder }}"
+            @if (isset($prefixIcon)) data-has-prefix="true" @endif
+            @if (isset($suffixIcon)) data-has-suffix="true" @endif
             {{ $required ? 'required' : '' }}
             {{ $disabled ? 'disabled' : '' }}
             {{ $attributes->merge([
                 'class' => 'w-full rounded-2xl border bg-zinc-50/70 hover:bg-white focus:bg-white text-zinc-900 placeholder:text-zinc-400 text-sm sm:text-base transition-all py-3 sm:py-3.5 '
-                    . (isset($prefixIcon) ? 'pl-11 ' : 'px-4 ')
-                    . (isset($suffixIcon) ? 'pr-11 ' : 'pr-4 ')
+                    . (isset($prefixIcon) ? 'has-prefix-icon !pl-11 sm:!pl-12 ' : 'px-4 ')
+                    . (isset($suffixIcon) ? 'has-suffix-icon !pr-11 sm:!pr-12 ' : 'pr-4 ')
                     . ($hasError
                         ? 'border-rose-300 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
                         : 'border-zinc-200 hover:border-zinc-300 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20')
@@ -56,7 +58,7 @@
         />
 
         @if (isset($suffixIcon))
-            <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400">
+            <div class="absolute inset-y-0 right-0 pr-3.5 sm:pr-4 flex items-center text-zinc-400 group-focus-within:text-zinc-600 transition-colors z-10">
                 {{ $suffixIcon }}
             </div>
         @endif

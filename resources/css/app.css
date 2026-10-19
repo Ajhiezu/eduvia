@@ -127,6 +127,11 @@
     color: var(--color-brand-600);
 }
 
+/* Prevent Alpine x-cloak flash */
+[x-cloak] {
+    display: none !important;
+}
+
 /* ==========================================================================
    Refined Form Inputs System — Dashboard & Modul (Landing Page Standard)
    ========================================================================== */
@@ -143,13 +148,46 @@ main form select,
 main form textarea {
     font-size: 0.875rem !important; /* 14px text-sm minimum */
     line-height: 1.5 !important;
-    padding: 0.6875rem 1rem !important; /* py-2.5 px-4 */
+    padding-top: 0.6875rem !important; /* py-2.5 */
+    padding-bottom: 0.6875rem !important;
     border-radius: 0.875rem !important; /* 14px rounded-xl */
     border: 1px solid #e4e4e7 !important; /* zinc-200 */
     background-color: #fafafa !important; /* zinc-50 */
     color: #18181b !important; /* zinc-900 */
     transition: all 0.15s ease-in-out !important;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02) !important;
+}
+
+/* Standard inputs horizontal padding (when no prefix or suffix icons present) */
+main form input[type="text"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
+main form input[type="email"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
+main form input[type="password"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
+main form input[type="number"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
+main form input[type="search"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
+main form input[type="tel"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
+main form input[type="url"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
+main form input[type="date"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
+main form input[type="datetime-local"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
+main form select,
+main form textarea {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+/* Explicit generous padding-left for inputs with prefix icons to prevent text overlapping */
+main form input.has-prefix-icon,
+main form input[data-has-prefix="true"],
+main form input[class*="pl-11"],
+main form input[class*="pl-12"] {
+    padding-left: 2.75rem !important; /* 44px text clearance past the icon */
+}
+
+/* Explicit generous padding-right for inputs with suffix icons */
+main form input.has-suffix-icon,
+main form input[data-has-suffix="true"],
+main form input[class*="pr-11"],
+main form input[class*="pr-12"] {
+    padding-right: 2.75rem !important;
 }
 
 @media (min-width: 640px) {
@@ -165,7 +203,37 @@ main form textarea {
     main form select,
     main form textarea {
         font-size: 0.9375rem !important; /* 15px */
-        padding: 0.75rem 1.0625rem !important; /* py-3 px-4.25 */
+        padding-top: 0.75rem !important; /* py-3 */
+        padding-bottom: 0.75rem !important;
+    }
+
+    main form input[type="text"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
+    main form input[type="email"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
+    main form input[type="password"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
+    main form input[type="number"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
+    main form input[type="search"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
+    main form input[type="tel"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
+    main form input[type="url"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
+    main form input[type="date"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
+    main form input[type="datetime-local"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
+    main form select,
+    main form textarea {
+        padding-left: 1.0625rem !important;
+        padding-right: 1.0625rem !important;
+    }
+
+    main form input.has-prefix-icon,
+    main form input[data-has-prefix="true"],
+    main form input[class*="pl-11"],
+    main form input[class*="pl-12"] {
+        padding-left: 3rem !important; /* 48px clean breathing room on desktop */
+    }
+
+    main form input.has-suffix-icon,
+    main form input[data-has-suffix="true"],
+    main form input[class*="pr-11"],
+    main form input[class*="pr-12"] {
+        padding-right: 3rem !important;
     }
 }
 

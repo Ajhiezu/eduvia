@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToSchool;
 use Database\Factories\AcademicYearFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,7 +23,7 @@ use Illuminate\Support\Facades\DB;
 class AcademicYear extends Model
 {
     /** @use HasFactory<AcademicYearFactory> */
-    use HasFactory;
+    use BelongsToSchool, HasFactory;
 
     /**
      * Get attributes cast types.

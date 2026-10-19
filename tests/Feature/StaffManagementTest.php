@@ -304,9 +304,9 @@ class StaffManagementTest extends TestCase
             'employment_status' => 'gty',
         ]);
 
-        // Attempting to view staff from other school yields 403 Forbidden
+        // Attempting to view staff from other school yields 403 or 404
         $response = $this->actingAs($this->schoolAdmin)->get(route('staff.show', $otherTeacher));
-        $response->assertForbidden();
+        $this->assertTrue(in_array($response->getStatusCode(), [403, 404]), 'Cross-tenant staff view must be denied with 403 or 404.');
     }
 
     public function test_school_admin_can_toggle_active_status_and_audit_log_created(): void

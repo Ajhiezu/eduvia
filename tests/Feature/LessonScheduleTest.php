@@ -478,8 +478,11 @@ class LessonScheduleTest extends TestCase
             'teaching_assignment_id' => $ta->id,
         ]);
 
-        $this->actingAs($admin2)->get(route('schedules.edit', $scheduleSchool1))->assertStatus(403);
-        $this->actingAs($admin2)->delete(route('schedules.destroy', $scheduleSchool1))->assertStatus(403);
+        $editRes = $this->actingAs($admin2)->get(route('schedules.edit', $scheduleSchool1));
+        $this->assertTrue(in_array($editRes->getStatusCode(), [403, 404]), 'Cross-tenant schedule edit must be denied with 403 or 404.');
+
+        $delRes = $this->actingAs($admin2)->delete(route('schedules.destroy', $scheduleSchool1));
+        $this->assertTrue(in_array($delRes->getStatusCode(), [403, 404]), 'Cross-tenant schedule delete must be denied with 403 or 404.');
     }
 
     /**

@@ -71,6 +71,7 @@ class StudentManagementTest extends TestCase
     public function test_admin_can_view_student_list_and_search(): void
     {
         $targetUser = User::factory()->create([
+            'school_id' => $this->school->id,
             'name' => 'Budi Santoso',
             'email' => 'budi.santoso@eduvia.test',
             'role' => UserRole::STUDENT,

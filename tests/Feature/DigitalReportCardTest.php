@@ -456,9 +456,9 @@ class DigitalReportCardTest extends TestCase
         $responseDraft = $this->get(route('student.reports.show', $draftReport));
         $responseDraft->assertStatus(404);
 
-        // 3. Student cannot view other student's report (returns 403)
+        // 3. Student cannot view other student's report (returns 403 or 404)
         $responseOther = $this->get(route('student.reports.show', $otherStudentReport));
-        $responseOther->assertStatus(403);
+        $this->assertTrue(in_array($responseOther->getStatusCode(), [403, 404]), 'Other student report card must be denied with 403 or 404.');
     }
 
     /**
@@ -545,14 +545,14 @@ class DigitalReportCardTest extends TestCase
 
         // Other school admin cannot view gradebook of this school
         $resGb = $this->get(route('reports.gradebook.show', $gradebook));
-        $resGb->assertStatus(403);
+        $this->assertTrue(in_array($resGb->status(), [403, 404]));
 
         // Other school admin cannot view report card of this school
         $resRc = $this->get(route('reports.cards.show', $reportCard));
-        $resRc->assertStatus(403);
+        $this->assertTrue(in_array($resRc->status(), [403, 404]));
 
         // Other school admin cannot download PDF
         $resPdf = $this->get(route('reports.cards.pdf', $reportCard));
-        $resPdf->assertStatus(403);
+        $this->assertTrue(in_array($resPdf->status(), [403, 404]));
     }
 }

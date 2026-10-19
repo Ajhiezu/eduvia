@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToSchool;
 use Database\Factories\AssessmentWeightConfigurationFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AssessmentWeightConfiguration extends Model
 {
+    use BelongsToSchool;
+
     /** @use HasFactory<AssessmentWeightConfigurationFactory> */
     use HasFactory;
 

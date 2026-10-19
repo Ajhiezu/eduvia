@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToSchool;
 use Database\Factories\ParentTeacherConversationFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ParentTeacherConversation extends Model
 {
+    use BelongsToSchool;
+
     /** @use HasFactory<ParentTeacherConversationFactory> */
     use HasFactory;
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\TenantManager;
 use Database\Factories\SchoolFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -151,7 +152,7 @@ class School extends Model
      */
     public static function current(): ?self
     {
-        return static::where('is_active', true)->first() ?? static::first();
+        return app(TenantManager::class)->getSchool();
     }
 
     /**

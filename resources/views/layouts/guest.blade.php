@@ -48,9 +48,11 @@
                         Buka Dashboard
                     </x-button>
                 @else
-                    <x-button href="{{ route('login') }}" size="sm" variant="outline">
-                        Masuk Sistem
-                    </x-button>
+                    @if (!request()->routeIs('login'))
+                        <x-button href="{{ route('login') }}" size="sm" variant="outline">
+                            Masuk Sistem
+                        </x-button>
+                    @endif
                 @endauth
             </nav>
         </div>

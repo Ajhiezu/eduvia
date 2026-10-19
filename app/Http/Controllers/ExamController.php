@@ -175,6 +175,16 @@ class ExamController extends Controller
     }
 
     /**
+     * Display the specified exam details (redirects to questions manager).
+     */
+    public function show(Exam $exam): RedirectResponse
+    {
+        $this->authorizeTenant($exam);
+
+        return redirect()->route('exams.questions', $exam);
+    }
+
+    /**
      * Show the form for editing the specified exam.
      */
     public function edit(Exam $exam): View

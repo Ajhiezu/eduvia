@@ -133,7 +133,7 @@
                         <div class="flex items-center gap-1 sm:gap-1.5 mt-0.5">
                             @if ($school->educational_levels && is_array($school->educational_levels))
                                 @foreach ($school->educational_levels as $lvl)
-                                    <span class="px-1.5 py-0.2 text-[8px] sm:text-[9px] font-bold uppercase rounded bg-zinc-100 text-zinc-700 border border-zinc-200">
+                                    <span class="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded-md bg-zinc-100 text-zinc-800 border border-zinc-200/90 shadow-2xs">
                                         {{ $lvl }}
                                     </span>
                                 @endforeach

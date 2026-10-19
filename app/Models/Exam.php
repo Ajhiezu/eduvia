@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToSchool;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Exam extends Model
 {
-    use HasFactory;
+    use BelongsToSchool, HasFactory;
 
     public const STATUS_DRAFT = 'draft';
 

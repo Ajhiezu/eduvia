@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Enums\Permission;
 use App\Enums\StaffPosition;
 use App\Enums\UserRole;
+use App\Traits\Auditable;
+use App\Traits\BelongsToSchool;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -16,13 +18,32 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'email', 'phone', 'role', 'is_active', 'avatar', 'password', 'school_id', 'email_verified_at'])]
-#[Hidden(['password', 'remember_token'])]
+#[Fillable([
+    'name',
+    'email',
+    'phone',
+    'role',
+    'is_active',
+    'avatar',
+    'password',
+    'school_id',
+    'email_verified_at',
+    'two_factor_secret',
+    'two_factor_recovery_codes',
+    'two_factor_confirmed_at',
+    'chat_service_hours_start',
+    'chat_service_hours_end',
+    'chat_service_days',
+    'chat_auto_reply_enabled',
+    'chat_auto_reply_message',
+])]
+#[Hidden(['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use Auditable, BelongsToSchool, HasApiTokens, HasFactory, Notifiable;
 
     /**
      * Get the attributes that should be cast.
@@ -33,9 +54,12 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'two_factor_confirmed_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
             'is_active' => 'boolean',
+            'chat_service_days' => 'array',
+            'chat_auto_reply_enabled' => 'boolean',
         ];
     }
 
@@ -148,6 +172,64 @@ class User extends Authenticatable
     }
 
     /**
+     * Determine if this user is a homeroom teacher (optionally for a specific classroom).
+     */
+    public function isHomeroomTeacher(?Classroom $classroom = null): bool
+    {
+        if (! $this->isTeacher()) {
+            return false;
+        }
+
+        if ($classroom) {
+            return (int) $classroom->homeroom_teacher_id === (int) $this->id;
+        }
+
+        return Classroom::where('homeroom_teacher_id', $this->id)->exists();
+    }
+
+    /**
+     * Determine if this teacher is the homeroom teacher of a specific student.
+     */
+    public function isHomeroomTeacherOf(User $student): bool
+    {
+        if (! $this->isTeacher()) {
+            return false;
+        }
+
+        return ClassroomStudent::where('student_id', $student->id)
+            ->where('enrollment_status', 'active')
+            ->whereHas('classroom', fn ($q) => $q->where('homeroom_teacher_id', $this->id))
+            ->exists();
+    }
+
+    /**
+     * Determine if this teacher teaches a specific student.
+     */
+    public function teachesStudent(User $student): bool
+    {
+        if (! $this->isTeacher()) {
+            return false;
+        }
+
+        if ($this->isHomeroomTeacherOf($student)) {
+            return true;
+        }
+
+        $studentClassroomIds = ClassroomStudent::where('student_id', $student->id)
+            ->where('enrollment_status', 'active')
+            ->pluck('classroom_id');
+
+        if ($studentClassroomIds->isEmpty()) {
+            return false;
+        }
+
+        return TeachingAssignment::where('teacher_id', $this->id)
+            ->where('is_active', true)
+            ->whereIn('classroom_id', $studentClassroomIds)
+            ->exists();
+    }
+
+    /**
      * Teaching assignments where this user is the teacher.
      */
     public function teachingAssignments(): HasMany
@@ -169,6 +251,30 @@ class User extends Authenticatable
     public function studentProfile(): HasOne
     {
         return $this->hasOne(StudentProfile::class, 'user_id');
+    }
+
+    /**
+     * Active classroom enrollment for student.
+     */
+    public function classroomEnrollment(): HasOne
+    {
+        return $this->hasOne(ClassroomStudent::class, 'student_id')->where('enrollment_status', 'active')->latest('id');
+    }
+
+    /**
+     * Current active classroom for student.
+     */
+    public function getClassroomAttribute(): ?Classroom
+    {
+        return $this->classroomEnrollment?->classroom;
+    }
+
+    /**
+     * Current active classroom ID for student.
+     */
+    public function getClassroomIdAttribute(): ?int
+    {
+        return $this->classroomEnrollment?->classroom_id;
     }
 
     /**
@@ -374,6 +480,21 @@ class User extends Authenticatable
     public function activeChildren(): BelongsToMany
     {
         return $this->linkedChildren()->wherePivot('status', ParentStudentRelation::STATUS_ACTIVE);
+    }
+
+    /**
+     * Check if this parent user is actively linked to a specific student.
+     */
+    public function isParentOf(User $student): bool
+    {
+        if (! $this->isParent()) {
+            return false;
+        }
+
+        return ParentStudentRelation::where('parent_id', $this->id)
+            ->where('student_id', $student->id)
+            ->where('status', ParentStudentRelation::STATUS_ACTIVE)
+            ->exists();
     }
 
     /**

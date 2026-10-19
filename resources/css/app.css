@@ -14,15 +14,20 @@
     --color-brand-300: #fca5a5;
     --color-brand-400: #f87171;
     --color-brand-500: #ef4444;
-    --color-brand-600: #e11d2e; /* Official Eduvia Primary Red */
-    --color-brand-700: #c81423; /* Official Primary Red Hover */
-    --color-brand-800: #9e0e1b; /* Official Deep Accent Red */
+    --color-brand-600: #e11d2e;
+    /* Official Eduvia Primary Red */
+    --color-brand-700: #c81423;
+    /* Official Primary Red Hover */
+    --color-brand-800: #9e0e1b;
+    /* Official Deep Accent Red */
     --color-brand-900: #7f1d1d;
     --color-brand-950: #450a0a;
 
     /* Official Neutral Palette */
-    --color-dark-text: #1f2937;  /* Official Dark Text */
-    --color-light-gray: #f3f4f6; /* Official Light Gray */
+    --color-dark-text: #1f2937;
+    /* Official Dark Text */
+    --color-light-gray: #f3f4f6;
+    /* Official Light Gray */
 
     /* Achievement / Accent Gold (Selective 1-5% for Medals & Stars) */
     --color-accent-50: #fffbeb;
@@ -34,7 +39,8 @@
     /* Academic Surface Tokens — Metis Refined Neutral (Zinc) */
     --color-surface-bg: #fafafa;
     --color-surface-card: #ffffff;
-    --color-surface-border: #e4e4e7; /* 1px hairline border */
+    --color-surface-border: #e4e4e7;
+    /* 1px hairline border */
     --color-surface-subtle: #f4f4f5;
 }
 
@@ -57,7 +63,8 @@
 }
 
 /* Smooth momentum scrolling for responsive tables & scrollable strips */
-.overflow-x-auto, [data-scrollable] {
+.overflow-x-auto,
+[data-scrollable] {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
 }
@@ -97,18 +104,23 @@
     border-radius: 0.5rem;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #52525b; /* zinc-600 */
+    color: #52525b;
+    /* zinc-600 */
     transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .metis-nav-item:hover {
-    background-color: #f4f4f5; /* zinc-100 */
-    color: #18181b; /* zinc-900 */
+    background-color: #f4f4f5;
+    /* zinc-100 */
+    color: #18181b;
+    /* zinc-900 */
 }
 
 .metis-nav-item.active {
-    background-color: #f4f4f5; /* zinc-100 */
-    color: #18181b; /* zinc-900 */
+    background-color: #f4f4f5;
+    /* zinc-100 */
+    color: #18181b;
+    /* zinc-900 */
     font-weight: 600;
 }
 
@@ -120,7 +132,8 @@
     bottom: 0.3125rem;
     width: 3px;
     border-radius: 0 3px 3px 0;
-    background-color: var(--color-brand-600); /* Official Eduvia Primary Red Accent */
+    background-color: var(--color-brand-600);
+    /* Official Eduvia Primary Red Accent */
 }
 
 .metis-nav-item.active svg {
@@ -146,51 +159,40 @@ main form input[type="date"],
 main form input[type="datetime-local"],
 main form select,
 main form textarea {
-    font-size: 0.875rem !important; /* 14px text-sm minimum */
+    font-size: 0.875rem !important;
+    /* 14px text-sm minimum */
     line-height: 1.5 !important;
-    padding-top: 0.6875rem !important; /* py-2.5 */
+    padding-top: 0.6875rem !important;
+    /* py-2.5 */
     padding-bottom: 0.6875rem !important;
-    border-radius: 0.875rem !important; /* 14px rounded-xl */
-    border: 1px solid #e4e4e7 !important; /* zinc-200 */
-    background-color: #fafafa !important; /* zinc-50 */
-    color: #18181b !important; /* zinc-900 */
+    border-radius: 0.875rem !important;
+    /* 14px rounded-xl */
+    border: 1px solid #e4e4e7 !important;
+    /* zinc-200 */
+    background-color: #fafafa !important;
+    /* zinc-50 */
+    color: #18181b !important;
+    /* zinc-900 */
     transition: all 0.15s ease-in-out !important;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02) !important;
 }
 
-/* Standard inputs horizontal padding (when no prefix or suffix icons present) */
-main form input[type="text"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
-main form input[type="email"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
-main form input[type="password"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
-main form input[type="number"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
-main form input[type="search"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
-main form input[type="tel"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
-main form input[type="url"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
-main form input[type="date"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
-main form input[type="datetime-local"]:not(.has-prefix-icon):not([data-has-prefix="true"]),
-main form select,
-main form textarea {
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-}
-
-/* Explicit generous padding-left for inputs with prefix icons to prevent text overlapping */
 main form input.has-prefix-icon,
-main form input[data-has-prefix="true"],
-main form input[class*="pl-11"],
-main form input[class*="pl-12"] {
-    padding-left: 2.75rem !important; /* 44px text clearance past the icon */
+main form input[type="text"].has-prefix-icon,
+main form input[type="email"].has-prefix-icon,
+main form input[type="password"].has-prefix-icon {
+    padding-left: 2.75rem !important;
 }
 
-/* Explicit generous padding-right for inputs with suffix icons */
 main form input.has-suffix-icon,
-main form input[data-has-suffix="true"],
-main form input[class*="pr-11"],
-main form input[class*="pr-12"] {
+main form input[type="text"].has-suffix-icon,
+main form input[type="email"].has-suffix-icon,
+main form input[type="password"].has-suffix-icon {
     padding-right: 2.75rem !important;
 }
 
 @media (min-width: 640px) {
+
     main form input[type="text"],
     main form input[type="email"],
     main form input[type="password"],
@@ -202,8 +204,10 @@ main form input[class*="pr-12"] {
     main form input[type="datetime-local"],
     main form select,
     main form textarea {
-        font-size: 0.9375rem !important; /* 15px */
-        padding-top: 0.75rem !important; /* py-3 */
+        font-size: 0.9375rem !important;
+        /* 15px */
+        padding-top: 0.75rem !important;
+        /* py-3 */
         padding-bottom: 0.75rem !important;
     }
 
@@ -226,7 +230,8 @@ main form input[class*="pr-12"] {
     main form input[data-has-prefix="true"],
     main form input[class*="pl-11"],
     main form input[class*="pl-12"] {
-        padding-left: 3rem !important; /* 48px clean breathing room on desktop */
+        padding-left: 3rem !important;
+        /* 48px clean breathing room on desktop */
     }
 
     main form input.has-suffix-icon,
@@ -246,7 +251,8 @@ main form input[type="tel"]:hover,
 main form input[type="url"]:hover,
 main form select:hover,
 main form textarea:hover {
-    border-color: #d4d4d8 !important; /* zinc-300 */
+    border-color: #d4d4d8 !important;
+    /* zinc-300 */
     background-color: #ffffff !important;
 }
 
@@ -269,16 +275,19 @@ main form textarea:focus {
 
 main form label {
     display: block !important;
-    font-size: 0.8125rem !important; /* 13px sm */
+    font-size: 0.8125rem !important;
+    /* 13px sm */
     font-weight: 700 !important;
-    color: #3f3f46 !important; /* zinc-700 */
-    margin-bottom: 0.5rem !important; /* 8px space to prevent dempet */
+    color: #3f3f46 !important;
+    /* zinc-700 */
+    margin-bottom: 0.5rem !important;
+    /* 8px space to prevent dempet */
     letter-spacing: 0.01em !important;
 }
 
 @media (min-width: 640px) {
     main form label {
-        font-size: 0.875rem !important; /* 14px */
+        font-size: 0.875rem !important;
+        /* 14px */
     }
 }
-

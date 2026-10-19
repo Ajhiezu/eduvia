@@ -869,6 +869,22 @@
                     <span x-show="!sidebarCollapsed" class="truncate">Tugas & Penilaian</span>
                 </a>
 
+                @if (\App\Services\TenantFeatureFlagService::isEnabled(\App\Services\TenantFeatureFlagService::AI_ASSISTANT))
+                    <a
+                        href="{{ route('teacher.ai.index') }}"
+                        class="metis-nav-item {{ request()->routeIs('teacher.ai.*') ? 'active' : '' }}"
+                        :title="sidebarCollapsed ? 'Asisten AI Pendidik' : ''"
+                    >
+                        <svg class="w-4 h-4 shrink-0 text-[#E11D2E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        <span x-show="!sidebarCollapsed" class="truncate flex items-center justify-between w-full">
+                            <span>Asisten AI Guru</span>
+                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-rose-50 text-brand-600 border border-rose-100">AI</span>
+                        </span>
+                    </a>
+                @endif
+
                 <!-- Section: Modul CBT & Bank Soal -->
                 <div class="pt-4 pb-1 px-2" x-show="!sidebarCollapsed">
                     <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Ujian CBT & Asesmen</span>

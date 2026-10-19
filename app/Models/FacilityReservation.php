@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToSchool;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FacilityReservation extends Model
 {
-    use HasFactory;
+    use BelongsToSchool, HasFactory;
 
     protected $fillable = [
         'school_id',

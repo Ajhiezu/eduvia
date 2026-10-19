@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\UserRole;
+use App\Traits\BelongsToSchool;
 use Database\Factories\ClassroomFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,7 +18,7 @@ use Illuminate\Validation\ValidationException;
 class Classroom extends Model
 {
     /** @use HasFactory<ClassroomFactory> */
-    use HasFactory;
+    use BelongsToSchool, HasFactory;
 
     /**
      * Get the attributes that should be cast.

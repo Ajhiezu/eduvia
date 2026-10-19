@@ -6,6 +6,7 @@ use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\PaymentReversal;
 use App\Models\School;
+use App\Support\CsvSanitizer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -156,7 +157,7 @@ class FinanceReportController extends Controller
 
             $no = 1;
             foreach ($payments as $payment) {
-                fputcsv($handle, [
+                fputcsv($handle, CsvSanitizer::sanitizeRow([
                     $no++,
                     $payment->payment_number,
                     $payment->payment_date ? $payment->payment_date->format('d/m/Y') : '-',
@@ -170,7 +171,7 @@ class FinanceReportController extends Controller
                     $payment->reference_number ?? '-',
                     $payment->recorder?->name ?? '-',
                     $payment->verifier?->name ?? '-',
-                ]);
+                ]));
             }
 
             fclose($handle);

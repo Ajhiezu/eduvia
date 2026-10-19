@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToSchool;
 use Database\Factories\SubjectGradebookFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class SubjectGradebook extends Model
 {
     /** @use HasFactory<SubjectGradebookFactory> */
-    use HasFactory;
+    use BelongsToSchool, HasFactory;
 
     public const STATUS_DRAFT = 'draft';
 

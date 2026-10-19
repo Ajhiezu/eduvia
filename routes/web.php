@@ -61,6 +61,7 @@ use App\Http\Controllers\StudentScheduleController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SubjectGradebookController;
 use App\Http\Controllers\SystemSettingController;
+use App\Http\Controllers\Teacher\TeacherAiAssistantController;
 use App\Http\Controllers\TeacherParentCommunicationController;
 use App\Http\Controllers\TeacherScheduleController;
 use App\Models\School;
@@ -369,7 +370,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/children', [ParentChildLinkController::class, 'index'])->name('children.index');
         Route::post('/children/claim-code', [ParentChildLinkController::class, 'claimCode'])
             ->name('children.claim-code')
-            ->middleware('throttle:10,1');
+            ->middleware('throttle:5,1');
     });
 
     // =========================================================================
@@ -476,31 +477,39 @@ Route::middleware('auth')->group(function () {
     // =========================================================================
     // Modul Operasional Sekolah (Phase 10: School Operations Management)
     // =========================================================================
-    Route::middleware('role:super_admin,school_admin,staff')->prefix('operations')->name('operations.')->group(function () {
+    Route::prefix('operations')->name('operations.')->group(function () {
         // Operational Dashboard
-        Route::get('/dashboard', [OperationsDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [OperationsDashboardController::class, 'index'])
+            ->middleware('role:super_admin,school_admin,staff')
+            ->name('dashboard');
 
         // Module B: Perpustakaan Sekolah (School Library)
-        Route::prefix('library')->name('library.')->group(function () {
+        Route::middleware('role:super_admin,school_admin,staff,teacher,student')->prefix('library')->name('library.')->group(function () {
+            // Public to school members (students, teachers, staff, admin)
             Route::get('/books', [LibraryController::class, 'booksIndex'])->name('books.index');
-            Route::get('/books/create', [LibraryController::class, 'bookCreate'])->name('books.create');
-            Route::post('/books', [LibraryController::class, 'bookStore'])->name('books.store');
-            Route::get('/books/{book}', [LibraryController::class, 'bookShow'])->name('books.show');
-            Route::get('/books/{book}/edit', [LibraryController::class, 'bookEdit'])->name('books.edit');
-            Route::put('/books/{book}', [LibraryController::class, 'bookUpdate'])->name('books.update');
-            Route::delete('/books/{book}', [LibraryController::class, 'bookDestroy'])->name('books.destroy');
-            Route::post('/books/{book}/add-copies', [LibraryController::class, 'addCopies'])->name('books.add-copies');
-            Route::get('/books/{book}/digital', [LibraryController::class, 'downloadDigital'])->name('books.digital');
 
-            Route::get('/loans', [LibraryController::class, 'loansIndex'])->name('loans.index');
-            Route::get('/loans/create', [LibraryController::class, 'loanCreate'])->name('loans.create');
-            Route::post('/loans', [LibraryController::class, 'loanStore'])->name('loans.store');
-            Route::post('/loans/{loan}/return', [LibraryController::class, 'loanReturn'])->name('loans.return');
-            Route::get('/reports', [LibraryController::class, 'reports'])->name('reports');
+            // Administrative management
+            Route::middleware('role:super_admin,school_admin,staff')->group(function () {
+                Route::get('/books/create', [LibraryController::class, 'bookCreate'])->name('books.create');
+                Route::post('/books', [LibraryController::class, 'bookStore'])->name('books.store');
+                Route::get('/books/{book}/edit', [LibraryController::class, 'bookEdit'])->name('books.edit');
+                Route::put('/books/{book}', [LibraryController::class, 'bookUpdate'])->name('books.update');
+                Route::delete('/books/{book}', [LibraryController::class, 'bookDestroy'])->name('books.destroy');
+                Route::post('/books/{book}/add-copies', [LibraryController::class, 'addCopies'])->name('books.add-copies');
+
+                Route::get('/loans', [LibraryController::class, 'loansIndex'])->name('loans.index');
+                Route::get('/loans/create', [LibraryController::class, 'loanCreate'])->name('loans.create');
+                Route::post('/loans', [LibraryController::class, 'loanStore'])->name('loans.store');
+                Route::post('/loans/{loan}/return', [LibraryController::class, 'loanReturn'])->name('loans.return');
+                Route::get('/reports', [LibraryController::class, 'reports'])->name('reports');
+            });
+
+            Route::get('/books/{book}', [LibraryController::class, 'bookShow'])->name('books.show');
+            Route::get('/books/{book}/digital', [LibraryController::class, 'downloadDigital'])->name('books.digital');
         });
 
         // Module C: Inventaris & Manajemen Aset (Inventory & Asset Management)
-        Route::prefix('inventory')->name('inventory.')->group(function () {
+        Route::middleware('role:super_admin,school_admin,staff')->prefix('inventory')->name('inventory.')->group(function () {
             Route::get('/assets', [InventoryController::class, 'assetsIndex'])->name('assets.index');
             Route::get('/assets/create', [InventoryController::class, 'assetCreate'])->name('assets.create');
             Route::post('/assets', [InventoryController::class, 'assetStore'])->name('assets.store');
@@ -519,28 +528,39 @@ Route::middleware('auth')->group(function () {
 
         // Module D: Laboratorium & Fasilitas Sekolah (Facilities & Laboratories)
         Route::prefix('facilities')->name('facilities.')->group(function () {
-            Route::get('/rooms', [FacilityController::class, 'roomsIndex'])->name('rooms.index');
-            Route::get('/rooms/create', [FacilityController::class, 'roomCreate'])->name('rooms.create');
-            Route::post('/rooms', [FacilityController::class, 'roomStore'])->name('rooms.store');
-            Route::get('/rooms/{room}', [FacilityController::class, 'roomShow'])->name('rooms.show');
-            Route::get('/rooms/{room}/edit', [FacilityController::class, 'roomEdit'])->name('rooms.edit');
-            Route::put('/rooms/{room}', [FacilityController::class, 'roomUpdate'])->name('rooms.update');
-            Route::delete('/rooms/{room}', [FacilityController::class, 'roomDestroy'])->name('rooms.destroy');
+            // Accessible to teachers, staff, school admins
+            Route::middleware('role:super_admin,school_admin,staff,teacher')->group(function () {
+                Route::get('/rooms', [FacilityController::class, 'roomsIndex'])->name('rooms.index');
+                Route::get('/reservations', [FacilityController::class, 'reservationsIndex'])->name('reservations.index');
+                Route::get('/reservations/create', [FacilityController::class, 'reservationCreate'])->name('reservations.create');
+                Route::post('/reservations', [FacilityController::class, 'reservationStore'])->name('reservations.store');
+                Route::post('/reservations/{reservation}/cancel', [FacilityController::class, 'reservationCancel'])->name('reservations.cancel');
 
-            Route::get('/reservations', [FacilityController::class, 'reservationsIndex'])->name('reservations.index');
-            Route::get('/reservations/create', [FacilityController::class, 'reservationCreate'])->name('reservations.create');
-            Route::post('/reservations', [FacilityController::class, 'reservationStore'])->name('reservations.store');
-            Route::post('/reservations/{reservation}/approve', [FacilityController::class, 'reservationApprove'])->name('reservations.approve');
-            Route::post('/reservations/{reservation}/reject', [FacilityController::class, 'reservationReject'])->name('reservations.reject');
-            Route::post('/reservations/{reservation}/cancel', [FacilityController::class, 'reservationCancel'])->name('reservations.cancel');
+                Route::get('/incidents', [FacilityController::class, 'incidentsIndex'])->name('incidents.index');
+                Route::post('/incidents', [FacilityController::class, 'incidentStore'])->name('incidents.store');
+            });
 
-            Route::get('/incidents', [FacilityController::class, 'incidentsIndex'])->name('incidents.index');
-            Route::post('/incidents', [FacilityController::class, 'incidentStore'])->name('incidents.store');
-            Route::put('/incidents/{incident}', [FacilityController::class, 'incidentUpdate'])->name('incidents.update');
+            // Management and approval
+            Route::middleware('role:super_admin,school_admin,staff')->group(function () {
+                Route::get('/rooms/create', [FacilityController::class, 'roomCreate'])->name('rooms.create');
+                Route::post('/rooms', [FacilityController::class, 'roomStore'])->name('rooms.store');
+                Route::get('/rooms/{room}/edit', [FacilityController::class, 'roomEdit'])->name('rooms.edit');
+                Route::put('/rooms/{room}', [FacilityController::class, 'roomUpdate'])->name('rooms.update');
+                Route::delete('/rooms/{room}', [FacilityController::class, 'roomDestroy'])->name('rooms.destroy');
+
+                Route::post('/reservations/{reservation}/approve', [FacilityController::class, 'reservationApprove'])->name('reservations.approve');
+                Route::post('/reservations/{reservation}/reject', [FacilityController::class, 'reservationReject'])->name('reservations.reject');
+
+                Route::put('/incidents/{incident}', [FacilityController::class, 'incidentUpdate'])->name('incidents.update');
+            });
+
+            Route::get('/rooms/{room}', [FacilityController::class, 'roomShow'])
+                ->middleware('role:super_admin,school_admin,staff,teacher')
+                ->name('rooms.show');
         });
 
         // Module E: Tata Usaha, Persuratan & Dokumen (Correspondence & Official Documents)
-        Route::prefix('correspondence')->name('correspondence.')->group(function () {
+        Route::middleware('role:super_admin,school_admin,staff')->prefix('correspondence')->name('correspondence.')->group(function () {
             Route::get('/', [CorrespondenceController::class, 'index'])->name('index');
             Route::get('/create', [CorrespondenceController::class, 'create'])->name('create');
             Route::post('/', [CorrespondenceController::class, 'store'])->name('store');
@@ -554,6 +574,24 @@ Route::middleware('auth')->group(function () {
             Route::get('/certificate/create', [CorrespondenceController::class, 'createCertificate'])->name('certificate.create');
             Route::post('/certificate/pdf', [CorrespondenceController::class, 'generateCertificatePdf'])->name('certificate.pdf');
         });
+    });
+
+    // =========================================================================
+    // ASISTEN AI GURU (Phase 4B - Guarded by role & tenant.ai)
+    // =========================================================================
+    Route::middleware(['role:super_admin,school_admin,teacher', 'tenant.ai'])->prefix('teacher/ai')->name('teacher.ai.')->group(function () {
+        Route::get('/', [TeacherAiAssistantController::class, 'index'])->name('index');
+        Route::get('/lesson-plan', [TeacherAiAssistantController::class, 'lessonPlan'])->name('lesson_plan');
+        Route::post('/lesson-plan', [TeacherAiAssistantController::class, 'storeLessonPlan'])->name('lesson_plan.store');
+        Route::get('/questions', [TeacherAiAssistantController::class, 'questions'])->name('questions');
+        Route::post('/questions', [TeacherAiAssistantController::class, 'storeQuestions'])->name('questions.store');
+        Route::get('/rubrics', [TeacherAiAssistantController::class, 'rubrics'])->name('rubrics');
+        Route::post('/rubrics', [TeacherAiAssistantController::class, 'storeRubric'])->name('rubrics.store');
+        Route::get('/essay-feedback', [TeacherAiAssistantController::class, 'essayFeedback'])->name('essay_feedback');
+        Route::post('/essay-feedback', [TeacherAiAssistantController::class, 'storeEssayFeedback'])->name('essay_feedback.store');
+        Route::get('/drafts/{draft}', [TeacherAiAssistantController::class, 'show'])->name('drafts.show');
+        Route::match(['put', 'post'], '/drafts/{draft}', [TeacherAiAssistantController::class, 'update'])->name('drafts.update');
+        Route::post('/drafts/{draft}/import-to-cbt', [TeacherAiAssistantController::class, 'importToCbt'])->name('drafts.import_cbt');
     });
 });
 

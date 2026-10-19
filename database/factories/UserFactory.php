@@ -99,6 +99,16 @@ class UserFactory extends Factory
     }
 
     /**
+     * Staff state.
+     */
+    public function staff(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => UserRole::STAFF->value,
+        ]);
+    }
+
+    /**
      * Parent state.
      */
     public function parentRole(): static
@@ -106,5 +116,13 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'role' => UserRole::PARENT->value,
         ]);
+    }
+
+    /**
+     * Alias for parent role state.
+     */
+    public function parent(): static
+    {
+        return $this->parentRole();
     }
 }

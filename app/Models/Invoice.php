@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Traits\Auditable;
+use App\Traits\BelongsToSchool;
 use Carbon\Carbon;
 use Database\Factories\InvoiceFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -32,7 +34,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Invoice extends Model
 {
     /** @use HasFactory<InvoiceFactory> */
-    use HasFactory;
+    use Auditable, BelongsToSchool, HasFactory;
 
     public const STATUS_DRAFT = 'draft';
 

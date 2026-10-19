@@ -1,12 +1,15 @@
 <?php
 
 use App\Http\Middleware\EnsureSchoolTenant;
+use App\Http\Middleware\EnsureTenantAiEnabled;
 use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Middleware\SecurityHeadersMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Laravel\Sanctum\Http\Middleware\CheckAbilities;
+use Laravel\Sanctum\Http\Middleware\CheckForAnyAbility;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -18,11 +21,20 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
             SecurityHeadersMiddleware::class,
+            EnsureSchoolTenant::class,
+        ]);
+
+        $middleware->api(append: [
+            SecurityHeadersMiddleware::class,
+            EnsureSchoolTenant::class,
         ]);
 
         $middleware->alias([
             'role' => EnsureUserHasRole::class,
             'tenant' => EnsureSchoolTenant::class,
+            'tenant.ai' => EnsureTenantAiEnabled::class,
+            'abilities' => CheckAbilities::class,
+            'ability' => CheckForAnyAbility::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

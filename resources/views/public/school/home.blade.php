@@ -30,17 +30,27 @@
                 
                 <!-- Left Column: Big Editorial Headline -->
                 <div class="lg:col-span-7">
-                    <div class="inline-flex flex-wrap items-center gap-2 mb-4">
-                        <span class="text-[11px] font-bold tracking-widest uppercase text-zinc-400">
-                            {{ $school->short_name ?: $school->name }} &bull; Situs Resmi
-                        </span>
-                        @if (!empty($setting->hero_headline))
-                            <span class="hidden sm:inline text-zinc-300">&bull;</span>
-                            <span class="text-xs font-semibold text-zinc-600">{{ $setting->hero_headline }}</span>
-                        @endif
+                    <div class="flex flex-wrap items-center gap-2.5 sm:gap-3 mb-5">
+                        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-zinc-100 text-zinc-800 border border-zinc-200/80 shadow-2xs font-sans">
+                            <span class="w-1.5 h-1.5 rounded-full bg-zinc-700 shrink-0"></span>
+                            <span class="text-[11px] font-bold tracking-wider uppercase">
+                                {{ $school->short_name ?: $school->name }} &bull; Situs Resmi
+                            </span>
+                        </div>
+
                         @if ($setting->accreditation_grade)
-                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                Akreditasi {{ $setting->accreditation_grade }}
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-zinc-900 text-white shadow-xs font-sans">
+                                <svg class="w-3.5 h-3.5 text-amber-400 fill-current shrink-0" viewBox="0 0 20 20" aria-hidden="true">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                                <span class="text-[11px] font-semibold tracking-tight">Akreditasi {{ $setting->accreditation_grade }}</span>
+                                <span class="text-[9px] uppercase tracking-wider text-zinc-400 font-bold border-l border-zinc-700 pl-2 hidden sm:inline">BAN-S/M</span>
+                            </div>
+                        @endif
+
+                        @if (!empty($setting->hero_headline))
+                            <span class="hidden md:inline-block text-xs font-medium text-zinc-500 font-sans italic border-l border-zinc-200 pl-3">
+                                {{ $setting->hero_headline }}
                             </span>
                         @endif
                     </div>
@@ -77,9 +87,12 @@
                         </a>
 
                         @if ($activeAdmissionPeriod)
-                            <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                PPDB Dibuka
+                            <span class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium bg-emerald-50 text-emerald-950 border border-emerald-200 shadow-2xs font-sans">
+                                <span class="relative flex h-2 w-2 shrink-0">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+                                </span>
+                                <span class="font-semibold tracking-tight">PPDB Dibuka</span>
                             </span>
                         @endif
                     </div>
@@ -610,9 +623,9 @@
             <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
                 
                 <div class="space-y-3 max-w-2xl text-center lg:text-left">
-                    <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-semibold bg-white/10 text-zinc-200 border border-white/15 backdrop-blur-xs font-sans">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        Penerimaan Peserta Didik Baru (PPDB / SPMB)
+                    <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-medium bg-white/10 text-white border border-white/20 backdrop-blur-xs font-sans shadow-2xs">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
+                        <span class="font-semibold tracking-tight">Penerimaan Peserta Didik Baru (PPDB / SPMB)</span>
                     </span>
                     <h2 class="text-3xl sm:text-4xl font-serif leading-tight">
                         @if ($activeAdmissionPeriod)

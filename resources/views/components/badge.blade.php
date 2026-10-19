@@ -1,37 +1,50 @@
 @props([
-    'variant' => 'neutral', // primary, accent, success, warning, danger, neutral
-    'size' => 'md', // sm, md
+    'variant' => 'neutral', // primary, brand, accent, success, warning, danger, info, dark, neutral
+    'size' => 'md', // xs, sm, md, lg
     'dot' => false,
+    'pill' => false,
+    'pulse' => false,
 ])
 
 @php
     $sizes = match ($size) {
-        'sm' => 'text-[11px] px-2 py-0.5 gap-1 font-medium',
-        default => 'text-xs px-2.5 py-1 gap-1.5 font-semibold',
+        'xs' => 'text-[10px] leading-3.5 px-1.5 py-0.5 gap-1 font-semibold tracking-wide',
+        'sm' => 'text-[11px] leading-4 px-2 py-0.5 gap-1.5 font-medium tracking-tight',
+        'lg' => 'text-sm leading-5 px-3 py-1.5 gap-2 font-medium',
+        default => 'text-xs leading-4.5 px-2.5 py-0.5 sm:py-1 gap-1.5 font-medium tracking-tight',
     };
 
     $variants = match ($variant) {
-        'primary' => 'bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-600/20',
-        'accent' => 'bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-600/20',
-        'success' => 'bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20',
-        'warning' => 'bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20',
-        'danger' => 'bg-rose-50 text-rose-700 ring-1 ring-inset ring-rose-600/20',
-        default => 'bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-500/20',
+        'primary', 'brand' => 'bg-rose-50/80 text-rose-900 border border-rose-200/80',
+        'accent', 'warning' => 'bg-amber-50/90 text-amber-950 border border-amber-200/80',
+        'success' => 'bg-emerald-50/80 text-emerald-950 border border-emerald-200/80',
+        'danger' => 'bg-rose-50/80 text-rose-900 border border-rose-200/80',
+        'info' => 'bg-sky-50/80 text-sky-950 border border-sky-200/80',
+        'dark' => 'bg-zinc-900 text-zinc-100 border border-zinc-800',
+        default => 'bg-zinc-100/90 text-zinc-800 border border-zinc-200/90',
     };
 
     $dotColors = match ($variant) {
-        'primary' => 'bg-brand-600',
-        'accent' => 'bg-amber-500',
-        'success' => 'bg-emerald-500',
-        'warning' => 'bg-amber-500',
-        'danger' => 'bg-rose-500',
-        default => 'bg-slate-400',
+        'primary', 'brand' => 'bg-[#E11D2E]',
+        'accent', 'warning' => 'bg-amber-500',
+        'success' => 'bg-emerald-600',
+        'danger' => 'bg-rose-600',
+        'info' => 'bg-sky-600',
+        'dark' => 'bg-zinc-300',
+        default => 'bg-zinc-400',
     };
+
+    $shape = $pill ? 'rounded-full' : 'rounded-md';
 @endphp
 
-<span {{ $attributes->merge(['class' => "inline-flex items-center rounded-full select-none {$sizes} {$variants}"]) }}>
+<span {{ $attributes->merge(['class' => "inline-flex items-center {$shape} select-none transition-colors duration-150 shadow-2xs font-sans {$sizes} {$variants}"]) }}>
     @if ($dot)
-        <span class="w-1.5 h-1.5 rounded-full {{ $dotColors }}"></span>
+        <span class="relative flex h-1.5 w-1.5 shrink-0">
+            @if ($pulse)
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60 {{ $dotColors }}"></span>
+            @endif
+            <span class="relative inline-flex rounded-full h-1.5 w-1.5 {{ $dotColors }}"></span>
+        </span>
     @endif
     {{ $slot }}
 </span>

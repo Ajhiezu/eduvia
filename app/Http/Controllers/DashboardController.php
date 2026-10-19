@@ -24,6 +24,10 @@ class DashboardController extends Controller
     public function index(Request $request): View|RedirectResponse
     {
         $user = $request->user();
+        if (! $user) {
+            return redirect()->route('login');
+        }
+
         $school = School::current();
         $academicYear = $school?->activeAcademicYear;
         $semester = $academicYear?->activeSemester;

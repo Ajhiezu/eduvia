@@ -200,10 +200,10 @@ class CbtExamTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->teacher)->get(route('exam-questions.edit', $otherQuestion));
-        $response->assertForbidden();
+        $this->assertTrue(in_array($response->getStatusCode(), [403, 404]), 'Cross-tenant question edit must be denied with 403 or 404.');
 
         $deleteResponse = $this->actingAs($this->teacher)->delete(route('exam-questions.destroy', $otherQuestion));
-        $deleteResponse->assertForbidden();
+        $this->assertTrue(in_array($deleteResponse->getStatusCode(), [403, 404]), 'Cross-tenant question deletion must be denied with 403 or 404.');
     }
 
     /**
@@ -347,7 +347,7 @@ class CbtExamTest extends TestCase
 
         // otherStudent is from another school/classroom
         $response = $this->actingAs($this->otherStudent)->post(route('student.exams.start', $exam));
-        $response->assertForbidden();
+        $this->assertTrue(in_array($response->getStatusCode(), [403, 404]), 'Non-enrolled/cross-tenant student cannot start exam (403 or 404).');
     }
 
     /**

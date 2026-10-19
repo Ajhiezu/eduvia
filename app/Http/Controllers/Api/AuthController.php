@@ -27,11 +27,7 @@ class AuthController extends Controller
 
         $user = User::where('email', $validated['email'])->first();
 
-        $isLocalDev = app()->environment('local', 'testing');
-        $passwordMatches = $user && (
-            Hash::check($validated['password'], $user->password)
-            || ($isLocalDev && ($validated['password'] === 'password' || $validated['password'] === 'Password123!'))
-        );
+        $passwordMatches = $user && Hash::check($validated['password'], $user->password);
 
         if (! $user || ! $passwordMatches) {
             return $this->apiError(

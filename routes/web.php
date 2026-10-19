@@ -35,6 +35,7 @@ use App\Http\Controllers\ParentChildLinkController;
 use App\Http\Controllers\ParentDashboardController;
 use App\Http\Controllers\ParentFinanceController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PilotOnboardingWebController;
 use App\Http\Controllers\ReportCardPdfController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SchoolAnnouncementController;
@@ -573,6 +574,17 @@ Route::middleware('auth')->group(function () {
             // Template Dokumen: Surat Keterangan Siswa Aktif
             Route::get('/certificate/create', [CorrespondenceController::class, 'createCertificate'])->name('certificate.create');
             Route::post('/certificate/pdf', [CorrespondenceController::class, 'generateCertificatePdf'])->name('certificate.pdf');
+        });
+
+        // =====================================================================
+        // Pilot Onboarding & Migration Tools (Phase 6B)
+        // =====================================================================
+        Route::prefix('pilot')->name('pilot.')->group(function () {
+            Route::get('/templates/{type}', [PilotOnboardingWebController::class, 'downloadTemplate'])->name('template.download');
+            Route::post('/preview', [PilotOnboardingWebController::class, 'preview'])->name('preview');
+            Route::post('/import', [PilotOnboardingWebController::class, 'import'])->name('import');
+            Route::post('/batches/{batchCode}/rollback', [PilotOnboardingWebController::class, 'rollback'])->name('rollback');
+            Route::get('/batches', [PilotOnboardingWebController::class, 'listBatches'])->name('batches');
         });
     });
 

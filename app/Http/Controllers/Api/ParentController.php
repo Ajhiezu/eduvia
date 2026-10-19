@@ -5,13 +5,19 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\AttendanceRecord;
 use App\Models\Invoice;
+use App\Models\ParentLinkCode;
 use App\Models\ParentStudentRelation;
+use App\Models\ParentTeacherConversation;
+use App\Models\Payment;
 use App\Models\SchoolAnnouncement;
+use App\Models\StudentReportCard;
 use App\Models\User;
+use App\Services\SecureUploadService;
 use App\Traits\ApiResponse;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ParentController extends Controller
 {
@@ -247,7 +253,7 @@ class ParentController extends Controller
 
         $inputCode = trim($validated['code']);
 
-        $linkCode = \App\Models\ParentLinkCode::where('code', $inputCode)->first();
+        $linkCode = ParentLinkCode::where('code', $inputCode)->first();
 
         if (! $linkCode) {
             return $this->apiError('Kode tautan siswa tidak valid atau tidak ditemukan.', 404);
@@ -344,7 +350,7 @@ class ParentController extends Controller
             'notes' => 'nullable|string|max:500',
         ]);
 
-        $uploadService = app(\App\Services\SecureUploadService::class);
+        $uploadService = app(SecureUploadService::class);
         $stored = $uploadService->validateAndStore(
             $request->file('proof'),
             'payments/proofs',
@@ -352,10 +358,10 @@ class ParentController extends Controller
         );
 
         do {
-            $payNumber = 'PAY-'.date('Ymd').'-'.strtoupper(\Illuminate\Support\Str::random(6));
-        } while (\App\Models\Payment::where('payment_number', $payNumber)->exists());
+            $payNumber = 'PAY-'.date('Ymd').'-'.strtoupper(Str::random(6));
+        } while (Payment::where('payment_number', $payNumber)->exists());
 
-        $payment = \App\Models\Payment::create([
+        $payment = Payment::create([
             'school_id' => $invoice->school_id,
             'payment_number' => $payNumber,
             'invoice_id' => $invoice->id,
@@ -363,10 +369,10 @@ class ParentController extends Controller
             'paid_by' => $parent->id,
             'amount' => (int) $validated['amount'],
             'payment_date' => now()->toDateString(),
-            'payment_method' => $validated['payment_method'] ?? \App\Models\Payment::METHOD_BANK_TRANSFER,
+            'payment_method' => $validated['payment_method'] ?? Payment::METHOD_BANK_TRANSFER,
             'reference_number' => $validated['reference_number'] ?? null,
             'proof_path' => $stored['path'],
-            'status' => \App\Models\Payment::STATUS_PENDING_VERIFICATION,
+            'status' => Payment::STATUS_PENDING_VERIFICATION,
             'notes' => $validated['notes'] ?? 'Bukti pembayaran diunggah oleh wali murid via aplikasi mobile.',
             'recorded_by' => $parent->id,
         ]);
@@ -397,8 +403,8 @@ class ParentController extends Controller
             return $this->apiError('Data anak tidak ditemukan.', 404);
         }
 
-        $reportCards = \App\Models\StudentReportCard::where('student_id', $student->id)
-            ->where('status', \App\Models\StudentReportCard::STATUS_PUBLISHED)
+        $reportCards = StudentReportCard::where('student_id', $student->id)
+            ->where('status', StudentReportCard::STATUS_PUBLISHED)
             ->with(['academicYear', 'semester', 'classroom', 'homeroomTeacher', 'items'])
             ->orderByDesc('id')
             ->get()
@@ -455,7 +461,7 @@ class ParentController extends Controller
     {
         $parent = $request->user();
 
-        $conversations = \App\Models\ParentTeacherConversation::where('parent_id', $parent->id)
+        $conversations = ParentTeacherConversation::where('parent_id', $parent->id)
             ->with(['teacher', 'student', 'latestMessage'])
             ->orderByDesc('last_message_at')
             ->get()
@@ -479,7 +485,7 @@ class ParentController extends Controller
     /**
      * Get messages in parent-teacher conversation.
      */
-    public function conversationMessages(Request $request, \App\Models\ParentTeacherConversation $conversation): JsonResponse
+    public function conversationMessages(Request $request, ParentTeacherConversation $conversation): JsonResponse
     {
         $parent = $request->user();
 
@@ -522,7 +528,7 @@ class ParentController extends Controller
     /**
      * Send message in parent-teacher conversation.
      */
-    public function sendConversationMessage(Request $request, \App\Models\ParentTeacherConversation $conversation): JsonResponse
+    public function sendConversationMessage(Request $request, ParentTeacherConversation $conversation): JsonResponse
     {
         $parent = $request->user();
 

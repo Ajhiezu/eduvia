@@ -6,6 +6,7 @@ use App\Models\AcademicYear;
 use App\Models\Assignment;
 use App\Models\AssignmentSubmission;
 use App\Models\Classroom;
+use App\Models\ClassroomStudent;
 use App\Models\ConversationMessage;
 use App\Models\FeeCategory;
 use App\Models\Invoice;
@@ -73,7 +74,7 @@ class MobileApiV1CompletenessTest extends TestCase
         $this->semester = Semester::factory()->create(['academic_year_id' => $this->academicYear->id]);
         $this->subject = Subject::factory()->create(['school_id' => $this->school->id, 'name' => 'Pemrograman Mobile']);
 
-        \App\Models\ClassroomStudent::factory()->create([
+        ClassroomStudent::factory()->create([
             'classroom_id' => $this->classroom->id,
             'student_id' => $this->student->id,
             'academic_year_id' => $this->academicYear->id,

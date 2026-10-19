@@ -155,3 +155,14 @@ Setiap perubahan antarmuka atau penambahan fitur baru harus mematuhi aturan beri
 - **Official Logo Assets:** Gunakan aset asli yang telah diverifikasi di `public/images/brand/` (`eduvia-logo-horizontal-transparent.png`, `eduvia-logo-vertical-transparent.png`, `eduvia-icon-mark-transparent.png`, `favicon.ico`). Dilarang menggambar ulang atau mengganti logo dengan emoji/teks biasa.
 - **Tipografi:** Plus Jakarta Sans & Inter.
 - **Zero Backend Changes:** Standardisasi tampilan berfokus 100% pada Frontend (Blade Views, CSS Tokens, Alpine.js, Assets). Jangan mengubah skema basis data, model, route, atau business logic backend yang sudah lulus uji.
+
+# EDUVIA MULTI-LEVEL DUMMY DATA MEMORY GUIDELINES
+
+Dokumen `docs/DATA_DUMMY_ALL_LEVELS_MEMORY.md` merupakan **Single Source of Truth (SSOT)** untuk data dummy multi-jenjang (SD, SMP, SMA) di platform Eduvia:
+- **Tenant:** Yayasan Perguruan Nusantara Utama (`school_id: 1`, slug: `nusantara-utama`).
+- **Skala Peserta Didik:** 63 Rombel (SD: 6 rombel x 36; SMP: 27 rombel x 32; SMA: 30 rombel x 32). Total 2.040 Siswa & 2.040 Orang Tua aktif terhubung.
+- **Tenaga Pendidik & Pimpinan:** 3 Kepala Sekolah terpisah (SD, SMP, SMA) & 75 Guru terspesialisasi mata pelajaran sesuai jenjang.
+- **Mata Pelajaran & Jadwal:** Kurikulum Merdeka real SD, SMP, SMA (Umum + MIPA & IPS) dengan 1.113 jadwal pelajaran mingguan berulang (looping 1 tahun ajaran).
+- **Default Password:** `password123`.
+- **Seeder:** `database/seeders/AllLevelsDummyDataSeeder.php` (dijalankan via `php artisan db:seed --class=AllLevelsDummyDataSeeder`).
+

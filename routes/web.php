@@ -484,7 +484,7 @@ Route::middleware('auth')->group(function () {
             ->name('dashboard');
 
         // Module B: Perpustakaan Sekolah (School Library)
-        Route::prefix('library')->name('library.')->group(function () {
+        Route::middleware('role:super_admin,school_admin,staff,teacher,student')->prefix('library')->name('library.')->group(function () {
             // Public to school members (students, teachers, staff, admin)
             Route::get('/books', [LibraryController::class, 'booksIndex'])->name('books.index');
 
@@ -560,7 +560,7 @@ Route::middleware('auth')->group(function () {
         });
 
         // Module E: Tata Usaha, Persuratan & Dokumen (Correspondence & Official Documents)
-        Route::prefix('correspondence')->name('correspondence.')->group(function () {
+        Route::middleware('role:super_admin,school_admin,staff')->prefix('correspondence')->name('correspondence.')->group(function () {
             Route::get('/', [CorrespondenceController::class, 'index'])->name('index');
             Route::get('/create', [CorrespondenceController::class, 'create'])->name('create');
             Route::post('/', [CorrespondenceController::class, 'store'])->name('store');

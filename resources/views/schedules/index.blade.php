@@ -121,47 +121,149 @@
             </x-card>
         </div>
 
+        @php
+            $groupedClassrooms = $classrooms->groupBy(fn ($c) => strtoupper($c->gradeLevel?->educational_level ?? 'UMUM'));
+            $levelLabels = [
+                'SD' => 'Jenjang SD (Kelas 1 - 6)',
+                'SMP' => 'Jenjang SMP (Kelas 7 - 9)',
+                'SMA' => 'Jenjang SMA (Kelas 10 - 12)',
+            ];
+            $groupedSubjects = $subjects->groupBy(fn ($s) => strtoupper($s->educational_level ?? 'UMUM'));
+            $subjectLevelLabels = [
+                'SD' => 'Mata Pelajaran SD',
+                'SMP' => 'Mata Pelajaran SMP',
+                'SMA' => 'Mata Pelajaran SMA',
+                'UMUM' => 'Mata Pelajaran Umum',
+            ];
+            $hasActiveFilters = $classroomId || $teacherId || $subjectId || $dayOfWeek || $educationalLevel || $semesterId || $status !== null || $search;
+        @endphp
+
         <!-- Filter & Search Controls -->
         <x-card padding>
-            <form method="GET" action="{{ route('schedules.index') }}" class="space-y-3">
+            <form method="GET" action="{{ route('schedules.index') }}" class="space-y-4">
                 <input type="hidden" name="view" value="{{ $viewMode }}">
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
+                <!-- Row 1: Search & Context Filters -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
                     <!-- Search Input -->
-                    <div class="lg:col-span-2">
-                        <input
-                            type="search"
-                            name="search"
-                            value="{{ $search }}"
-                            placeholder="Cari mapel, guru, kelas, ruang..."
-                            class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 placeholder-zinc-400"
-                        >
+                    <div class="sm:col-span-2 lg:col-span-4">
+                        <label class="block text-[11px] font-bold text-zinc-600 mb-1">Pencarian Cepat</label>
+                        <div class="relative">
+                            <input
+                                type="search"
+                                name="search"
+                                value="{{ $search }}"
+                                placeholder="Cari mapel, guru, kelas, ruang..."
+                                class="w-full h-10 rounded-lg border border-zinc-300 text-zinc-900 text-xs pl-9 pr-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 placeholder-zinc-400 bg-white"
+                            >
+                            <svg class="w-4 h-4 text-zinc-400 absolute left-3 top-3 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
                     </div>
 
-                    <!-- Classroom Filter -->
-                    <div>
+                    <!-- Academic Year Filter -->
+                    <div class="lg:col-span-3">
+                        <label class="block text-[11px] font-bold text-zinc-600 mb-1">Tahun Ajaran</label>
                         <select
-                            name="classroom_id"
-                            class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                            name="academic_year_id"
+                            class="w-full h-10 rounded-lg border border-zinc-300 text-zinc-900 text-xs px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 bg-white"
                             onchange="this.form.submit()"
                         >
-                            <option value="">Semua Kelas (Rombel)</option>
-                            @foreach ($classrooms as $cls)
-                                <option value="{{ $cls->id }}" @selected((string) $classroomId === (string) $cls->id)>
-                                    {{ $cls->name }}
+                            @foreach ($academicYears as $year)
+                                <option value="{{ $year->id }}" @selected((string) $academicYearId === (string) $year->id)>
+                                    T.A. {{ $year->name }} {{ $year->is_active ? '(Aktif)' : '' }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
-                    <!-- Teacher Filter -->
-                    <div>
+                    <!-- Semester Filter -->
+                    <div class="lg:col-span-3">
+                        <label class="block text-[11px] font-bold text-zinc-600 mb-1">Semester</label>
                         <select
-                            name="teacher_id"
-                            class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                            name="semester_id"
+                            class="w-full h-10 rounded-lg border border-zinc-300 text-zinc-900 text-xs px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 bg-white"
                             onchange="this.form.submit()"
                         >
-                            <option value="">Semua Guru Pengampu</option>
+                            <option value="">Semua Semester</option>
+                            @foreach ($semesters as $sem)
+                                <option value="{{ $sem->id }}" @selected((string) $semesterId === (string) $sem->id)>
+                                    {{ $sem->name }} {{ $sem->is_active ? '(Aktif)' : '' }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Educational Level Filter -->
+                    <div class="lg:col-span-2">
+                        <label class="block text-[11px] font-bold text-zinc-600 mb-1">Jenjang</label>
+                        <select
+                            name="educational_level"
+                            class="w-full h-10 rounded-lg border border-zinc-300 text-zinc-900 text-xs px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 bg-white"
+                            onchange="this.form.submit()"
+                        >
+                            <option value="">Semua Jenjang</option>
+                            <option value="sd" @selected($educationalLevel === 'sd')>SD</option>
+                            <option value="smp" @selected($educationalLevel === 'smp')>SMP</option>
+                            <option value="sma" @selected($educationalLevel === 'sma')>SMA</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 2: Classroom, Subject, Teacher, Day, and Status Filters -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 pt-1">
+                    <!-- Classroom Filter -->
+                    <div class="lg:col-span-3">
+                        <label class="block text-[11px] font-bold text-zinc-600 mb-1">Kelas (Rombel)</label>
+                        <select
+                            name="classroom_id"
+                            class="w-full h-10 rounded-lg border border-zinc-300 text-zinc-900 text-xs px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 bg-white"
+                            onchange="this.form.submit()"
+                        >
+                            <option value="">Semua Kelas ({{ $classrooms->count() }} Rombel)</option>
+                            @foreach ($groupedClassrooms as $level => $clsList)
+                                <optgroup label="{{ $levelLabels[$level] ?? 'Jenjang ' . $level }}">
+                                    @foreach ($clsList as $cls)
+                                        <option value="{{ $cls->id }}" @selected((string) $classroomId === (string) $cls->id)>
+                                            {{ $cls->name }} ({{ $cls->gradeLevel?->name ?? 'Tingkat' }})
+                                        </option>
+                                    @endforeach
+                                </optgroup>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Subject Filter -->
+                    <div class="lg:col-span-3">
+                        <label class="block text-[11px] font-bold text-zinc-600 mb-1">Mata Pelajaran</label>
+                        <select
+                            name="subject_id"
+                            class="w-full h-10 rounded-lg border border-zinc-300 text-zinc-900 text-xs px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 bg-white"
+                            onchange="this.form.submit()"
+                        >
+                            <option value="">Semua Mata Pelajaran ({{ $subjects->count() }})</option>
+                            @foreach ($groupedSubjects as $lvl => $subList)
+                                <optgroup label="{{ $subjectLevelLabels[$lvl] ?? 'Mapel ' . $lvl }}">
+                                    @foreach ($subList as $sbj)
+                                        <option value="{{ $sbj->id }}" @selected((string) $subjectId === (string) $sbj->id)>
+                                            {{ $sbj->code }} - {{ $sbj->name }}
+                                        </option>
+                                    @endforeach
+                                </optgroup>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Teacher Filter -->
+                    <div class="lg:col-span-3">
+                        <label class="block text-[11px] font-bold text-zinc-600 mb-1">Guru Pengampu</label>
+                        <select
+                            name="teacher_id"
+                            class="w-full h-10 rounded-lg border border-zinc-300 text-zinc-900 text-xs px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 bg-white"
+                            onchange="this.form.submit()"
+                        >
+                            <option value="">Semua Guru ({{ $teachers->count() }})</option>
                             @foreach ($teachers as $t)
                                 <option value="{{ $t->id }}" @selected((string) $teacherId === (string) $t->id)>
                                     {{ $t->name }}
@@ -170,46 +272,12 @@
                         </select>
                     </div>
 
-                    <!-- Subject Filter -->
-                    <div>
-                        <select
-                            name="subject_id"
-                            class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
-                            onchange="this.form.submit()"
-                        >
-                            <option value="">Semua Mata Pelajaran</option>
-                            @foreach ($subjects as $sbj)
-                                <option value="{{ $sbj->id }}" @selected((string) $subjectId === (string) $sbj->id)>
-                                    {{ $sbj->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Academic Year Filter -->
-                    <div>
-                        <select
-                            name="academic_year_id"
-                            class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
-                            onchange="this.form.submit()"
-                        >
-                            <option value="">Semua Tahun Ajaran</option>
-                            @foreach ($academicYears as $year)
-                                <option value="{{ $year->id }}" @selected((string) $academicYearId === (string) $year->id)>
-                                    {{ $year->name }} {{ $year->is_active ? '(Aktif)' : '' }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Secondary Filter Bar & View Mode Toggle -->
-                <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-zinc-100">
-                    <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <!-- Day Filter -->
+                    <!-- Day Filter -->
+                    <div class="sm:col-span-1 lg:col-span-2">
+                        <label class="block text-[11px] font-bold text-zinc-600 mb-1">Hari</label>
                         <select
                             name="day_of_week"
-                            class="rounded-lg border border-zinc-300 text-zinc-800 text-xs py-1.5 px-2.5 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                            class="w-full h-10 rounded-lg border border-zinc-300 text-zinc-900 text-xs px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 bg-white"
                             onchange="this.form.submit()"
                         >
                             <option value="">Semua Hari</option>
@@ -219,26 +287,40 @@
                                 </option>
                             @endforeach
                         </select>
+                    </div>
 
-                        <!-- Status Filter -->
+                    <!-- Status Filter -->
+                    <div class="sm:col-span-1 lg:col-span-1">
+                        <label class="block text-[11px] font-bold text-zinc-600 mb-1">Status</label>
                         <select
                             name="status"
-                            class="rounded-lg border border-zinc-300 text-zinc-800 text-xs py-1.5 px-2.5 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                            class="w-full h-10 rounded-lg border border-zinc-300 text-zinc-900 text-xs px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 bg-white"
                             onchange="this.form.submit()"
                         >
-                            <option value="">Semua Status</option>
-                            <option value="1" @selected((string) $status === '1')>Aktif Saja</option>
-                            <option value="0" @selected((string) $status === '0')>Nonaktif Saja</option>
+                            <option value="">Semua</option>
+                            <option value="1" @selected((string) $status === '1')>Aktif</option>
+                            <option value="0" @selected((string) $status === '0')>Nonaktif</option>
                         </select>
+                    </div>
+                </div>
 
-                        @if ($classroomId || $teacherId || $subjectId || $dayOfWeek || $status !== null || $search)
+                <!-- Secondary Filter Bar & View Mode Toggle -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-zinc-100">
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        @if ($hasActiveFilters)
                             <a
                                 href="{{ route('schedules.index', ['view' => $viewMode]) }}"
-                                class="text-xs text-brand-600 hover:text-brand-700 font-semibold px-2 py-1.5 rounded hover:bg-brand-50 transition-colors"
+                                class="inline-flex items-center text-xs text-brand-600 hover:text-brand-700 font-semibold px-3 py-1.5 rounded-lg border border-brand-200 hover:bg-brand-50 transition-colors"
                             >
+                                <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
                                 Reset Filter
                             </a>
                         @endif
+                        <span class="text-xs text-zinc-500">
+                            Menampilkan <strong class="text-zinc-900">{{ $totalCount }}</strong> jadwal sesuai filter
+                        </span>
                     </div>
 
                     <!-- View Switcher Tabs -->
@@ -282,6 +364,59 @@
         <!-- ================================================================= -->
         @if ($viewMode === 'weekly')
             <div class="space-y-4">
+                @if ($classroomId)
+                    @php
+                        $selectedCls = $classrooms->firstWhere('id', (int) $classroomId);
+                    @endphp
+                    <div class="p-3.5 bg-brand-50 border border-brand-200 rounded-xl text-xs text-brand-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-brand-600 shrink-0"></span>
+                            <div>
+                                <span class="font-extrabold text-sm text-brand-900">
+                                    Jadwal Mingguan: {{ $selectedCls?->name ?? 'Kelas' }}
+                                </span>
+                                <span class="text-zinc-500 ml-1.5">
+                                    ({{ $selectedCls?->gradeLevel?->name ?? 'Tingkat' }} • {{ $totalCount }} Sesi Pelajaran Teralokasi)
+                                </span>
+                            </div>
+                        </div>
+                        <a
+                            href="{{ request()->fullUrlWithQuery(['classroom_id' => null]) }}"
+                            class="inline-flex items-center text-xs font-bold text-brand-700 hover:text-brand-900 hover:underline shrink-0"
+                        >
+                            Tampilkan Semua Kelas &rarr;
+                        </a>
+                    </div>
+                @else
+                    <div class="p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-xs text-zinc-800 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-2xs">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-brand-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>
+                                Menampilkan seluruh jadwal gabungan <strong>{{ $totalCount }} sesi</strong> dari <strong>{{ $distinctClassrooms }} rombel</strong>. Pilih kelas tertentu pada filter untuk melihat kalender jadwal khusus satu rombel.
+                            </span>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-1.5 shrink-0">
+                            <span class="text-zinc-500 text-[11px] font-semibold">Pilih Cepat:</span>
+                            @if ($c1 = $classrooms->first())
+                                <a href="{{ request()->fullUrlWithQuery(['classroom_id' => $c1->id]) }}" class="px-2.5 py-1 rounded bg-white border border-zinc-300 hover:border-brand-500 hover:text-brand-600 font-bold text-[11px] text-zinc-800 shadow-2xs transition-colors">
+                                    {{ $c1->name }} (SD)
+                                </a>
+                            @endif
+                            @if ($c2 = $classrooms->firstWhere('gradeLevel.educational_level', 'smp'))
+                                <a href="{{ request()->fullUrlWithQuery(['classroom_id' => $c2->id]) }}" class="px-2.5 py-1 rounded bg-white border border-zinc-300 hover:border-brand-500 hover:text-brand-600 font-bold text-[11px] text-zinc-800 shadow-2xs transition-colors">
+                                    {{ $c2->name }} (SMP)
+                                </a>
+                            @endif
+                            @if ($c3 = $classrooms->firstWhere('gradeLevel.educational_level', 'sma'))
+                                <a href="{{ request()->fullUrlWithQuery(['classroom_id' => $c3->id]) }}" class="px-2.5 py-1 rounded bg-white border border-zinc-300 hover:border-brand-500 hover:text-brand-600 font-bold text-[11px] text-zinc-800 shadow-2xs transition-colors">
+                                    {{ $c3->name }} (SMA)
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                @endif
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4">
                     @foreach (array_slice($days, 0, 6, true) as $dayNum => $dayLabel)
                         @php

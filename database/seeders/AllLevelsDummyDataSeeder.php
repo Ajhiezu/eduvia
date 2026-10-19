@@ -64,6 +64,7 @@ class AllLevelsDummyDataSeeder extends Seeder
                 'description' => 'Tahun Ajaran 2026/2027',
             ]
         );
+        $this->academicYear->activate();
 
         $this->semesterGanjil = Semester::firstOrCreate(
             ['academic_year_id' => $this->academicYear->id, 'semester_type' => 'ganjil'],
@@ -74,6 +75,7 @@ class AllLevelsDummyDataSeeder extends Seeder
                 'is_active' => true,
             ]
         );
+        $this->semesterGanjil->activate();
 
         $this->semesterGenap = Semester::firstOrCreate(
             ['academic_year_id' => $this->academicYear->id, 'semester_type' => 'genap'],

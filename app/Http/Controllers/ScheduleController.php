@@ -57,6 +57,7 @@ class ScheduleController extends Controller
 
         $academicYearId = $request->input('academic_year_id');
         $semesterId = $request->input('semester_id');
+        $educationalLevel = $request->input('educational_level');
         $classroomId = $request->input('classroom_id');
         $teacherId = $request->input('teacher_id');
         $subjectId = $request->input('subject_id');
@@ -78,7 +79,7 @@ class ScheduleController extends Controller
             ->with([
                 'teachingAssignment.subject',
                 'teachingAssignment.classroom.gradeLevel',
-                'teachingAssignment.teacher',
+                'teachingAssignment.teacher.staffProfile',
                 'teachingAssignment.academicYear',
                 'teachingAssignment.semester',
             ])
@@ -86,6 +87,12 @@ class ScheduleController extends Controller
             ->when($academicYearId, fn ($q) => $q->forAcademicYear((int) $academicYearId))
             ->when($classroomId, fn ($q) => $q->forClassroom((int) $classroomId))
             ->when($teacherId, fn ($q) => $q->forTeacher((int) $teacherId))
+            ->when($subjectId, function ($q) use ($subjectId) {
+                $q->whereHas('teachingAssignment', fn ($sub) => $sub->where('subject_id', (int) $subjectId));
+            })
+            ->when($educationalLevel, function ($q) use ($educationalLevel) {
+                $q->whereHas('teachingAssignment.classroom.gradeLevel', fn ($g) => $g->where('educational_level', $educationalLevel));
+            })
             ->when($semesterId, function ($q) use ($semesterId) {
                 $q->whereHas('teachingAssignment', fn ($sub) => $sub->where('semester_id', (int) $semesterId));
             })
@@ -125,18 +132,28 @@ class ScheduleController extends Controller
             ->orderBy('semester_type')
             ->get();
 
-        $classrooms = Classroom::when($schoolId, fn ($q) => $q->where('school_id', $schoolId))
+        $classrooms = Classroom::with('gradeLevel')
+            ->when($schoolId, fn ($q) => $q->where('school_id', $schoolId))
             ->when($academicYearId, fn ($q) => $q->where('academic_year_id', $academicYearId))
+            ->when($educationalLevel, fn ($q) => $q->whereHas('gradeLevel', fn ($g) => $g->where('educational_level', $educationalLevel)))
             ->where('is_active', true)
-            ->orderBy('name')
-            ->get();
+            ->get()
+            ->sortBy([
+                fn ($a, $b) => ($a->gradeLevel?->order ?? 0) <=> ($b->gradeLevel?->order ?? 0),
+                fn ($a, $b) => ($a->gradeLevel?->level_number ?? 0) <=> ($b->gradeLevel?->level_number ?? 0),
+                fn ($a, $b) => strnatcasecmp($a->name, $b->name),
+            ])
+            ->values();
 
         $subjects = Subject::when($schoolId, fn ($q) => $q->where('school_id', $schoolId))
+            ->when($educationalLevel, fn ($q) => $q->where('educational_level', $educationalLevel))
             ->where('is_active', true)
+            ->orderBy('educational_level')
             ->orderBy('name')
             ->get();
 
-        $teachers = User::when($schoolId, fn ($q) => $q->where('school_id', $schoolId))
+        $teachers = User::with('staffProfile')
+            ->when($schoolId, fn ($q) => $q->where('school_id', $schoolId))
             ->where('role', UserRole::TEACHER)
             ->where('is_active', true)
             ->orderBy('name')
@@ -158,6 +175,7 @@ class ScheduleController extends Controller
             'days',
             'academicYearId',
             'semesterId',
+            'educationalLevel',
             'classroomId',
             'teacherId',
             'subjectId',
@@ -191,17 +209,25 @@ class ScheduleController extends Controller
             ->orderBy('semester_type')
             ->get();
 
-        $classrooms = Classroom::when($schoolId, fn ($q) => $q->where('school_id', $schoolId))
+        $classrooms = Classroom::with('gradeLevel')
+            ->when($schoolId, fn ($q) => $q->where('school_id', $schoolId))
             ->where('is_active', true)
-            ->orderBy('name')
-            ->get();
+            ->get()
+            ->sortBy([
+                fn ($a, $b) => ($a->gradeLevel?->order ?? 0) <=> ($b->gradeLevel?->order ?? 0),
+                fn ($a, $b) => ($a->gradeLevel?->level_number ?? 0) <=> ($b->gradeLevel?->level_number ?? 0),
+                fn ($a, $b) => strnatcasecmp($a->name, $b->name),
+            ])
+            ->values();
 
         $subjects = Subject::when($schoolId, fn ($q) => $q->where('school_id', $schoolId))
             ->where('is_active', true)
+            ->orderBy('educational_level')
             ->orderBy('name')
             ->get();
 
-        $teachers = User::when($schoolId, fn ($q) => $q->where('school_id', $schoolId))
+        $teachers = User::with('staffProfile')
+            ->when($schoolId, fn ($q) => $q->where('school_id', $schoolId))
             ->where('role', UserRole::TEACHER)
             ->where('is_active', true)
             ->orderBy('name')
@@ -308,17 +334,25 @@ class ScheduleController extends Controller
             ->orderBy('semester_type')
             ->get();
 
-        $classrooms = Classroom::when($schoolId, fn ($q) => $q->where('school_id', $schoolId))
+        $classrooms = Classroom::with('gradeLevel')
+            ->when($schoolId, fn ($q) => $q->where('school_id', $schoolId))
             ->where('is_active', true)
-            ->orderBy('name')
-            ->get();
+            ->get()
+            ->sortBy([
+                fn ($a, $b) => ($a->gradeLevel?->order ?? 0) <=> ($b->gradeLevel?->order ?? 0),
+                fn ($a, $b) => ($a->gradeLevel?->level_number ?? 0) <=> ($b->gradeLevel?->level_number ?? 0),
+                fn ($a, $b) => strnatcasecmp($a->name, $b->name),
+            ])
+            ->values();
 
         $subjects = Subject::when($schoolId, fn ($q) => $q->where('school_id', $schoolId))
             ->where('is_active', true)
+            ->orderBy('educational_level')
             ->orderBy('name')
             ->get();
 
-        $teachers = User::when($schoolId, fn ($q) => $q->where('school_id', $schoolId))
+        $teachers = User::with('staffProfile')
+            ->when($schoolId, fn ($q) => $q->where('school_id', $schoolId))
             ->where('role', UserRole::TEACHER)
             ->where('is_active', true)
             ->orderBy('name')

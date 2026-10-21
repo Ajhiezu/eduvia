@@ -3,9 +3,9 @@
     'hoverable' => true,
 ])
 
-<div class="w-full overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-none">
+<div class="w-full overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-none">
     <div class="overflow-x-auto" data-scrollable>
-        <table {{ $attributes->merge(['class' => 'w-full min-w-[600px] text-left text-sm text-zinc-600']) }}>
+        <table {{ $attributes->merge(['class' => 'w-full min-w-[600px] text-left text-sm text-zinc-700']) }}>
             @if (isset($header))
                 <thead class="bg-zinc-50 border-b border-zinc-200 text-xs font-semibold uppercase tracking-wider text-zinc-500 select-none">
                     <tr>

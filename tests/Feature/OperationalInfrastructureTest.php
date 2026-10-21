@@ -14,6 +14,7 @@ class DummyQueuedTask
     use TenantAwareJob;
 
     public bool $executedInTenantContext = false;
+
     public ?int $capturedSchoolId = null;
 
     public function __construct(?int $schoolId = null)

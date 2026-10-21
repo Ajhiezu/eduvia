@@ -63,29 +63,29 @@
         <form method="GET" action="{{ route('finance.payments.index') }}" class="bg-white p-4 rounded-2xl border border-zinc-200 shadow-xs space-y-3">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
                 <div class="lg:col-span-2">
-                    <label class="block font-semibold text-zinc-700 mb-1">Cari Transaksi / Siswa</label>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="No Pembayaran, Nama Siswa, No Tagihan..." class="w-full px-3 py-2 rounded-lg border border-zinc-300">
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Cari Transaksi / Siswa</label>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="No Pembayaran, Nama Siswa, No Tagihan..." class="w-full px-3.5 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400">
                 </div>
                 <div>
-                    <label class="block font-semibold text-zinc-700 mb-1">Metode</label>
-                    <select name="method" class="w-full px-3 py-2 rounded-lg border border-zinc-300">
-                        <option value="">-- Semua Metode --</option>
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Metode</label>
+                    <select name="method" class="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20">
+                        <option value="">Semua Metode</option>
                         <option value="cash" {{ request('method') === 'cash' ? 'selected' : '' }}>Tunai (Kasir)</option>
                         <option value="bank_transfer" {{ request('method') === 'bank_transfer' ? 'selected' : '' }}>Transfer Bank</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block font-semibold text-zinc-700 mb-1">Dari Tanggal</label>
-                    <input type="date" name="start_date" value="{{ request('start_date') }}" class="w-full px-3 py-2 rounded-lg border border-zinc-300">
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Dari Tanggal</label>
+                    <input type="date" name="start_date" value="{{ request('start_date') }}" class="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20">
                 </div>
                 <div>
-                    <label class="block font-semibold text-zinc-700 mb-1">Sampai Tanggal</label>
-                    <input type="date" name="end_date" value="{{ request('end_date') }}" class="w-full px-3 py-2 rounded-lg border border-zinc-300">
+                    <label class="block text-sm font-medium text-zinc-700 mb-1.5">Sampai Tanggal</label>
+                    <input type="date" name="end_date" value="{{ request('end_date') }}" class="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20">
                 </div>
             </div>
-            <div class="flex items-center justify-end gap-2 pt-2 border-t border-zinc-100">
-                <a href="{{ route('finance.payments.index') }}" class="px-3 py-1.5 rounded-lg border border-zinc-300 text-zinc-600 text-xs font-semibold hover:bg-zinc-50">Reset</a>
-                <button type="submit" class="px-4 py-1.5 rounded-lg bg-zinc-900 text-white text-xs font-semibold hover:bg-zinc-800">Terapkan Filter</button>
+            <div class="flex items-center justify-end gap-3 pt-3 border-t border-zinc-100">
+                <a href="{{ route('finance.payments.index') }}" class="px-4 py-2.5 rounded-lg border border-zinc-200 text-zinc-600 text-sm font-medium hover:bg-zinc-50 transition-colors">Reset</a>
+                <button type="submit" class="px-5 py-2.5 rounded-lg bg-zinc-900 text-white text-sm font-semibold hover:bg-zinc-800 transition-colors">Terapkan Filter</button>
             </div>
         </form>
 

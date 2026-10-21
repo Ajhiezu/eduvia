@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\LeaveRequestController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ParentController;
 use App\Http\Controllers\Api\PaymentGatewayController;
+use App\Http\Controllers\Api\PilotSupportApiController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\V1\Teacher\TeacherAiApiController;
@@ -150,6 +151,15 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::get('/status/{orderId}', [PaymentGatewayController::class, 'checkStatus'])->name('status');
             Route::post('/reconcile', [PaymentGatewayController::class, 'reconcile'])->name('reconcile');
             Route::get('/ledger', [PaymentGatewayController::class, 'ledger'])->name('ledger');
+        });
+
+        // Pilot Support, Feedback & Telemetry (Phase 6B)
+        Route::prefix('pilot')->name('pilot.')->group(function () {
+            Route::post('/feedback', [PilotSupportApiController::class, 'submitFeedback'])->name('feedback.submit');
+            Route::get('/feedbacks', [PilotSupportApiController::class, 'listFeedbacks'])->name('feedbacks.list');
+            Route::put('/feedbacks/{feedback}/triage', [PilotSupportApiController::class, 'triageFeedback'])->name('feedback.triage');
+            Route::post('/surveys', [PilotSupportApiController::class, 'submitSurvey'])->name('survey.submit');
+            Route::get('/metrics/weekly', [PilotSupportApiController::class, 'weeklyReport'])->name('metrics.weekly');
         });
     });
 

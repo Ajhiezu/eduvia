@@ -95,26 +95,26 @@
 
         <!-- Filter Card -->
         <x-card padding>
-            <form method="GET" action="{{ route('students.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            <form method="GET" action="{{ route('students.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
                 <!-- Search Input -->
-                <div class="lg:col-span-2">
+                <div class="sm:col-span-2 lg:col-span-3">
                     <input
                         type="search"
                         name="search"
                         value="{{ $search }}"
                         placeholder="Cari nama siswa, NIS, NISN, atau email..."
-                        class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 placeholder-zinc-400"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3.5 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
                     >
                 </div>
 
                 <!-- Status Filter -->
-                <div>
+                <div class="lg:col-span-3">
                     <select
                         name="status"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
-                        <option value="">-- Semua Status --</option>
+                        <option value="">Semua Status</option>
                         <option value="active" {{ $status === 'active' ? 'selected' : '' }}>Aktif</option>
                         <option value="transferred" {{ $status === 'transferred' ? 'selected' : '' }}>Pindah / Mutasi</option>
                         <option value="graduated" {{ $status === 'graduated' ? 'selected' : '' }}>Lulus</option>
@@ -123,13 +123,13 @@
                 </div>
 
                 <!-- Classroom Filter -->
-                <div>
+                <div class="lg:col-span-3">
                     <select
                         name="classroom_id"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
-                        <option value="">-- Semua Rombel --</option>
+                        <option value="">Semua Rombel</option>
                         @foreach ($classrooms as $c)
                             <option value="{{ $c->id }}" {{ $classroomId == $c->id ? 'selected' : '' }}>
                                 {{ $c->name }}
@@ -139,13 +139,13 @@
                 </div>
 
                 <!-- Grade Level Filter -->
-                <div>
+                <div class="lg:col-span-3">
                     <select
                         name="grade_level_id"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
-                        <option value="">-- Semua Tingkat Kelas --</option>
+                        <option value="">Semua Tingkat Kelas</option>
                         @foreach ($gradeLevels as $gl)
                             <option value="{{ $gl->id }}" {{ $gradeLevelId == $gl->id ? 'selected' : '' }}>
                                 {{ $gl->displayLabel() }}

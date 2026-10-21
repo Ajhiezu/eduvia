@@ -80,10 +80,10 @@
 
         <!-- Filter & Search Controls -->
         <x-card padding>
-            <form method="GET" action="{{ route('staff.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            <form method="GET" action="{{ route('staff.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-end">
                 <!-- Search Input -->
-                <div class="lg:col-span-2">
-                    <label for="search" class="block text-[11px] font-semibold text-zinc-600 uppercase tracking-wider mb-1">
+                <div class="sm:col-span-2 lg:col-span-3">
+                    <label for="search" class="block text-sm font-medium text-zinc-700 mb-1.5">
                         Pencarian
                     </label>
                     <input
@@ -92,22 +92,22 @@
                         id="search"
                         value="{{ request('search') }}"
                         placeholder="Cari nama, email, NIP, atau NUPTK..."
-                        class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3.5 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
                     />
                 </div>
 
                 <!-- Role Filter -->
-                <div>
-                    <label for="role" class="block text-[11px] font-semibold text-zinc-600 uppercase tracking-wider mb-1">
+                <div class="lg:col-span-3">
+                    <label for="role" class="block text-sm font-medium text-zinc-700 mb-1.5">
                         Peran Sistem
                     </label>
                     <select
                         name="role"
                         id="role"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
-                        <option value="">-- Semua Peran --</option>
+                        <option value="">Semua Peran</option>
                         <option value="teacher" {{ request('role') === 'teacher' ? 'selected' : '' }}>Guru / Pendidik</option>
                         <option value="staff" {{ request('role') === 'staff' ? 'selected' : '' }}>Staf / Tenaga Kependidikan</option>
                         <option value="school_admin" {{ request('role') === 'school_admin' ? 'selected' : '' }}>Admin / Kepala Sekolah</option>
@@ -115,17 +115,17 @@
                 </div>
 
                 <!-- Position Filter -->
-                <div>
-                    <label for="position" class="block text-[11px] font-semibold text-zinc-600 uppercase tracking-wider mb-1">
+                <div class="lg:col-span-3">
+                    <label for="position" class="block text-sm font-medium text-zinc-700 mb-1.5">
                         Jabatan
                     </label>
                     <select
                         name="position"
                         id="position"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
-                        <option value="">-- Semua Jabatan --</option>
+                        <option value="">Semua Jabatan</option>
                         @foreach ($positions as $pos)
                             <option value="{{ $pos->value }}" {{ request('position') === $pos->value ? 'selected' : '' }}>
                                 {{ $pos->label() }}
@@ -135,8 +135,8 @@
                 </div>
 
                 <!-- Status Filter & Submit -->
-                <div>
-                    <label for="status" class="block text-[11px] font-semibold text-zinc-600 uppercase tracking-wider mb-1">
+                <div class="lg:col-span-3">
+                    <label for="status" class="block text-sm font-medium text-zinc-700 mb-1.5">
                         Status
                     </label>
                     <div class="flex items-center gap-2">
@@ -144,15 +144,15 @@
                             name="status"
                             id="status"
                             onchange="this.form.submit()"
-                            class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
                         >
-                            <option value="">-- Semua --</option>
+                            <option value="">Semua Status</option>
                             <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Aktif</option>
                             <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Non-Aktif</option>
                             <option value="pending_invitation" {{ request('status') === 'pending_invitation' ? 'selected' : '' }}>Menunggu Aktivasi</option>
                         </select>
 
-                        <x-button type="submit" variant="secondary" size="sm" class="shrink-0">
+                        <x-button type="submit" variant="secondary" size="md" class="shrink-0">
                             Cari
                         </x-button>
                     </div>

@@ -12,9 +12,9 @@
     $baseStyles = "inline-flex items-center justify-center font-semibold transition-all duration-150 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none select-none touch-manipulation";
 
     $sizes = match ($size) {
-        'sm' => "text-xs px-3 py-1.5 gap-1.5",
-        'lg' => "text-base px-5 py-3 gap-2.5",
-        default => "text-sm px-4 py-2 gap-2",
+        'sm' => "text-xs sm:text-sm px-3.5 py-1.5 min-h-[36px] gap-1.5",
+        'lg' => "text-base px-5 py-3 min-h-[48px] gap-2.5",
+        default => "text-sm sm:text-base px-4 py-2.5 min-h-[44px] gap-2",
     };
 
     $variants = match ($variant) {

@@ -7,9 +7,7 @@ use Closure;
 
 class SetTenantContext
 {
-    public function __construct(protected ?int $schoolId)
-    {
-    }
+    public function __construct(protected ?int $schoolId) {}
 
     /**
      * Process the queued job with isolated tenant context.

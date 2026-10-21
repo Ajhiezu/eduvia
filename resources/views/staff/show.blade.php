@@ -312,12 +312,12 @@
                         Formulir Penetapan Penugasan Mengajar Baru
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                         <div>
-                            <label for="classroom_id" class="block text-xs font-semibold text-zinc-700 mb-1">
-                                Rombel / Kelas <span class="text-rose-500">*</span>
+                            <label for="classroom_id" class="block text-sm font-medium text-zinc-700 mb-1.5">
+                                Rombel / Kelas <span class="text-[#E11D2E]">*</span>
                             </label>
-                            <select name="classroom_id" id="classroom_id" required class="w-full rounded border-zinc-300 text-xs py-1.5 px-2">
+                            <select name="classroom_id" id="classroom_id" required class="w-full rounded-lg border-zinc-200 text-base py-2.5 pl-3.5 pr-11">
                                 <option value="">-- Pilih Kelas --</option>
                                 @foreach ($classrooms as $c)
                                     <option value="{{ $c->id }}">{{ $c->name }} ({{ $c->gradeLevel?->name }})</option>
@@ -326,10 +326,10 @@
                         </div>
 
                         <div>
-                            <label for="subject_id" class="block text-xs font-semibold text-zinc-700 mb-1">
-                                Mata Pelajaran <span class="text-rose-500">*</span>
+                            <label for="subject_id" class="block text-sm font-medium text-zinc-700 mb-1.5">
+                                Mata Pelajaran <span class="text-[#E11D2E]">*</span>
                             </label>
-                            <select name="subject_id" id="subject_id" required class="w-full rounded border-zinc-300 text-xs py-1.5 px-2">
+                            <select name="subject_id" id="subject_id" required class="w-full rounded-lg border-zinc-200 text-base py-2.5 pl-3.5 pr-11">
                                 <option value="">-- Pilih Mapel --</option>
                                 @foreach ($subjects as $s)
                                     <option value="{{ $s->id }}">{{ $s->name }} ({{ $s->code }})</option>
@@ -338,10 +338,10 @@
                         </div>
 
                         <div>
-                            <label for="academic_year_id" class="block text-xs font-semibold text-zinc-700 mb-1">
-                                Tahun Ajaran <span class="text-rose-500">*</span>
+                            <label for="academic_year_id" class="block text-sm font-medium text-zinc-700 mb-1.5">
+                                Tahun Ajaran <span class="text-[#E11D2E]">*</span>
                             </label>
-                            <select name="academic_year_id" id="academic_year_id" required class="w-full rounded border-zinc-300 text-xs py-1.5 px-2">
+                            <select name="academic_year_id" id="academic_year_id" required class="w-full rounded-lg border-zinc-200 text-base py-2.5 pl-3.5 pr-11">
                                 @foreach ($academicYears as $ay)
                                     <option value="{{ $ay->id }}" {{ $ay->is_active ? 'selected' : '' }}>{{ $ay->name }}</option>
                                 @endforeach
@@ -349,16 +349,16 @@
                         </div>
 
                         <div>
-                            <label for="hours_per_week" class="block text-xs font-semibold text-zinc-700 mb-1">
-                                Jam / Minggu <span class="text-rose-500">*</span>
+                            <label for="hours_per_week" class="block text-sm font-medium text-zinc-700 mb-1.5">
+                                Jam / Minggu <span class="text-[#E11D2E]">*</span>
                             </label>
-                            <input type="number" name="hours_per_week" id="hours_per_week" value="4" min="1" max="50" required class="w-full rounded border-zinc-300 text-xs py-1.5 px-2">
+                            <input type="number" name="hours_per_week" id="hours_per_week" value="4" min="1" max="50" required class="w-full rounded-lg border-zinc-200 text-base py-2.5 px-3.5 font-mono">
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-end gap-2 pt-2">
-                        <x-button type="button" @click="showAssignModal = false" variant="secondary" size="sm">Batal</x-button>
-                        <x-button type="submit" variant="primary" size="sm">Simpan Penugasan</x-button>
+                    <div class="flex items-center justify-end gap-3 pt-3">
+                        <x-button type="button" @click="showAssignModal = false" variant="secondary" size="md">Batal</x-button>
+                        <x-button type="submit" variant="primary" size="md">Simpan Penugasan</x-button>
                     </div>
                 </form>
             </div>

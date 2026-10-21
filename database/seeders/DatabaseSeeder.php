@@ -688,5 +688,8 @@ class DatabaseSeeder extends Seeder
 
         // 8. Seed Computer Based Test (CBT) Bank Soal & Demo Exam
         $this->call(CbtSeeder::class);
+
+        // 9. Seed Complete Multi-Level Dummy Data (SD, SMP, SMA)
+        $this->call(AllLevelsDummyDataSeeder::class);
     }
 }

@@ -66,16 +66,24 @@
                             <label for="classroom_id" class="block text-xs font-bold text-zinc-700 mb-1">
                                 Rombongan Belajar (Kelas) <span class="text-rose-500">*</span>
                             </label>
+                            @php
+                                $editGroupedClassrooms = $classrooms->groupBy(fn ($c) => strtoupper($c->gradeLevel?->educational_level ?? 'UMUM'));
+                                $editGroupedSubjects = $subjects->groupBy(fn ($s) => strtoupper($s->educational_level ?? 'UMUM'));
+                            @endphp
                             <select
                                 id="classroom_id"
                                 name="classroom_id"
                                 required
                                 class="w-full rounded-lg border {{ $errors->has('classroom_id') ? 'border-rose-400 bg-rose-50/20' : 'border-zinc-300' }} text-zinc-900 text-xs py-2.5 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
                             >
-                                @foreach ($classrooms as $cls)
-                                    <option value="{{ $cls->id }}" @selected(old('classroom_id', $ta?->classroom_id) == $cls->id)>
-                                        {{ $cls->name }} ({{ $cls->academicYear?->name ?? 'Tahun Aktif' }})
-                                    </option>
+                                @foreach ($editGroupedClassrooms as $level => $clsList)
+                                    <optgroup label="Jenjang {{ $level }}">
+                                        @foreach ($clsList as $cls)
+                                            <option value="{{ $cls->id }}" @selected(old('classroom_id', $ta?->classroom_id) == $cls->id)>
+                                                {{ $cls->name }} ({{ $cls->gradeLevel?->name ?? 'Tingkat' }})
+                                            </option>
+                                        @endforeach
+                                    </optgroup>
                                 @endforeach
                             </select>
                             @error('classroom_id')
@@ -94,10 +102,14 @@
                                 required
                                 class="w-full rounded-lg border {{ $errors->has('subject_id') ? 'border-rose-400 bg-rose-50/20' : 'border-zinc-300' }} text-zinc-900 text-xs py-2.5 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
                             >
-                                @foreach ($subjects as $sbj)
-                                    <option value="{{ $sbj->id }}" @selected(old('subject_id', $ta?->subject_id) == $sbj->id)>
-                                        {{ $sbj->name }} ({{ $sbj->code ?? '-' }})
-                                    </option>
+                                @foreach ($editGroupedSubjects as $lvl => $subList)
+                                    <optgroup label="Mapel {{ $lvl }}">
+                                        @foreach ($subList as $sbj)
+                                            <option value="{{ $sbj->id }}" @selected(old('subject_id', $ta?->subject_id) == $sbj->id)>
+                                                {{ $sbj->name }} ({{ $sbj->code ?? '-' }})
+                                            </option>
+                                        @endforeach
+                                    </optgroup>
                                 @endforeach
                             </select>
                             @error('subject_id')

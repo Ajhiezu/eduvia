@@ -8,7 +8,7 @@ Eduvia adalah aplikasi e-learning modern yang dirancang untuk institusi pendidik
 
 ## 1. Stack Teknologi
 
-- **Backend:** PHP 8.3 & Laravel 12 (Modular Monolith)
+- **Backend:** PHP 8.5.12 & Laravel 12 (Modular Monolith)
 - **Frontend & UI:** Blade Components + Tailwind CSS v4 (`@tailwindcss/vite`) + Alpine.js 3.x
 - **Basis Data:** MySQL / MariaDB (InnoDB, `utf8mb4`)
 - **Keamanan:** Security Headers Middleware, CSRF Token Protection, Login Rate Limiting (Throttle), Password Hashing Bcrypt (Rounds 12)
@@ -19,7 +19,7 @@ Eduvia adalah aplikasi e-learning modern yang dirancang untuk institusi pendidik
 ## 2. Prasyarat Sistem
 
 Pastikan lingkungan server atau mesin pengembang memiliki:
-- PHP >= 8.3 (dengan ekstensi `pdo_mysql`, `mbstring`, `openssl`, `tokenizer`, `xml`, `curl`)
+- PHP >= 8.5.12 (dengan ekstensi `pdo_mysql`, `mbstring`, `openssl`, `tokenizer`, `xml`, `curl`)
 - Composer >= 2.2
 - Node.js >= 20.x & npm >= 10.x
 - MySQL >= 8.0 atau MariaDB >= 10.4

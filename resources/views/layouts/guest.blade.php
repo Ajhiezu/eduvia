@@ -36,12 +36,14 @@
             </a>
 
             <nav class="flex items-center gap-1.5 sm:gap-4 shrink-0">
-                <a href="{{ route('home') }}" class="text-xs sm:text-sm font-semibold text-slate-600 hover:text-brand-600 transition-colors px-2 py-1.5 rounded-lg">
-                    Beranda
-                </a>
-                <a href="{{ route('school.public.home', ['school' => 'nusantara-utama']) }}" class="hidden sm:inline-block text-xs sm:text-sm font-semibold text-slate-600 hover:text-brand-600 transition-colors px-2 py-1.5 rounded-lg">
-                    Portal Sekolah
-                </a>
+                @if (!request()->routeIs('login'))
+                    <a href="{{ route('home') }}" class="text-xs sm:text-sm font-semibold text-slate-600 hover:text-brand-600 transition-colors px-2 py-1.5 rounded-lg">
+                        Beranda
+                    </a>
+                    <a href="{{ route('school.public.home', ['school' => 'nusantara-utama']) }}" class="hidden sm:inline-block text-xs sm:text-sm font-semibold text-slate-600 hover:text-brand-600 transition-colors px-2 py-1.5 rounded-lg">
+                        Portal Sekolah
+                    </a>
+                @endif
 
                 @auth
                     <x-button href="{{ route('dashboard') }}" size="sm" variant="primary">

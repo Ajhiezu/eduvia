@@ -133,11 +133,11 @@
    ========================================================================== */
 
 /* Universal Form Controls Baseline (All Pages, Dashboards, Modals, Public) */
-input[type="text"],
+input[type="text"]:not(.omnibox-input),
 input[type="email"],
 input[type="password"],
 input[type="number"],
-input[type="search"],
+input[type="search"]:not(.omnibox-input),
 input[type="tel"],
 input[type="url"],
 input[type="date"],
@@ -159,11 +159,11 @@ textarea {
 }
 
 /* Single-line Inputs & Selects: Exactly ~44px Total Height (24px line-box + 18px padding + 2px border) */
-input[type="text"],
+input[type="text"]:not(.omnibox-input),
 input[type="email"],
 input[type="password"],
 input[type="number"],
-input[type="search"],
+input[type="search"]:not(.omnibox-input),
 input[type="tel"],
 input[type="url"],
 input[type="date"],
@@ -202,7 +202,7 @@ select option {
 
 /* Administrative & Table Filter Toolbar Controls: 14px Typography to prevent text clipping */
 form[method="GET"] select,
-form[method="GET"] input:not([type="checkbox"]):not([type="radio"]),
+form[method="GET"] input:not([type="checkbox"]):not([type="radio"]):not(.omnibox-input),
 .filter-select,
 .table-filter select,
 select.text-sm {
@@ -212,7 +212,7 @@ select.text-sm {
     padding-right: 2.125rem !important; /* 34px */
 }
 
-form[method="GET"] input::placeholder {
+form[method="GET"] input:not(.omnibox-input)::placeholder {
     font-size: 0.875rem !important;
 }
 
@@ -224,7 +224,7 @@ textarea {
 }
 
 /* Placeholder Styling: 16px default, muted zinc-400 */
-input::placeholder,
+input:not(.omnibox-input)::placeholder,
 textarea::placeholder {
     color: #9ca3af !important; /* zinc-400 */
     opacity: 1 !important;
@@ -233,11 +233,11 @@ textarea::placeholder {
 }
 
 /* Hover State: Maintain 1px border */
-input[type="text"]:hover:not(:disabled):not([readonly]),
+input[type="text"]:not(.omnibox-input):hover:not(:disabled):not([readonly]),
 input[type="email"]:hover:not(:disabled):not([readonly]),
 input[type="password"]:hover:not(:disabled):not([readonly]),
 input[type="number"]:hover:not(:disabled):not([readonly]),
-input[type="search"]:hover:not(:disabled):not([readonly]),
+input[type="search"]:not(.omnibox-input):hover:not(:disabled):not([readonly]),
 input[type="tel"]:hover:not(:disabled):not([readonly]),
 input[type="url"]:hover:not(:disabled):not([readonly]),
 input[type="date"]:hover:not(:disabled):not([readonly]),
@@ -249,22 +249,22 @@ textarea:hover:not(:disabled):not([readonly]) {
 }
 
 /* Focus & Focus-Visible State: Crisp halo ring, NO layout shift, NO border clipping */
-input[type="text"]:focus,
+input[type="text"]:not(.omnibox-input):focus,
 input[type="email"]:focus,
 input[type="password"]:focus,
 input[type="number"]:focus,
-input[type="search"]:focus,
+input[type="search"]:not(.omnibox-input):focus,
 input[type="tel"]:focus,
 input[type="url"]:focus,
 input[type="date"]:focus,
 input[type="datetime-local"]:focus,
 select:focus,
 textarea:focus,
-input[type="text"]:focus-visible,
+input[type="text"]:not(.omnibox-input):focus-visible,
 input[type="email"]:focus-visible,
 input[type="password"]:focus-visible,
 input[type="number"]:focus-visible,
-input[type="search"]:focus-visible,
+input[type="search"]:not(.omnibox-input):focus-visible,
 input[type="tel"]:focus-visible,
 input[type="url"]:focus-visible,
 select:focus-visible,
@@ -274,6 +274,39 @@ textarea:focus-visible {
     outline: none !important;
     box-shadow: 0 0 0 3px rgba(225, 29, 46, 0.15) !important;
     background-color: #ffffff !important;
+}
+
+/* Metis Master Omnibox Global Search Input Clean Reset */
+.omnibox-input {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    font-size: 0.875rem !important; /* 14px */
+    font-weight: 400 !important;
+    line-height: 1.25rem !important;
+    color: #18181b !important; /* zinc-900 */
+    outline: none !important;
+}
+
+.omnibox-input:focus,
+.omnibox-input:focus-visible {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    background-color: transparent !important;
+}
+
+.omnibox-input::placeholder {
+    color: #9ca3af !important; /* zinc-400 */
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
 }
 
 /* Disabled & Read-only State */

@@ -139,7 +139,7 @@
             <x-card title="Logo Resmi Sekolah" padding>
                 <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
                     <div class="w-24 h-24 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center overflow-hidden shrink-0 shadow-2xs">
-                        @if ($school?->logo_path)
+                        @if ($school?->logo_path && $school->logoUrl())
                             <img src="{{ $school->logoUrl() }}" alt="{{ $school->name }}" class="w-full h-full object-contain p-2">
                         @else
                             <div class="text-center p-2 text-slate-400">

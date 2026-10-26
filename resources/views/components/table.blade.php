@@ -29,7 +29,7 @@
     </div>
 
     @if (isset($footer))
-        <div class="px-4 sm:px-5 py-3 sm:py-3.5 bg-zinc-50 border-t border-zinc-100 text-xs text-zinc-500 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+        <div class="border-t border-zinc-200 bg-white">
             {{ $footer }}
         </div>
     @endif

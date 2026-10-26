@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Invoice;
 use App\Models\Payment;
+use App\Models\PaymentGatewayTransaction;
+use App\Services\Payment\PaymentService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -15,6 +17,18 @@ class StudentFinanceController extends Controller
     public function index(Request $request): View
     {
         $student = $request->user();
+
+        $pendingTxs = PaymentGatewayTransaction::where('student_id', $student->id)
+            ->where('transaction_status', PaymentGatewayTransaction::STATUS_PENDING)
+            ->where('created_at', '>=', now()->subHours(24))
+            ->get();
+
+        if ($pendingTxs->isNotEmpty()) {
+            $paymentService = app(PaymentService::class);
+            foreach ($pendingTxs as $pTx) {
+                $paymentService->syncTransaction($pTx);
+            }
+        }
 
         $invoices = Invoice::query()
             ->where('student_id', $student->id)

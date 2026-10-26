@@ -84,24 +84,27 @@
         </div>
 
         <!-- Center: Metis Omnibox Global Search -->
-        <div class="hidden md:flex flex-1 max-w-md mx-4">
-            <div class="relative w-full">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-400">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                </div>
+        <div class="hidden md:flex flex-1 items-center justify-center max-w-lg lg:max-w-xl mx-auto px-4">
+            <label class="group relative flex items-center w-full h-10 px-3.5 gap-2.5 bg-zinc-50/90 hover:bg-zinc-100/70 focus-within:bg-white border border-zinc-200/90 hover:border-zinc-300 focus-within:border-brand-600 focus-within:ring-2 focus-within:ring-brand-100 rounded-xl transition-all shadow-2xs cursor-text">
+                <svg class="w-4 h-4 text-zinc-400 group-focus-within:text-brand-600 shrink-0 transition-colors pointer-events-none" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+                </svg>
                 <input
-                    type="search"
-                    placeholder="Cari di Eduvia... (Ctrl+K)"
-                    class="w-full pl-9 pr-14 py-2 text-xs sm:text-sm bg-zinc-50/80 hover:bg-white focus:bg-white text-zinc-800 placeholder-zinc-400 border border-zinc-200 rounded-lg transition-colors focus:border-brand-600 focus:ring-2 focus:ring-brand-100 focus:outline-none"
+                    type="text"
+                    placeholder="Cari data siswa, guru, kelas, atau fitur..."
+                    class="omnibox-input flex-1 min-w-0"
                     @keydown.window.prevent.ctrl.k="$el.focus()"
                     @keydown.window.prevent.meta.k="$el.focus()"
                 >
-                <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
-                    <kbd class="px-1.5 py-0.5 text-[10px] font-semibold text-zinc-400 bg-white border border-zinc-200 rounded shadow-2xs">Ctrl K</kbd>
+                <div class="shrink-0 flex items-center gap-1 select-none pointer-events-none">
+                    <kbd class="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[10px] font-mono font-semibold text-zinc-400 bg-white border border-zinc-200/90 rounded shadow-2xs group-hover:border-zinc-300 transition-colors">
+                        Ctrl
+                    </kbd>
+                    <kbd class="inline-flex items-center justify-center min-w-[18px] h-5 px-1 text-[10px] font-mono font-semibold text-zinc-400 bg-white border border-zinc-200/90 rounded shadow-2xs group-hover:border-zinc-300 transition-colors">
+                        K
+                    </kbd>
                 </div>
-            </div>
+            </label>
         </div>
 
         <!-- Right: Metis Quick Utilities & User Menu -->

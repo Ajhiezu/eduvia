@@ -9,9 +9,11 @@ use App\Models\ParentLinkCode;
 use App\Models\ParentStudentRelation;
 use App\Models\ParentTeacherConversation;
 use App\Models\Payment;
+use App\Models\PaymentGatewayTransaction;
 use App\Models\SchoolAnnouncement;
 use App\Models\StudentReportCard;
 use App\Models\User;
+use App\Services\Payment\PaymentService;
 use App\Services\SecureUploadService;
 use App\Traits\ApiResponse;
 use Carbon\Carbon;
@@ -216,6 +218,19 @@ class ParentController extends Controller
 
         if (! $student) {
             return $this->apiError('Tidak ada data anak.', 404);
+        }
+
+        // Proactively sync any pending gateway transactions for this student
+        $pendingTransactions = PaymentGatewayTransaction::where('student_id', $student->id)
+            ->where('transaction_status', PaymentGatewayTransaction::STATUS_PENDING)
+            ->where('created_at', '>=', now()->subHours(24))
+            ->get();
+
+        if ($pendingTransactions->isNotEmpty()) {
+            $paymentService = app(PaymentService::class);
+            foreach ($pendingTransactions as $pendingTx) {
+                $paymentService->syncTransaction($pendingTx);
+            }
         }
 
         $invoices = Invoice::where('student_id', $student->id)

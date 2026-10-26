@@ -112,6 +112,12 @@ class PaymentGatewayController extends Controller
             return $this->apiError('Akses ditolak (Beda Sekolah).', 403);
         }
 
+        // Auto-sync with Midtrans API if status is still pending
+        if ($tx->transaction_status === PaymentGatewayTransaction::STATUS_PENDING) {
+            $this->paymentService->syncTransaction($tx);
+            $tx->refresh();
+        }
+
         return $this->apiSuccess(
             data: [
                 'order_id' => $tx->order_id,

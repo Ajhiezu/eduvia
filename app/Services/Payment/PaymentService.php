@@ -35,15 +35,55 @@ class PaymentService
             throw new \InvalidArgumentException('Minimal harus memilih 1 tagihan untuk dibayar.');
         }
 
-        // Fetch invoices belonging to student and valid status
+        // 1. Proactively sync any pending transactions related to these invoices with Midtrans
+        $pendingTransactions = PaymentGatewayTransaction::whereHas('allocations', function ($q) use ($invoiceIds) {
+            $q->whereIn('invoice_id', $invoiceIds);
+        })
+            ->where('transaction_status', PaymentGatewayTransaction::STATUS_PENDING)
+            ->where('created_at', '>=', now()->subHours(24))
+            ->get();
+
+        foreach ($pendingTransactions as $pendingTx) {
+            $this->syncTransaction($pendingTx);
+        }
+
+        // 2. Fetch fresh invoices belonging to student and valid status
         /** @var Collection<int, Invoice> $invoices */
         $invoices = Invoice::whereIn('id', $invoiceIds)
             ->where('student_id', $studentId)
-            ->whereIn('status', [Invoice::STATUS_ISSUED, Invoice::STATUS_PARTIALLY_PAID, Invoice::STATUS_OVERDUE])
             ->get();
 
+        foreach ($invoices as $inv) {
+            if ($inv->status === Invoice::STATUS_PAID || $inv->paid_amount >= $inv->total_amount) {
+                throw new \DomainException("Tagihan {$inv->invoice_number} ({$inv->title}) sudah lunas dan tidak dapat dibayar kembali.");
+            }
+
+            if (! in_array($inv->status, [Invoice::STATUS_ISSUED, Invoice::STATUS_PARTIALLY_PAID, Invoice::STATUS_OVERDUE])) {
+                throw new \DomainException("Tagihan {$inv->invoice_number} tidak dapat diproses (Status: {$inv->status}).");
+            }
+        }
+
         if ($invoices->count() !== count(array_unique($invoiceIds))) {
-            throw new \DomainException('Sebagian atau seluruh tagihan yang dipilih tidak valid atau sudah lunas.');
+            throw new \DomainException('Sebagian atau seluruh tagihan yang dipilih tidak ditemukan atau tidak valid.');
+        }
+
+        // 3. Prevent duplicate active pending transactions for the same invoice
+        $activePendingTx = PaymentGatewayTransaction::whereHas('allocations', function ($q) use ($invoiceIds) {
+            $q->whereIn('invoice_id', $invoiceIds);
+        })
+            ->where('transaction_status', PaymentGatewayTransaction::STATUS_PENDING)
+            ->where('expiry_time', '>', now())
+            ->latest()
+            ->first();
+
+        if ($activePendingTx) {
+            // If checking out with the same payment method, return existing active transaction (do not spawn new order)
+            if ($activePendingTx->payment_method === $paymentMethod) {
+                return $activePendingTx;
+            }
+
+            // If switching payment method (e.g., BCA VA -> BRI VA), expire the old one so only 1 active VA exists
+            $activePendingTx->update(['transaction_status' => PaymentGatewayTransaction::STATUS_EXPIRE]);
         }
 
         $schoolId = $invoices->first()->school_id;
@@ -253,8 +293,8 @@ class PaymentService
                 'payment_id' => $payment->id,
             ]);
 
-            // 2. Update invoice paid amount and status
-            $newPaid = (int) ($invoice->paid_amount + $allocation->amount_applied);
+            // 2. Update invoice paid amount and status (capped at total_amount to prevent overpayment)
+            $newPaid = (int) min($invoice->total_amount, $invoice->paid_amount + $allocation->amount_applied);
             $newStatus = ($newPaid >= $invoice->total_amount)
                 ? Invoice::STATUS_PAID
                 : Invoice::STATUS_PARTIALLY_PAID;
@@ -333,6 +373,39 @@ class PaymentService
     }
 
     /**
+     * Actively sync an individual transaction status directly with the gateway API.
+     */
+    public function syncTransaction(PaymentGatewayTransaction $tx): string
+    {
+        if ($tx->transaction_status === PaymentGatewayTransaction::STATUS_SETTLEMENT) {
+            return PaymentGatewayTransaction::STATUS_SETTLEMENT;
+        }
+
+        try {
+            $statusData = $this->gateway->getStatus($tx->order_id);
+            $gwStatus = $statusData['transaction_status'] ?? 'pending';
+
+            if (in_array($gwStatus, ['settlement', 'capture'])) {
+                $this->applySettlement($tx, $statusData);
+
+                return PaymentGatewayTransaction::STATUS_SETTLEMENT;
+            }
+
+            if (in_array($gwStatus, ['expire', 'cancel', 'deny']) || $tx->isExpired()) {
+                $tx->update(['transaction_status' => PaymentGatewayTransaction::STATUS_EXPIRE]);
+
+                return PaymentGatewayTransaction::STATUS_EXPIRE;
+            }
+
+            return $gwStatus;
+        } catch (\Throwable $e) {
+            Log::info("Sync gateway for order {$tx->order_id} failed: {$e->getMessage()}");
+
+            return $tx->transaction_status;
+        }
+    }
+
+    /**
      * Daily automated reconciliation comparing gateway transactions against gateway records.
      *
      * @return array{scanned: int, settled: int, expired: int, discrepancies: array<int, string>}
@@ -351,14 +424,10 @@ class PaymentService
         foreach ($pendingTransactions as $tx) {
             $scanned++;
             try {
-                $statusData = $this->gateway->getStatus($tx->order_id);
-                $gwStatus = $statusData['transaction_status'] ?? 'pending';
-
-                if (in_array($gwStatus, ['settlement', 'capture'])) {
-                    $this->applySettlement($tx, $statusData);
+                $finalStatus = $this->syncTransaction($tx);
+                if ($finalStatus === PaymentGatewayTransaction::STATUS_SETTLEMENT) {
                     $settled++;
-                } elseif (in_array($gwStatus, ['expire', 'cancel', 'deny']) || $tx->isExpired()) {
-                    $tx->update(['transaction_status' => PaymentGatewayTransaction::STATUS_EXPIRE]);
+                } elseif ($finalStatus === PaymentGatewayTransaction::STATUS_EXPIRE) {
                     $expired++;
                 }
             } catch (\Throwable $e) {

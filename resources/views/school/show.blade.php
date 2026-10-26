@@ -15,7 +15,7 @@
         <div class="p-4 sm:p-6 rounded-xl bg-white border border-zinc-200 shadow-none flex flex-col md:flex-row items-start md:items-center justify-between gap-5 sm:gap-6">
             <div class="flex flex-col sm:flex-row items-start gap-4 sm:gap-5">
                 <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-zinc-50 border border-zinc-200 flex items-center justify-center overflow-hidden shrink-0 shadow-2xs">
-                    @if ($school?->logo_path)
+                    @if ($school?->logo_path && $school->logoUrl())
                         <img src="{{ $school->logoUrl() }}" alt="{{ $school->name }}" class="w-full h-full object-contain p-2">
                     @else
                         <div class="text-center p-2 text-zinc-400">

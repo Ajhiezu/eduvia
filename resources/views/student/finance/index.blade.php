@@ -1,7 +1,8 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <x-slot:headerTitle>Status Tagihan & Riwayat Pembayaran</x-slot:headerTitle>
+    <div class="space-y-6">
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-zinc-200">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-zinc-200">
             <div>
                 <nav class="flex items-center gap-2 text-xs text-zinc-500 mb-2">
                     <span class="text-zinc-500">Portal Siswa</span>

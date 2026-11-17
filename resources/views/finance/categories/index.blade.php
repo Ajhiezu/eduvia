@@ -1,7 +1,8 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8" x-data="{ activeTab: 'categories', showCatModal: false, showRuleModal: false, showDiscountModal: false }">
+    <x-slot:headerTitle>Konfigurasi Tarif & Potongan Biaya</x-slot:headerTitle>
+    <div class="space-y-6" x-data="{ activeTab: 'categories', showCatModal: false, showRuleModal: false, showDiscountModal: false }">
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-zinc-200">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-zinc-200">
             <div>
                 <nav class="flex items-center gap-2 text-xs text-zinc-500 mb-2">
                     <a href="{{ route('finance.invoices.index') }}" class="hover:text-zinc-800">Keuangan Sekolah</a>
@@ -15,7 +16,7 @@
                 <button
                     type="button"
                     @click="showCatModal = true"
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#E11D2E] text-white text-xs font-semibold hover:bg-[#c81926] shadow-sm transition-colors"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-600 text-white text-xs font-semibold hover:bg-brand-700 shadow-sm transition-colors"
                 >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     <span>Tambah Kategori Biaya</span>
@@ -44,19 +45,19 @@
         <div class="flex border-b border-zinc-200 gap-6 text-sm font-medium">
             <button
                 @click="activeTab = 'categories'"
-                :class="activeTab === 'categories' ? 'text-[#E11D2E] border-b-2 border-[#E11D2E] pb-3 font-bold' : 'text-zinc-500 hover:text-zinc-800 pb-3'"
+                :class="activeTab === 'categories' ? 'text-brand-600 border-b-2 border-[#E11D2E] pb-3 font-bold' : 'text-zinc-500 hover:text-zinc-800 pb-3'"
             >
                 1. Kategori Biaya ({{ $categories->count() }})
             </button>
             <button
                 @click="activeTab = 'rules'"
-                :class="activeTab === 'rules' ? 'text-[#E11D2E] border-b-2 border-[#E11D2E] pb-3 font-bold' : 'text-zinc-500 hover:text-zinc-800 pb-3'"
+                :class="activeTab === 'rules' ? 'text-brand-600 border-b-2 border-[#E11D2E] pb-3 font-bold' : 'text-zinc-500 hover:text-zinc-800 pb-3'"
             >
                 2. Tarif Khusus Jenjang/Kelas ({{ $rules->total() }})
             </button>
             <button
                 @click="activeTab = 'discounts'"
-                :class="activeTab === 'discounts' ? 'text-[#E11D2E] border-b-2 border-[#E11D2E] pb-3 font-bold' : 'text-zinc-500 hover:text-zinc-800 pb-3'"
+                :class="activeTab === 'discounts' ? 'text-brand-600 border-b-2 border-[#E11D2E] pb-3 font-bold' : 'text-zinc-500 hover:text-zinc-800 pb-3'"
             >
                 3. Beasiswa & Keringanan ({{ $discounts->total() }})
             </button>
@@ -165,7 +166,7 @@
                                     <td class="px-5 py-3.5 font-bold text-zinc-900">{{ $rule->formatted_amount }}</td>
                                     <td class="px-5 py-3.5 text-zinc-400 text-[11px]">{{ $rule->notes ?? '-' }}</td>
                                     <td class="px-5 py-3.5 text-right">
-                                        <form method="POST" action="{{ route('finance.rules.destroy', $rule) }}" onsubmit="return confirm('Hapus aturan tarif khusus ini?');">
+                                        <form method="POST" action="{{ route('finance.rules.destroy', $rule) }}" data-confirm="Hapus aturan tarif khusus ini?">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-rose-600 hover:text-rose-800 font-semibold text-xs">Hapus</button>
@@ -232,7 +233,7 @@
                                     </td>
                                     <td class="px-5 py-3.5 text-zinc-500 text-[11px]">{{ $disc->reason ?? '-' }}</td>
                                     <td class="px-5 py-3.5 text-right">
-                                        <form method="POST" action="{{ route('finance.discounts.destroy', $disc) }}" onsubmit="return confirm('Hapus data potongan beasiswa ini?');">
+                                        <form method="POST" action="{{ route('finance.discounts.destroy', $disc) }}" data-confirm="Hapus data potongan beasiswa ini?">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-rose-600 hover:text-rose-800 font-semibold text-xs">Hapus</button>
@@ -302,7 +303,7 @@
                     </div>
                     <div class="flex justify-end gap-2 pt-3 border-t border-zinc-100">
                         <button type="button" @click="showCatModal = false" class="px-4 py-2 rounded-lg border border-zinc-300 text-zinc-700 font-semibold hover:bg-zinc-50">Batal</button>
-                        <button type="submit" class="px-4 py-2 rounded-lg bg-[#E11D2E] text-white font-semibold hover:bg-[#c81926]">Simpan Kategori</button>
+                        <button type="submit" class="px-4 py-2 rounded-lg bg-brand-600 text-white font-semibold hover:bg-brand-700">Simpan Kategori</button>
                     </div>
                 </form>
             </div>
@@ -425,7 +426,7 @@
                     </div>
                     <div class="flex justify-end gap-2 pt-3 border-t border-zinc-100">
                         <button type="button" @click="showDiscountModal = false" class="px-4 py-2 rounded-lg border border-zinc-300 text-zinc-700 font-semibold hover:bg-zinc-50">Batal</button>
-                        <button type="submit" class="px-4 py-2 rounded-lg bg-[#E11D2E] text-white font-semibold hover:bg-[#c81926]">Simpan Beasiswa</button>
+                        <button type="submit" class="px-4 py-2 rounded-lg bg-brand-600 text-white font-semibold hover:bg-brand-700">Simpan Beasiswa</button>
                     </div>
                 </form>
             </div>

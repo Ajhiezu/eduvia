@@ -5,7 +5,6 @@ namespace App\Services\Notification\Drivers;
 use App\Models\User;
 use App\Services\Notification\Contracts\NotificationDriverInterface;
 use App\Services\Notification\NotificationPayload;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class MailNotificationDriver implements NotificationDriverInterface
@@ -22,16 +21,12 @@ class MailNotificationDriver implements NotificationDriverInterface
             ];
         }
 
-        if (app()->environment('testing', 'local')) {
-            Log::info('[EMAIL NOTIFICATION MOCK SENT]', [
-                'recipient' => $user->email,
-                'title' => $payload->title,
-                'body' => $payload->body,
-            ]);
-
+        if ((config('services.notifications.simulate') && ! app()->isProduction()) || in_array(config('mail.default'), ['log', 'array'], true)) {
             return [
-                'success' => true,
+                'success' => false,
                 'recipient' => $user->email,
+                'status' => 'simulated',
+                'error' => 'Email hanya disimulasikan dan tidak dikirim ke penerima.',
             ];
         }
 

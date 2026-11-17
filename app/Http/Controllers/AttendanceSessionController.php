@@ -182,7 +182,7 @@ class AttendanceSessionController extends Controller
             'records.auditLogs.user',
         ]);
 
-        $records = $session->records->sortBy(fn ($r) => $r->student->name);
+        $records = $session->records->sortBy(fn (AttendanceRecord $record): string => $record->student?->name ?? '');
         $summary = $session->attendanceSummary();
 
         // Collect all audit logs for this session

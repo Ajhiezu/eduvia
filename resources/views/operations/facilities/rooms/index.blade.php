@@ -1,6 +1,7 @@
 <x-app-layout>
+    <x-slot:headerTitle>Laboratorium & Fasilitas Sekolah</x-slot:headerTitle>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight text-zinc-900">Laboratorium & Fasilitas Sekolah</h1>
                 <p class="text-sm text-zinc-500 mt-1">Daftar ruangan khusus, laboratorium IPA/Komputer/Bahasa, bengkel kejuruan, dan sarana umum.</p>
@@ -31,7 +32,7 @@
                     <x-input type="text" name="search" :value="$search" placeholder="Cari nama fasilitas, kode, lokasi gedung..." />
                 </div>
                 <div class="flex gap-2">
-                    <select name="type" class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <select name="type" class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                         <option value="">Semua Jenis Fasilitas</option>
                         @foreach($roomTypes as $k => $label)
                             <option value="{{ $k }}" {{ $type === $k ? 'selected' : '' }}>{{ $label }}</option>

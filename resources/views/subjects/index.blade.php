@@ -18,7 +18,7 @@
         @endif
 
         <!-- Action & Navigation Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
                     Mata Pelajaran & Struktur Kurikulum
@@ -200,7 +200,7 @@
                                         <x-button href="{{ route('subjects.edit', $subject) }}" variant="outline" size="sm">
                                             Edit
                                         </x-button>
-                                        <form method="POST" action="{{ route('subjects.destroy', $subject) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus mata pelajaran ini?');" class="inline">
+                                        <form method="POST" action="{{ route('subjects.destroy', $subject) }}" data-confirm="Apakah Anda yakin ingin menghapus mata pelajaran ini?" class="inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="p-1.5 text-zinc-400 hover:text-red-600 transition-colors rounded-lg hover:bg-red-50" title="Hapus Mapel">

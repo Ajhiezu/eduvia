@@ -1,6 +1,7 @@
 <x-app-layout>
+    <x-slot:headerTitle>Barang Habis Pakai (ATK & Logistik)</x-slot:headerTitle>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="flex items-center gap-3">
                 <x-button href="{{ route('operations.inventory.assets.index') }}" variant="ghost" size="sm">
                     &larr; Aset Sarpras

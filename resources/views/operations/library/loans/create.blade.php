@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot:headerTitle>Catat Peminjaman Buku</x-slot:headerTitle>
     <x-slot name="header">
         <div class="flex items-center gap-3">
             <x-button href="{{ route('operations.library.loans.index') }}" variant="ghost" size="sm">
@@ -18,7 +19,7 @@
 
                 <div>
                     <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Pilih Eksemplar Buku Tersedia <span class="text-rose-500">*</span></label>
-                    <select name="library_book_copy_id" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <select name="library_book_copy_id" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                         <option value="">-- Pilih Buku & Barcode --</option>
                         @foreach($availableCopies as $copy)
                             <option value="{{ $copy->id }}" {{ old('library_book_copy_id') == $copy->id ? 'selected' : '' }}>
@@ -33,7 +34,7 @@
 
                 <div>
                     <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Peminjam (Siswa / Guru / Staf) <span class="text-rose-500">*</span></label>
-                    <select name="user_id" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <select name="user_id" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                         <option value="">-- Pilih Pengguna --</option>
                         @foreach($users as $u)
                             <option value="{{ $u->id }}" {{ old('user_id') == $u->id ? 'selected' : '' }}>
@@ -50,7 +51,7 @@
 
                 <div>
                     <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Catatan Tambahan (Opsional)</label>
-                    <textarea name="notes" rows="2" class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]" placeholder="Misal: Kondisi buku sebelum dipinjam ada sedikit coretan...">{{ old('notes') }}</textarea>
+                    <textarea name="notes" rows="2" class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]" placeholder="Misal: Kondisi buku sebelum dipinjam ada sedikit coretan...">{{ old('notes') }}</textarea>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-zinc-100">

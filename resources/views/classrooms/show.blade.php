@@ -43,7 +43,7 @@
         @endif
 
         <!-- Breadcrumb & Top Bar -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2 text-xs text-zinc-500 mb-1">
                     <a href="{{ route('classrooms.index') }}" class="hover:text-zinc-800">&larr; Kembali ke Daftar Rombel</a>
@@ -94,7 +94,7 @@
                     <form
                         method="POST"
                         action="{{ route('classrooms.destroy', $classroom) }}"
-                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus rombongan belajar ini?')"
+                        data-confirm="Apakah Anda yakin ingin menghapus rombongan belajar ini?"
                     >
                         @csrf
                         @method('DELETE')

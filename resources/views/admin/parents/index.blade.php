@@ -6,7 +6,7 @@
     <div class="space-y-6">
 
         <!-- Top Header & Actions -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-zinc-200">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-zinc-200">
             <div>
                 <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
                     Relasi Orang Tua & Siswa
@@ -19,7 +19,7 @@
             <div class="flex items-center gap-2">
                 <a
                     href="{{ route('admin.parents.create') }}"
-                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#E11D2E] hover:bg-[#C81423] text-white shadow-xs transition-colors"
+                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs transition-colors"
                 >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     <span>Tautkan Manual</span>
@@ -43,7 +43,7 @@
                 @csrf
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-semibold text-zinc-700 mb-1">Pilih Siswa</label>
-                    <select name="student_id" required class="w-full text-xs rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <select name="student_id" required class="w-full text-xs rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                         <option value="">-- Pilih Siswa Terdaftar --</option>
                         @foreach (\App\Models\User::where('role', \App\Enums\UserRole::STUDENT)->where('is_active', true)->orderBy('name')->get() as $st)
                             <option value="{{ $st->id }}">{{ $st->name }} (NISN: {{ $st->studentProfile?->nisn ?? '-' }})</option>
@@ -52,7 +52,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-zinc-700 mb-1">Jenis Hubungan</label>
-                    <select name="relationship_type" class="w-full text-xs rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <select name="relationship_type" class="w-full text-xs rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                         <option value="guardian">Wali Murid</option>
                         <option value="father">Ayah Kandung</option>
                         <option value="mother">Ibu Kandung</option>
@@ -91,9 +91,9 @@
                         name="search"
                         value="{{ request('search') }}"
                         placeholder="Cari orang tua / siswa..."
-                        class="text-xs rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E] w-48 sm:w-64"
+                        class="text-xs rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E] w-48 sm:w-64"
                     >
-                    <select name="status" class="text-xs rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <select name="status" class="text-xs rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                         <option value="">Semua Status</option>
                         <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Aktif</option>
                         <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Menunggu Verifikasi</option>

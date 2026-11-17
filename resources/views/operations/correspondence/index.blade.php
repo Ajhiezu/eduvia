@@ -1,6 +1,7 @@
 <x-app-layout>
+    <x-slot:headerTitle>Tata Usaha & Persuratan Resmi</x-slot:headerTitle>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight text-zinc-900">Tata Usaha & Persuratan Resmi</h1>
                 <p class="text-sm text-zinc-500 mt-1">Buku agenda surat masuk, surat dinas keluar, penomoran resmi, dan arsip dokumen sekolah.</p>
@@ -29,13 +30,13 @@
 
         <!-- Tabs: Surat Masuk vs Surat Keluar -->
         <div class="flex items-center gap-2 border-b border-zinc-200 pb-3">
-            <a href="{{ route('operations.correspondence.index', ['type' => 'incoming']) }}" class="px-4 py-2 rounded-xl text-xs font-bold transition-colors {{ $type === 'incoming' ? 'bg-[#E11D2E] text-white shadow-xs' : 'text-zinc-600 hover:bg-zinc-100' }}">
+            <a href="{{ route('operations.correspondence.index', ['type' => 'incoming']) }}" class="px-4 py-2 rounded-xl text-xs font-bold transition-colors {{ $type === 'incoming' ? 'bg-brand-600 text-white shadow-xs' : 'text-zinc-600 hover:bg-zinc-100' }}">
                 Surat Masuk ({{ $incomingCount }})
                 @if($actionNeededCount > 0)
                     <span class="ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] bg-white text-rose-600 font-extrabold">{{ $actionNeededCount }}</span>
                 @endif
             </a>
-            <a href="{{ route('operations.correspondence.index', ['type' => 'outgoing']) }}" class="px-4 py-2 rounded-xl text-xs font-bold transition-colors {{ $type === 'outgoing' ? 'bg-[#E11D2E] text-white shadow-xs' : 'text-zinc-600 hover:bg-zinc-100' }}">
+            <a href="{{ route('operations.correspondence.index', ['type' => 'outgoing']) }}" class="px-4 py-2 rounded-xl text-xs font-bold transition-colors {{ $type === 'outgoing' ? 'bg-brand-600 text-white shadow-xs' : 'text-zinc-600 hover:bg-zinc-100' }}">
                 Surat Keluar Resmi ({{ $outgoingCount }})
             </a>
         </div>
@@ -48,7 +49,7 @@
                     <x-input type="text" name="search" :value="$search" placeholder="Cari nomor surat, perihal, instansi pengirim/tujuan..." />
                 </div>
                 <div>
-                    <select name="category" class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <select name="category" class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                         <option value="">Semua Kategori</option>
                         @foreach($categories as $cat)
                             <option value="{{ $cat }}" {{ $category === $cat ? 'selected' : '' }}>{{ $cat }}</option>
@@ -102,7 +103,7 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-3 text-right">
-                                    <a href="{{ route('operations.correspondence.show', $letter) }}" class="text-xs font-bold text-[#E11D2E] hover:underline">
+                                    <a href="{{ route('operations.correspondence.show', $letter) }}" class="text-xs font-bold text-brand-600 hover:underline">
                                         Buka Arsip &rarr;
                                     </a>
                                 </td>

@@ -6,7 +6,7 @@
     <div class="space-y-6">
 
         <!-- Top Header & Child Switcher -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-zinc-200">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-zinc-200">
             <div>
                 <div class="flex items-center gap-2">
                     <a href="{{ route('parent.dashboard') }}" class="text-xs text-zinc-500 hover:text-zinc-900">&larr; Beranda Pantauan</a>
@@ -21,18 +21,7 @@
                 </p>
             </div>
 
-            @if ($activeChildren->count() > 1)
-                <div class="flex items-center gap-1.5 bg-zinc-100 p-1 rounded-xl">
-                    @foreach ($activeChildren as $child)
-                        <a
-                            href="{{ route('parent.dashboard', ['child_id' => $child->id]) }}"
-                            class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ $activeChild && $activeChild->id === $child->id ? 'bg-[#E11D2E] text-white shadow-xs' : 'text-zinc-600 hover:text-zinc-900' }}"
-                        >
-                            {{ $child->name }}
-                        </a>
-                    @endforeach
-                </div>
-            @endif
+            <x-child-switcher :children="$activeChildren" :active-child="$activeChild" :return-url="route('parent.reports')" />
         </div>
 
         @if (! $activeChild)
@@ -75,7 +64,7 @@
                             <div class="mt-5 pt-3 border-t border-zinc-100 flex items-center justify-between gap-2">
                                 <a
                                     href="{{ route('parent.reports.show', $report) }}"
-                                    class="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-[#E11D2E] hover:bg-[#C81423] text-white shadow-xs transition-colors w-full"
+                                    class="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs transition-colors w-full"
                                 >
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                                     <span>Buka Lembar Rapor</span>

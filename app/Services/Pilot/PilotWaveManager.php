@@ -9,13 +9,16 @@ use App\Models\ClassroomStudent;
 use App\Models\Exam;
 use App\Models\ExamQuestion;
 use App\Models\FeeCategory;
+use App\Models\ParentStudentRelation;
 use App\Models\School;
+use App\Models\SchoolAiQuota;
 use App\Models\Semester;
 use App\Models\Subject;
 use App\Models\SystemSetting;
 use App\Models\TeachingAssignment;
 use App\Models\User;
 use App\Models\UserConsent;
+use Illuminate\Database\Query\Builder;
 use RuntimeException;
 
 class PilotWaveManager
@@ -80,11 +83,29 @@ class PilotWaveManager
                     'notes' => $w1Check['can_activate'] ? 'Seluruh prasyarat Gelombang 1 terpenuhi.' : 'Gelombang 1 belum memenuhi syarat.',
                 ];
 
-                $consentCount = UserConsent::where('school_id', $schoolId)->count();
+                $missingConsentCount = User::where('school_id', $schoolId)
+                    ->where('role', 'student')
+                    ->where('is_active', true)
+                    ->whereNotIn('id', UserConsent::where('school_id', $schoolId)
+                        ->granted()
+                        ->ofType('child_data_processing')
+                        ->whereNotNull('consented_at')
+                        ->whereIn('parent_user_id', User::where('school_id', $schoolId)->where('role', 'parent')->where('is_active', true)->select('id'))
+                        ->whereExists(function (Builder $query) use ($schoolId): void {
+                            $query->selectRaw('1')->from('parent_student_relations')
+                                ->where('parent_student_relations.school_id', $schoolId)
+                                ->whereColumn('parent_student_relations.parent_id', 'user_consents.parent_user_id')
+                                ->whereColumn('parent_student_relations.student_id', 'user_consents.user_id')
+                                ->where('parent_student_relations.status', ParentStudentRelation::STATUS_ACTIVE);
+                        })
+                        ->select('user_id'))
+                    ->count();
                 $checks[] = [
                     'item' => 'Registri Persetujuan (Consent Registry)',
-                    'passed' => $consentCount >= 0, // Ready to receive consents
-                    'notes' => 'Tabel user_consents siap mencatat persetujuan orang tua.',
+                    'passed' => $missingConsentCount === 0,
+                    'notes' => $missingConsentCount === 0
+                        ? 'Persetujuan pemrosesan data dari wali terhubung tersedia untuk seluruh siswa aktif.'
+                        : "Sebanyak {$missingConsentCount} siswa aktif belum memiliki persetujuan pemrosesan data dari wali terhubung.",
                 ];
                 break;
 
@@ -130,7 +151,7 @@ class PilotWaveManager
                 break;
 
             case 6: // Modul Lanjutan & AI
-                $quotaExists = DB::table('school_ai_quotas')->where('school_id', $schoolId)->exists();
+                $quotaExists = SchoolAiQuota::where('school_id', $schoolId)->exists();
                 $checks[] = [
                     'item' => 'Alokasi Kuota Token AI Sekolah',
                     'passed' => $quotaExists,

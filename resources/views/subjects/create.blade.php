@@ -53,14 +53,14 @@
                             name="code"
                             value="{{ old('code') }}"
                             placeholder="Contoh: MAT-10, BIND-7"
-                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 px-3.5 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400 font-mono"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 px-3.5 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400 font-mono"
                         >
                     </div>
 
                     <!-- Name -->
                     <div>
                         <label for="name" class="block text-sm font-medium text-zinc-700 mb-1.5">
-                            Nama Mata Pelajaran <span class="text-[#E11D2E]">*</span>
+                            Nama Mata Pelajaran <span class="text-brand-600">*</span>
                         </label>
                         <input
                             type="text"
@@ -69,20 +69,20 @@
                             value="{{ old('name') }}"
                             required
                             placeholder="Contoh: Matematika, Bahasa Indonesia"
-                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 px-3.5 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 px-3.5 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
                         >
                     </div>
 
                     <!-- Group -->
                     <div>
                         <label for="group" class="block text-sm font-medium text-zinc-700 mb-1.5">
-                            Kelompok Mata Pelajaran <span class="text-[#E11D2E]">*</span>
+                            Kelompok Mata Pelajaran <span class="text-brand-600">*</span>
                         </label>
                         <select
                             id="group"
                             name="group"
                             required
-                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 pl-3.5 pr-11 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 pl-3.5 pr-11 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20"
                         >
                             <option value="Umum" @selected(old('group') === 'Umum')>Umum / Inti Nasional</option>
                             <option value="Peminatan" @selected(old('group') === 'Peminatan')>Peminatan (MIPA / IPS / Bahasa - SMA)</option>
@@ -99,7 +99,7 @@
                         <select
                             id="educational_level"
                             name="educational_level"
-                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 pl-3.5 pr-11 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 pl-3.5 pr-11 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20"
                         >
                             <option value="">Semua Jenjang</option>
                             <option value="sd" @selected(old('educational_level') === 'sd')>SD / MI</option>
@@ -117,7 +117,7 @@
                         <select
                             id="curriculum"
                             name="curriculum"
-                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 pl-3.5 pr-11 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 pl-3.5 pr-11 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20"
                         >
                             <option value="merdeka" @selected(old('curriculum', 'merdeka') === 'merdeka')>Kurikulum Merdeka</option>
                             <option value="k13" @selected(old('curriculum') === 'k13')>Kurikulum 2013 (K-13)</option>
@@ -128,7 +128,7 @@
                     <!-- Credit Hours -->
                     <div>
                         <label for="credit_hours" class="block text-sm font-medium text-zinc-700 mb-1.5">
-                            Beban Belajar Mingguan (JP) <span class="text-[#E11D2E]">*</span>
+                            Beban Belajar Mingguan (JP) <span class="text-brand-600">*</span>
                         </label>
                         <input
                             type="number"
@@ -138,7 +138,7 @@
                             max="20"
                             value="{{ old('credit_hours', 2) }}"
                             required
-                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 px-3.5 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 font-mono"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 px-3.5 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20 font-mono"
                         >
                     </div>
 
@@ -153,7 +153,7 @@
                             name="academic_program"
                             value="{{ old('academic_program') }}"
                             placeholder="Contoh: MIPA, Teknik Komputer dan Jaringan, Otomatisasi Tata Kelola Perkantoran"
-                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 px-3.5 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 px-3.5 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
                         >
                     </div>
 
@@ -168,7 +168,7 @@
                             name="order"
                             min="0"
                             value="{{ old('order', 0) }}"
-                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 px-3.5 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 font-mono"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 px-3.5 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20 font-mono"
                         >
                     </div>
 
@@ -197,7 +197,7 @@
                             name="description"
                             rows="3"
                             placeholder="Ringkasan ruang lingkup materi atau capaian pembelajaran mata pelajaran..."
-                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 px-3.5 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400 min-h-[96px]"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-base py-2.5 px-3.5 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400 min-h-[96px]"
                         >{{ old('description') }}</textarea>
                     </div>
                 </div>

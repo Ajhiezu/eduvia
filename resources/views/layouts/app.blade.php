@@ -1,3 +1,7 @@
+@php
+    $isReferenceDashboard = request()->routeIs('dashboard', 'parent.dashboard');
+    $pageTitle = trim((string) ($headerTitle ?? $title ?? $__env->yieldContent('headerTitle'))) ?: 'Dashboard';
+@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-zinc-50">
 <head>
@@ -5,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title ?? 'Dashboard' }} — {{ config('app.name', 'Eduvia') }}</title>
+    <title>{{ $pageTitle }} — {{ config('app.name', 'Eduvia') }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,8 +17,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Favicon & Brand Icons -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('Desain tanpa judul (7).ico') }}">
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('Desain tanpa judul (7).ico') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 
     <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -34,12 +38,14 @@
             }
         }
     }"
-    class="min-h-full flex flex-col font-sans text-zinc-900 bg-zinc-50 antialiased selection:bg-brand-600 selection:text-white"
+    class="eduvia-app min-h-full flex flex-col font-sans text-zinc-900 bg-white antialiased selection:bg-brand-600 selection:text-white {{ $isReferenceDashboard ? 'dashboard-reference' : '' }}"
+    :data-sidebar-collapsed="sidebarCollapsed ? 'true' : 'false'"
     x-init="$watch('sidebarOpen', val => document.body.classList.toggle('overflow-hidden', val))"
     @keydown.escape="userDropdownOpen = false; notificationsOpen = false; sidebarOpen = false"
 >
     <!-- Global Notification Toasts -->
     <x-toast />
+    <x-confirm-dialog />
 
     @php
         $currentSchool = \App\Models\School::current();
@@ -50,15 +56,17 @@
     <!-- ====================================================================== -->
     <!-- METIS MASTER TOP HEADER (Fixed Across Entire Screen)                  -->
     <!-- ====================================================================== -->
-    <header class="fixed top-0 inset-x-0 z-40 h-16 bg-white border-b border-zinc-200/90 px-4 sm:px-6 flex items-center justify-between gap-4">
+    <header class="app-header fixed top-0 inset-x-0 z-40 h-16 bg-white border-b border-zinc-200/90 px-4 sm:px-6 flex items-center justify-between gap-4">
         <!-- Left: Brand Logo + Sidebar Toggle -->
-        <div class="flex items-center gap-3 shrink-0">
+        <div class="app-brand flex items-center gap-3 shrink-0">
             <!-- Mobile Drawer Toggle -->
             <button
                 type="button"
                 @click="sidebarOpen = !sidebarOpen; if (sidebarOpen) sidebarCollapsed = false"
                 class="p-2 rounded-lg text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100 lg:hidden focus:outline-none"
-                aria-label="Toggle navigation drawer"
+                aria-label="Buka navigasi"
+                aria-controls="application-navigation"
+                :aria-expanded="sidebarOpen.toString()"
             >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
@@ -84,14 +92,30 @@
         </div>
 
         <!-- Center: Metis Omnibox Global Search -->
-        <div class="hidden md:flex flex-1 items-center justify-center max-w-lg lg:max-w-xl mx-auto px-4">
+        <div class="dashboard-header-greeting">
+            @if ($isReferenceDashboard)
+                <h1>Selamat datang, {{ explode(' ', trim(auth()->user()->name))[0] }}!</h1>
+            @else
+                <p class="app-header-eyebrow">Ruang kerja {{ auth()->user()->role->label() }}</p>
+                <h2>{{ $pageTitle }}</h2>
+            @endif
+            <p>{{ now()->translatedFormat('l, d F Y') }}</p>
+        </div>
+        <div class="app-search relative hidden md:flex flex-1 items-center justify-center max-w-lg lg:max-w-xl mx-auto px-4" x-data="dashboardNavigationSearch" @click.outside="open = false" @keydown.escape="open = false">
             <label class="group relative flex items-center w-full h-10 px-3.5 gap-2.5 bg-zinc-50/90 hover:bg-zinc-100/70 focus-within:bg-white border border-zinc-200/90 hover:border-zinc-300 focus-within:border-brand-600 focus-within:ring-2 focus-within:ring-brand-100 rounded-xl transition-all shadow-2xs cursor-text">
                 <svg class="w-4 h-4 text-zinc-400 group-focus-within:text-brand-600 shrink-0 transition-colors pointer-events-none" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
                 </svg>
                 <input
                     type="text"
-                    placeholder="Cari data siswa, guru, kelas, atau fitur..."
+                    placeholder="Cari menu atau layanan..."
+                    aria-label="Cari menu dan layanan"
+                    x-model="query"
+                    @input="open = true"
+                    @focus="open = true"
+                    @keydown.enter.prevent="goFirst()"
+                    aria-controls="navigation-search-results"
+                    :aria-expanded="(open && query.trim().length > 0).toString()"
                     class="omnibox-input flex-1 min-w-0"
                     @keydown.window.prevent.ctrl.k="$el.focus()"
                     @keydown.window.prevent.meta.k="$el.focus()"
@@ -105,12 +129,18 @@
                     </kbd>
                 </div>
             </label>
+            <div id="navigation-search-results" class="dashboard-nav-search-results" x-show="open && query.trim().length > 0" x-cloak>
+                <template x-for="item in matches" :key="item.url">
+                    <a :href="item.url"><span x-text="item.label"></span><span aria-hidden="true">&nearr;</span></a>
+                </template>
+                <p x-show="matches.length === 0" role="status">Menu tidak ditemukan. Coba kata lain.</p>
+            </div>
         </div>
 
         <!-- Right: Metis Quick Utilities & User Menu -->
         <div class="flex items-center gap-2 sm:gap-3 shrink-0">
             <!-- School Operational Context Pill -->
-            <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-100/80 border border-zinc-200 text-xs text-zinc-700">
+            <div class="app-context-pill hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-100/80 border border-zinc-200 text-xs text-zinc-700">
                 <span class="w-2 h-2 rounded-full {{ $currentSchool?->is_active ? 'bg-emerald-500' : 'bg-zinc-400' }}"></span>
                 <span class="font-semibold text-zinc-800 truncate max-w-[150px]" title="{{ $currentSchool?->name }}">
                     {{ $currentSchool?->name ?? 'Yayasan Perguruan Nusantara Utama' }}
@@ -125,7 +155,7 @@
             <button
                 type="button"
                 @click="toggleFullscreen()"
-                class="hidden sm:inline-flex p-2 rounded-lg text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100 transition-colors focus:outline-none"
+                class="app-fullscreen hidden sm:inline-flex p-2 rounded-lg text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100 transition-colors focus:outline-none"
                 title="Beralih Layar Penuh"
             >
                 <svg x-show="!isFullscreen" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -324,6 +354,7 @@
                         </div>
 
                         <div class="pt-1 border-t border-zinc-100">
+                            <a href="{{ route('account.security') }}" class="flex items-center gap-2 px-4 py-2 text-zinc-700 hover:bg-zinc-50">Keamanan Akun</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="w-full flex items-center gap-2 px-4 py-2 text-rose-600 hover:bg-rose-50 text-left font-semibold transition-colors">
@@ -366,8 +397,14 @@
             'lg:w-20': sidebarCollapsed,
             'lg:w-64': !sidebarCollapsed
         }"
-        class="fixed top-0 lg:top-16 left-0 bottom-0 z-50 lg:z-30 w-72 sm:w-80 lg:w-64 max-w-[85vw] bg-white border-r border-zinc-200 flex flex-col transition-all duration-200 shadow-2xl lg:shadow-none"
+        class="app-sidebar fixed top-0 lg:top-16 left-0 bottom-0 z-50 lg:z-30 w-72 sm:w-80 lg:w-64 max-w-[85vw] bg-white border-r border-zinc-200 flex flex-col transition-all duration-200 shadow-2xl lg:shadow-none"
     >
+        <div class="dashboard-sidebar-brand">
+            <a href="{{ route('dashboard') }}" x-show="!sidebarCollapsed" aria-label="Beranda Eduvia"><x-application-logo size="md" /></a>
+            <button type="button" @click="sidebarCollapsed = !sidebarCollapsed" class="dashboard-icon-button" :aria-expanded="(!sidebarCollapsed).toString()" aria-controls="application-navigation" aria-label="Sembunyikan atau luaskan navigasi">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" :class="{ 'rotate-180': sidebarCollapsed }"><path d="m14 7-5 5 5 5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+        </div>
         <!-- Mobile Drawer Header with Logo & Close Button -->
         <div class="lg:hidden flex items-center justify-between px-4 h-16 border-b border-zinc-200 bg-white shrink-0">
             <x-application-logo size="sm" />
@@ -384,7 +421,11 @@
         </div>
 
         <!-- Sidebar School Context Summary -->
-        <div class="p-3 border-b border-zinc-100 bg-zinc-50/50" x-show="!sidebarCollapsed">
+        <div class="dashboard-sidebar-context p-3 border-b border-zinc-100 bg-zinc-50/50" x-show="!sidebarCollapsed">
+            <div class="flex items-center gap-3 mb-5">
+                <img src="{{ asset('images/brand/eduvia-icon-mark-transparent.png') }}" alt="" class="h-9 w-9 object-contain" />
+                <div><p class="text-[10px] text-zinc-500 mb-1">Ruang kerja Anda</p><p class="text-sm font-semibold text-zinc-900">{{ auth()->user()->role->label() }}</p></div>
+            </div>
             <div class="flex items-center justify-between text-zinc-500 mb-1">
                 <span class="font-bold text-[10px] uppercase tracking-wider text-zinc-400">Konteks Sekolah</span>
                 <span class="w-1.5 h-1.5 rounded-full {{ $currentSchool?->is_active ? 'bg-emerald-500' : 'bg-zinc-300' }}"></span>
@@ -398,7 +439,7 @@
         </div>
 
         <!-- Navigation Scrollable Links -->
-        <nav
+        <nav id="application-navigation" aria-label="Navigasi utama"
             class="flex-1 px-3 py-3 space-y-1 overflow-y-auto"
             @click="if (window.innerWidth < 1024 && $event.target.closest('a')) sidebarOpen = false"
         >
@@ -1198,17 +1239,17 @@
             'lg:pl-20': sidebarCollapsed,
             'lg:pl-64': !sidebarCollapsed
         }"
-        class="flex-1 flex flex-col min-w-0 pt-16 transition-all duration-200"
+        class="app-viewport flex-1 flex flex-col min-w-0 pt-16 transition-all duration-200"
     >
         <!-- Top Sub-Bar (Breadcrumbs & Actions) -->
-        <div class="min-h-12 py-1.5 sm:py-0 h-auto sm:h-12 bg-white/70 backdrop-blur-xs border-b border-zinc-200/80 px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-4">
+        <div class="app-breadcrumbs min-h-12 py-1.5 sm:py-0 h-auto sm:h-12 bg-white/70 backdrop-blur-xs border-b border-zinc-200/80 px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-4">
             <div class="flex items-center gap-1.5 sm:gap-2 text-xs text-zinc-500 truncate min-w-0 flex-1">
                 @if (isset($breadcrumbs))
                     {{ $breadcrumbs }}
                 @else
                     <a href="{{ route('dashboard') }}" class="hover:text-zinc-900 transition-colors shrink-0">Eduvia</a>
                     <span class="text-zinc-300 shrink-0">/</span>
-                    <span class="font-bold text-zinc-900 truncate">{{ $headerTitle ?? 'Dashboard' }}</span>
+                    <span class="font-bold text-zinc-900 truncate">{{ $pageTitle }}</span>
                 @endif
             </div>
 
@@ -1222,7 +1263,7 @@
         </div>
 
         <!-- Main Slot Body -->
-        <main class="flex-1 p-3 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto min-w-0">
+        <main class="app-main {{ $isReferenceDashboard ? '' : 'app-page' }} flex-1 p-3 sm:p-6 lg:p-8 w-full mx-auto min-w-0">
             @isset($slot)
                 {{ $slot }}
             @else
@@ -1233,7 +1274,7 @@
         <!-- Clean Editorial Footer -->
         <footer class="border-t border-zinc-200/80 bg-white py-3.5 px-3 sm:px-6 lg:px-8 text-center sm:flex sm:items-center sm:justify-between text-xs text-zinc-500 gap-2">
             <p>&copy; {{ date('Y') }} <strong>Eduvia</strong> &mdash; Learn &middot; Grow &middot; Build Your Future. Hak cipta dilindungi.</p>
-            <p class="mt-1 sm:mt-0 text-[11px] text-zinc-400">Template Metis Refined Neutral &bull; SD, SMP, SMA, SMK</p>
+            <p class="mt-1 sm:mt-0 text-[11px] text-zinc-400">SD &middot; SMP &middot; SMA &middot; SMK</p>
         </footer>
     </div>
 </body>

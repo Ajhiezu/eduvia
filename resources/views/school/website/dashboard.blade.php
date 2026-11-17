@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('headerTitle')Pengelolaan Website Sekolah: {{ $school->name }}@endsection
+
 @section('content')
 <div class="space-y-6">
 

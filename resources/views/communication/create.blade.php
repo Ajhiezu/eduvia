@@ -28,9 +28,9 @@
                     <!-- Parent Perspective -->
                     <div>
                         <label class="block text-xs sm:text-sm font-bold text-zinc-700 mb-2">
-                            Pilih Siswa (Anak yang Dikonsultasikan) <span class="text-[#E11D2E]">*</span>
+                            Pilih Siswa (Anak yang Dikonsultasikan) <span class="text-brand-600">*</span>
                         </label>
-                        <select name="student_id" required class="w-full text-sm sm:text-base rounded-2xl border border-zinc-200 bg-zinc-50/70 px-4 py-3 sm:py-3.5 text-zinc-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-[#E11D2E] transition-all">
+                        <select name="student_id" required class="w-full text-sm sm:text-base rounded-2xl border border-zinc-200 bg-zinc-50/70 px-4 py-3 sm:py-3.5 text-zinc-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-brand-600 transition-all">
                             @foreach ($activeChildren as $ch)
                                 <option value="{{ $ch->id }}" {{ request('child_id') == $ch->id ? 'selected' : '' }}>
                                     {{ $ch->name }} (Kelas: {{ $ch->classroomEnrollments->first()?->classroom?->name ?? '-' }})
@@ -44,9 +44,9 @@
 
                     <div>
                         <label class="block text-xs sm:text-sm font-bold text-zinc-700 mb-2">
-                            Pilih Guru Tujuan (Wali Kelas / Guru Pengajar Sah) <span class="text-[#E11D2E]">*</span>
+                            Pilih Guru Tujuan (Wali Kelas / Guru Pengajar Sah) <span class="text-brand-600">*</span>
                         </label>
-                        <select name="recipient_id" required class="w-full text-sm sm:text-base rounded-2xl border border-zinc-200 bg-zinc-50/70 px-4 py-3 sm:py-3.5 text-zinc-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-[#E11D2E] transition-all">
+                        <select name="recipient_id" required class="w-full text-sm sm:text-base rounded-2xl border border-zinc-200 bg-zinc-50/70 px-4 py-3 sm:py-3.5 text-zinc-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-brand-600 transition-all">
                             <option value="">-- Pilih Tenaga Pendidik --</option>
                             @foreach ($eligibleTeachers as $t)
                                 <option value="{{ $t->id }}" {{ old('recipient_id') == $t->id ? 'selected' : '' }}>
@@ -62,9 +62,9 @@
                     <!-- Teacher / Admin Perspective -->
                     <div>
                         <label class="block text-xs sm:text-sm font-bold text-zinc-700 mb-2">
-                            Pilih Orang Tua / Wali Murid Terverifikasi <span class="text-[#E11D2E]">*</span>
+                            Pilih Orang Tua / Wali Murid Terverifikasi <span class="text-brand-600">*</span>
                         </label>
-                        <select name="recipient_id" required class="w-full text-sm sm:text-base rounded-2xl border border-zinc-200 bg-zinc-50/70 px-4 py-3 sm:py-3.5 text-zinc-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-[#E11D2E] transition-all">
+                        <select name="recipient_id" required class="w-full text-sm sm:text-base rounded-2xl border border-zinc-200 bg-zinc-50/70 px-4 py-3 sm:py-3.5 text-zinc-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-brand-600 transition-all">
                             <option value="">-- Pilih Orang Tua Murid --</option>
                             @foreach ($eligibleParents as $rel)
                                 <option value="{{ $rel->parent_id }}" {{ old('recipient_id') == $rel->parent_id ? 'selected' : '' }}>
@@ -79,9 +79,9 @@
 
                     <div>
                         <label class="block text-xs sm:text-sm font-bold text-zinc-700 mb-2">
-                            Pilih Siswa Terkait <span class="text-[#E11D2E]">*</span>
+                            Pilih Siswa Terkait <span class="text-brand-600">*</span>
                         </label>
-                        <select name="student_id" required class="w-full text-sm sm:text-base rounded-2xl border border-zinc-200 bg-zinc-50/70 px-4 py-3 sm:py-3.5 text-zinc-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-[#E11D2E] transition-all">
+                        <select name="student_id" required class="w-full text-sm sm:text-base rounded-2xl border border-zinc-200 bg-zinc-50/70 px-4 py-3 sm:py-3.5 text-zinc-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-brand-600 transition-all">
                             <option value="">-- Pilih Siswa --</option>
                             @foreach ($eligibleParents as $rel)
                                 <option value="{{ $rel->student_id }}" {{ old('student_id') == $rel->student_id ? 'selected' : '' }}>
@@ -97,7 +97,7 @@
 
                 <div>
                     <label class="block text-xs sm:text-sm font-bold text-zinc-700 mb-2">
-                        Subjek / Topik Konsultasi <span class="text-[#E11D2E]">*</span>
+                        Subjek / Topik Konsultasi <span class="text-brand-600">*</span>
                     </label>
                     <input
                         type="text"
@@ -105,7 +105,7 @@
                         value="{{ old('subject') }}"
                         required
                         placeholder="Contoh: Konsultasi Evaluasi Nilai Tugas Matematika Bab 2"
-                        class="w-full text-sm sm:text-base rounded-2xl border border-zinc-200 bg-zinc-50/70 px-4 py-3 sm:py-3.5 text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-[#E11D2E] transition-all"
+                        class="w-full text-sm sm:text-base rounded-2xl border border-zinc-200 bg-zinc-50/70 px-4 py-3 sm:py-3.5 text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-brand-600 transition-all"
                     >
                     @error('subject')
                         <p class="text-xs text-rose-600 mt-1.5 font-medium">{{ $message }}</p>
@@ -114,14 +114,14 @@
 
                 <div>
                     <label class="block text-xs sm:text-sm font-bold text-zinc-700 mb-2">
-                        Isi Pesan Awal <span class="text-[#E11D2E]">*</span>
+                        Isi Pesan Awal <span class="text-brand-600">*</span>
                     </label>
                     <textarea
                         name="body"
                         rows="5"
                         required
                         placeholder="Tuliskan pertanyaan, tanggapan, atau konsultasi Anda dengan sopan..."
-                        class="w-full text-sm sm:text-base rounded-2xl border border-zinc-200 bg-zinc-50/70 px-4 py-3 sm:py-3.5 text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-[#E11D2E] transition-all leading-relaxed"
+                        class="w-full text-sm sm:text-base rounded-2xl border border-zinc-200 bg-zinc-50/70 px-4 py-3 sm:py-3.5 text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-brand-600 transition-all leading-relaxed"
                     >{{ old('body') }}</textarea>
                     @error('body')
                         <p class="text-xs text-rose-600 mt-1.5 font-medium">{{ $message }}</p>
@@ -146,7 +146,7 @@
                     <a href="{{ route('conversations.index') }}" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-zinc-600 hover:bg-zinc-100 transition-colors">
                         Batal
                     </a>
-                    <button type="submit" class="px-6 py-3 rounded-xl text-xs sm:text-sm font-bold bg-[#E11D2E] hover:bg-[#C81423] text-white shadow-xs transition-colors flex items-center gap-2">
+                    <button type="submit" class="px-6 py-3 rounded-xl text-xs sm:text-sm font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs transition-colors flex items-center gap-2">
                         <span>Kirim Pesan</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </button>

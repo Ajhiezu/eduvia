@@ -33,7 +33,7 @@
         @endif
 
         <!-- Back Navigation & Title -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2">
                     <x-button href="{{ route('admissions.applicants.index') }}" variant="secondary" size="xs">
@@ -69,7 +69,7 @@
 
                 <!-- Re-Registration Button -->
                 @if ($applicant->status === 'accepted')
-                    <form action="{{ route('admissions.applicants.re-register', $applicant) }}" method="POST" onsubmit="return confirm('Konfirmasi bahwa calon siswa telah menyelesaikan proses daftar ulang?')">
+                    <form action="{{ route('admissions.applicants.re-register', $applicant) }}" method="POST" data-confirm="Konfirmasi bahwa calon siswa telah menyelesaikan proses daftar ulang?">
                         @csrf
                         <x-button type="submit" variant="secondary" size="sm">
                             <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

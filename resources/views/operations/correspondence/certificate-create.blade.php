@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot:headerTitle>Penerbitan Surat Keterangan Siswa Aktif</x-slot:headerTitle>
     <x-slot name="header">
         <div class="flex items-center gap-3">
             <x-button href="{{ route('operations.correspondence.index') }}" variant="ghost" size="sm">
@@ -18,7 +19,7 @@
 
                 <div>
                     <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Pilih Peserta Didik Aktif <span class="text-rose-500">*</span></label>
-                    <select name="student_id" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <select name="student_id" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                         <option value="">-- Pilih Siswa --</option>
                         @foreach($students as $st)
                             <option value="{{ $st->id }}">

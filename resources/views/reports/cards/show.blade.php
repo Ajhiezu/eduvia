@@ -66,7 +66,7 @@
                         Edit Catatan & Nonakademik
                     </x-button>
 
-                    <form action="{{ route('reports.cards.submit', $reportCard) }}" method="POST" onsubmit="return confirm('Ajukan buku rapor ini untuk verifikasi pihak sekolah?');">
+                    <form action="{{ route('reports.cards.submit', $reportCard) }}" method="POST" data-confirm="Ajukan buku rapor ini untuk verifikasi pihak sekolah?">
                         @csrf
                         <x-button type="submit" variant="primary" size="sm">
                             <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,7 +98,7 @@
                 @endif
 
                 @if((auth()->user()->isSuperAdmin() || auth()->user()->isSchoolAdmin()) && in_array($reportCard->status, [\App\Models\StudentReportCard::STATUS_APPROVED, \App\Models\StudentReportCard::STATUS_PENDING_REVIEW]))
-                    <form action="{{ route('reports.cards.publish', $reportCard) }}" method="POST" onsubmit="return confirm('Terbitkan buku rapor ini secara resmi? Snapshot permanen akan dihasilkan dan siswa dapat melihat hasilnya.');">
+                    <form action="{{ route('reports.cards.publish', $reportCard) }}" method="POST" data-confirm="Terbitkan buku rapor ini secara resmi? Snapshot permanen akan dihasilkan dan siswa dapat melihat hasilnya.">
                         @csrf
                         <x-button type="submit" variant="primary" size="sm" class="bg-emerald-600 hover:bg-emerald-700">
                             <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot:headerTitle>Terbitkan Tagihan Baru</x-slot:headerTitle>
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8" x-data="{
         items: [
             { item_name: '', quantity: 1, unit_price: 0, discount_amount: 0, fee_category_id: '' }
@@ -206,7 +207,7 @@
                     </div>
                     <div class="flex justify-between text-base font-bold text-zinc-900 pt-2 border-t border-zinc-200">
                         <span>Total Tagihan Akhir:</span>
-                        <span class="text-[#E11D2E] font-mono" x-text="formatRupiah(calculateTotal())"></span>
+                        <span class="text-brand-600 font-mono" x-text="formatRupiah(calculateTotal())"></span>
                     </div>
                 </div>
             </div>
@@ -222,7 +223,7 @@
                 <a href="{{ route('finance.invoices.index') }}" class="px-5 py-2.5 rounded-lg border border-zinc-300 text-zinc-700 text-xs font-semibold hover:bg-zinc-50">
                     Batal
                 </a>
-                <button type="submit" class="px-6 py-2.5 rounded-lg bg-[#E11D2E] text-white text-xs font-semibold hover:bg-[#c81926] shadow-sm">
+                <button type="submit" class="px-6 py-2.5 rounded-lg bg-brand-600 text-white text-xs font-semibold hover:bg-brand-700 shadow-sm">
                     Terbitkan Tagihan Sekarang
                 </button>
             </div>

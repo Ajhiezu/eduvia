@@ -17,7 +17,7 @@
         @endif
 
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
                     Konfigurasi Bobot Penilaian
@@ -90,7 +90,7 @@
                                         <x-button href="{{ route('reports.weights.edit', $config) }}" variant="ghost" size="xs">
                                             Edit
                                         </x-button>
-                                        <form action="{{ route('reports.weights.destroy', $config) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus skema bobot ini?');">
+                                        <form action="{{ route('reports.weights.destroy', $config) }}" method="POST" data-confirm="Apakah Anda yakin ingin menghapus skema bobot ini?">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:text-red-800 text-xs font-semibold px-2 py-1 rounded hover:bg-red-50">

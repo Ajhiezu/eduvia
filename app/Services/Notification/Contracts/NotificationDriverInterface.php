@@ -9,7 +9,7 @@ interface NotificationDriverInterface
     /**
      * Send notification via this specific driver.
      *
-     * @return array{success: bool, recipient: string, error?: string}
+     * @return array{success: bool, recipient: string, status?: string, error?: string|null}
      */
     public function send(NotificationPayload $payload): array;
 }

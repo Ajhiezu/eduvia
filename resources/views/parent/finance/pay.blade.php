@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot:headerTitle>Konfirmasi Bukti Transfer Bank</x-slot:headerTitle>
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         <!-- Header -->
         <div class="flex items-center justify-between pb-6 border-b border-zinc-200">
@@ -37,7 +38,7 @@
             <div class="text-zinc-500">Nama Siswa: <strong class="text-zinc-900">{{ $invoice->student?->name }}</strong></div>
             <div class="flex justify-between pt-2 border-t border-zinc-200 text-zinc-700">
                 <span>Total Tagihan: <strong>{{ $invoice->formatted_total }}</strong></span>
-                <span>Sisa Kewajiban: <strong class="text-[#E11D2E] font-mono text-sm">{{ $invoice->formatted_remaining }}</strong></span>
+                <span>Sisa Kewajiban: <strong class="text-brand-600 font-mono text-sm">{{ $invoice->formatted_remaining }}</strong></span>
             </div>
         </div>
 
@@ -118,7 +119,7 @@
                 <a href="{{ route('parent.finance.index') }}" class="px-4 py-2 rounded-lg border border-zinc-300 text-zinc-700 font-semibold hover:bg-zinc-50">
                     Batal
                 </a>
-                <button type="submit" class="px-5 py-2 rounded-lg bg-[#E11D2E] text-white font-semibold hover:bg-[#c81926] shadow-sm">
+                <button type="submit" class="px-5 py-2 rounded-lg bg-brand-600 text-white font-semibold hover:bg-brand-700 shadow-sm">
                     Kirim Konfirmasi Pembayaran
                 </button>
             </div>

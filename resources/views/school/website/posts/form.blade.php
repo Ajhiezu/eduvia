@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('headerTitle'){{ $post->exists ? 'Edit Konten Website' : 'Tulis Konten Baru' }}@endsection
+
 @section('content')
 <div class="max-w-4xl mx-auto space-y-6">
 

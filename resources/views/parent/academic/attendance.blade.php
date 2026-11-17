@@ -6,7 +6,7 @@
     <div class="space-y-6">
 
         <!-- Top Header & Child Switcher -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-zinc-200">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-zinc-200">
             <div>
                 <div class="flex items-center gap-2">
                     <a href="{{ route('parent.dashboard') }}" class="text-xs text-zinc-500 hover:text-zinc-900">&larr; Beranda Pantauan</a>
@@ -21,18 +21,7 @@
                 </p>
             </div>
 
-            @if ($activeChildren->count() > 1)
-                <div class="flex items-center gap-1.5 bg-zinc-100 p-1 rounded-xl">
-                    @foreach ($activeChildren as $child)
-                        <a
-                            href="{{ route('parent.dashboard', ['child_id' => $child->id]) }}"
-                            class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ $activeChild && $activeChild->id === $child->id ? 'bg-[#E11D2E] text-white shadow-xs' : 'text-zinc-600 hover:text-zinc-900' }}"
-                        >
-                            {{ $child->name }}
-                        </a>
-                    @endforeach
-                </div>
-            @endif
+            <x-child-switcher :children="$activeChildren" :active-child="$activeChild" :return-url="route('parent.attendance')" />
         </div>
 
         @if (! $activeChild)
@@ -73,7 +62,7 @@
             <!-- Filter Controls -->
             <form action="{{ route('parent.attendance') }}" method="GET" class="bg-white p-4 rounded-xl border border-zinc-200/80 shadow-xs flex flex-wrap items-center gap-3">
                 <div class="w-full sm:w-auto">
-                    <select name="status" class="w-full text-xs font-semibold rounded-lg border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <select name="status" class="w-full text-xs font-semibold rounded-lg border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                         <option value="">Semua Status Presensi</option>
                         <option value="present" {{ request('status') === 'present' ? 'selected' : '' }}>Hadir</option>
                         <option value="late" {{ request('status') === 'late' ? 'selected' : '' }}>Terlambat</option>
@@ -83,9 +72,9 @@
                     </select>
                 </div>
                 <div class="flex items-center gap-2">
-                    <input type="date" name="start_date" value="{{ request('start_date') }}" class="text-xs rounded-lg border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <input type="date" name="start_date" value="{{ request('start_date') }}" class="text-xs rounded-lg border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                     <span class="text-xs text-zinc-400">s/d</span>
-                    <input type="date" name="end_date" value="{{ request('end_date') }}" class="text-xs rounded-lg border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <input type="date" name="end_date" value="{{ request('end_date') }}" class="text-xs rounded-lg border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                 </div>
                 <button type="submit" class="px-3.5 py-2 text-xs font-bold rounded-lg bg-zinc-800 text-white hover:bg-zinc-900 transition-colors">
                     Saring

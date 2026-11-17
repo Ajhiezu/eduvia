@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Services\Notification\NotificationPayload;
 use App\Services\Notification\NotificationService;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -31,20 +32,39 @@ class PaymentService
      */
     public function checkout(User $payer, int $studentId, array $invoiceIds, string $paymentMethod): PaymentGatewayTransaction
     {
-        if (empty($invoiceIds)) {
-            throw new \InvalidArgumentException('Minimal harus memilih 1 tagihan untuk dibayar.');
+        $invoices = Invoice::whereIn('id', $invoiceIds)
+            ->where('student_id', $studentId)
+            ->get();
+
+        if ($invoices->isEmpty() || $invoices->count() !== count(array_unique($invoiceIds))) {
+            throw new \DomainException('Sebagian atau seluruh tagihan yang dipilih tidak ditemukan atau tidak valid.');
         }
 
-        // 1. Proactively sync any pending transactions related to these invoices with Midtrans
-        $pendingTransactions = PaymentGatewayTransaction::whereHas('allocations', function ($q) use ($invoiceIds) {
-            $q->whereIn('invoice_id', $invoiceIds);
+        $pendingTransactions = PaymentGatewayTransaction::whereHas('allocations', function (Builder $query) use ($invoiceIds): void {
+            $query->whereIn('invoice_id', $invoiceIds);
         })
             ->where('transaction_status', PaymentGatewayTransaction::STATUS_PENDING)
             ->where('created_at', '>=', now()->subHours(24))
             ->get();
 
-        foreach ($pendingTransactions as $pendingTx) {
-            $this->syncTransaction($pendingTx);
+        foreach ($pendingTransactions as $pendingTransaction) {
+            $this->syncTransaction($pendingTransaction);
+        }
+
+        return DB::transaction(function () use ($payer, $studentId, $invoiceIds, $paymentMethod): PaymentGatewayTransaction {
+            User::whereKey($studentId)->lockForUpdate()->firstOrFail();
+
+            return $this->createCheckout($payer, $studentId, $invoiceIds, $paymentMethod);
+        });
+    }
+
+    /**
+     * @param  array<int>  $invoiceIds
+     */
+    protected function createCheckout(User $payer, int $studentId, array $invoiceIds, string $paymentMethod): PaymentGatewayTransaction
+    {
+        if (empty($invoiceIds)) {
+            throw new \InvalidArgumentException('Minimal harus memilih 1 tagihan untuk dibayar.');
         }
 
         // 2. Fetch fresh invoices belonging to student and valid status
@@ -77,13 +97,15 @@ class PaymentService
             ->first();
 
         if ($activePendingTx) {
-            // If checking out with the same payment method, return existing active transaction (do not spawn new order)
-            if ($activePendingTx->payment_method === $paymentMethod) {
+            $existingInvoiceIds = $activePendingTx->allocations()->pluck('invoice_id')->sort()->values()->all();
+            $requestedInvoiceIds = array_values(array_unique(array_map('intval', $invoiceIds)));
+            sort($requestedInvoiceIds);
+
+            if ($activePendingTx->payment_method === $paymentMethod && $existingInvoiceIds === $requestedInvoiceIds) {
                 return $activePendingTx;
             }
 
-            // If switching payment method (e.g., BCA VA -> BRI VA), expire the old one so only 1 active VA exists
-            $activePendingTx->update(['transaction_status' => PaymentGatewayTransaction::STATUS_EXPIRE]);
+            throw new \DomainException('Masih ada instruksi pembayaran aktif untuk tagihan ini. Selesaikan pembayaran atau tunggu hingga kedaluwarsa sebelum mengubah pilihan tagihan atau metode.');
         }
 
         $schoolId = $invoices->first()->school_id;
@@ -212,6 +234,10 @@ class PaymentService
             $tx = PaymentGatewayTransaction::where('order_id', $orderId)
                 ->lockForUpdate()
                 ->firstOrFail();
+
+            if (! is_numeric($payload['gross_amount']) || (float) $payload['gross_amount'] !== (float) $tx->gross_amount) {
+                throw new \InvalidArgumentException('Nominal pembayaran gateway tidak sesuai dengan transaksi.');
+            }
 
             // IDEMPOTENCY GUARD: If already settled, do not double-process
             if ($tx->transaction_status === PaymentGatewayTransaction::STATUS_SETTLEMENT) {
@@ -386,7 +412,17 @@ class PaymentService
             $gwStatus = $statusData['transaction_status'] ?? 'pending';
 
             if (in_array($gwStatus, ['settlement', 'capture'])) {
-                $this->applySettlement($tx, $statusData);
+                DB::transaction(function () use ($tx, $statusData): void {
+                    $lockedTransaction = PaymentGatewayTransaction::whereKey($tx->id)->lockForUpdate()->firstOrFail();
+
+                    if ($lockedTransaction->transaction_status !== PaymentGatewayTransaction::STATUS_SETTLEMENT) {
+                        if (! isset($statusData['gross_amount']) || ! is_numeric($statusData['gross_amount']) || (float) $statusData['gross_amount'] !== (float) $lockedTransaction->gross_amount) {
+                            throw new \DomainException('Nominal pembayaran gateway tidak sesuai dengan transaksi.');
+                        }
+
+                        $this->applySettlement($lockedTransaction, $statusData);
+                    }
+                });
 
                 return PaymentGatewayTransaction::STATUS_SETTLEMENT;
             }

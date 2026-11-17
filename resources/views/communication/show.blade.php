@@ -6,7 +6,7 @@
     <div class="max-w-4xl mx-auto space-y-6">
 
         <!-- Top Header & Thread Meta -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-zinc-200">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-zinc-200">
             <div>
                 <a href="{{ route('conversations.index') }}" class="text-xs text-zinc-500 hover:text-zinc-900 inline-flex items-center gap-1 font-semibold">
                     &larr; Kembali ke Daftar Percakapan
@@ -33,7 +33,7 @@
             </div>
 
             @if ($conversation->status !== 'closed')
-                <form action="{{ route('conversations.close', $conversation) }}" method="POST" onsubmit="return confirm('Apakah Anda ingin menutup percakapan ini?');">
+                <form action="{{ route('conversations.close', $conversation) }}" method="POST" data-confirm="Apakah Anda ingin menutup percakapan ini?">
                     @csrf
                     <button type="submit" class="px-3 py-1.5 rounded-xl text-xs font-bold border border-zinc-300 hover:bg-zinc-100 text-zinc-700 transition-colors">
                         Tandai Selesai / Tutup
@@ -95,7 +95,7 @@
                                 rows="4"
                                 required
                                 placeholder="Ketik balasan pesan Anda dengan jelas dan santun..."
-                                class="w-full text-sm sm:text-base rounded-2xl border border-zinc-200 bg-zinc-50/70 px-4 py-3 sm:py-3.5 text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-[#E11D2E] transition-all leading-relaxed"
+                                class="w-full text-sm sm:text-base rounded-2xl border border-zinc-200 bg-zinc-50/70 px-4 py-3 sm:py-3.5 text-zinc-900 placeholder:text-zinc-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-brand-600 transition-all leading-relaxed"
                             ></textarea>
                             @error('body')
                                 <p class="text-xs text-rose-600 mt-1.5 font-medium">{{ $message }}</p>
@@ -113,7 +113,7 @@
 
                             <button
                                 type="submit"
-                                class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-xs sm:text-sm font-bold bg-[#E11D2E] hover:bg-[#C81423] text-white shadow-xs transition-colors shrink-0"
+                                class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-xs sm:text-sm font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs transition-colors shrink-0"
                             >
                                 <span>Kirim Balasan</span>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>

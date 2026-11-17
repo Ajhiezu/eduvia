@@ -1,6 +1,7 @@
 <x-app-layout>
+    <x-slot:headerTitle>{{ $letter->subject }}</x-slot:headerTitle>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="flex items-center gap-3">
                 <x-button href="{{ route('operations.correspondence.index', ['type' => $letter->type]) }}" variant="ghost" size="sm">
                     &larr; Buku Agenda
@@ -22,7 +23,7 @@
                 <x-button href="{{ route('operations.correspondence.edit', $letter) }}" variant="secondary" size="sm">
                     Edit Surat
                 </x-button>
-                <form action="{{ route('operations.correspondence.destroy', $letter) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus arsip surat ini?')">
+                <form action="{{ route('operations.correspondence.destroy', $letter) }}" method="POST" data-confirm="Apakah Anda yakin ingin menghapus arsip surat ini?">
                     @csrf
                     @method('DELETE')
                     <x-button type="submit" variant="danger" size="sm">Hapus</x-button>

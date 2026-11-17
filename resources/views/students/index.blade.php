@@ -18,7 +18,7 @@
         @endif
 
         <!-- Action & Navigation Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
                     Manajemen Kesiswaan & Peserta Didik
@@ -103,7 +103,7 @@
                         name="search"
                         value="{{ $search }}"
                         placeholder="Cari nama siswa, NIS, NISN, atau email..."
-                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3.5 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3.5 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
                     >
                 </div>
 
@@ -112,7 +112,7 @@
                     <select
                         name="status"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
                         <option value="">Semua Status</option>
                         <option value="active" {{ $status === 'active' ? 'selected' : '' }}>Aktif</option>
@@ -127,7 +127,7 @@
                     <select
                         name="classroom_id"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
                         <option value="">Semua Rombel</option>
                         @foreach ($classrooms as $c)
@@ -143,7 +143,7 @@
                     <select
                         name="grade_level_id"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
                         <option value="">Semua Tingkat Kelas</option>
                         @foreach ($gradeLevels as $gl)

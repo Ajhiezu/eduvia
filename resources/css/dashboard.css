@@ -1,0 +1,155 @@
+/* Dashboard layout inspired by the supplied academic portal reference. */
+.dashboard-reference { background: #fff; color: #1f2937; }
+.dashboard-reference .app-main { max-width: none; padding: 0; }
+.dashboard-reference .app-breadcrumbs { display: none; }
+.eduvia-app .app-header { box-shadow: none; border-bottom-color: #f0f1f3; }
+.eduvia-app .app-context-pill,
+.eduvia-app .app-fullscreen { display: none; }
+.dashboard-header-greeting { display: none; min-width: 0; }
+.dashboard-header-greeting h1 { font-size: clamp(19px, 1.55vw, 27px); font-weight: 750; letter-spacing: -.045em; line-height: 1.3; }
+.dashboard-header-greeting p { margin-top: 7px; color: #6b7280; font-size: 12px; }
+.dashboard-sidebar-brand { display: none; }
+.dashboard-workspace { display: grid; min-width: 0; }
+.dashboard-primary { min-width: 0; padding: 24px 16px 36px; }
+.dashboard-primary > * + * { margin-top: 25px; }
+.dashboard-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.dashboard-toolbar h2 { font-size: 12px; font-weight: 600; color: #6b7280; }
+.dashboard-toolbar h2 span { color: #d1d5db; margin: 0 8px; }
+.dashboard-toolbar a { font-size: 12px; color: #6b7280; }
+.dashboard-hero { position: relative; min-height: 245px; overflow: hidden; border-radius: 17px; background: #26382d; isolation: isolate; }
+.dashboard-hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 42%; z-index: -2; }
+.dashboard-hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgb(12 23 18 / .78), rgb(12 23 18 / .30) 62%, rgb(12 23 18 / .08)); z-index: -1; }
+.dashboard-hero-content { padding: 28px; max-width: 520px; color: white; }
+.dashboard-hero-content > p { color: rgb(255 255 255 / .85); font-size: 10px; letter-spacing: .13em; font-weight: 600; text-transform: uppercase; }
+.dashboard-hero-content h2 { max-width: 440px; font-size: clamp(25px, 2.4vw, 37px); font-weight: 650; letter-spacing: -.045em; line-height: 1.2; margin: 24px 0 20px; text-wrap: balance; }
+.dashboard-hero-content a { display: inline-flex; align-items: center; gap: 18px; color: white; font-size: 12px; font-weight: 600; border-bottom: 1px solid rgb(255 255 255 / .65); padding-bottom: 5px; }
+.dashboard-stat-strip { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 1px solid #e5e7eb; padding: 1px 0 24px; gap: 22px 16px; }
+.dashboard-stat-strip > div { min-width: 0; }
+.dashboard-stat-strip dt { font-size: 11px; color: #6b7280; margin-bottom: 9px; }
+.dashboard-stat-strip dd { font-size: 23px; font-weight: 650; letter-spacing: -.04em; overflow-wrap: anywhere; }
+.dashboard-stat-strip dd small { font-size: 12px; font-weight: 400; color: #6b7280; letter-spacing: 0; }
+.dashboard-overview { display: grid; gap: 20px; }
+.dashboard-panel { padding: 22px; border: 1px solid #e5e7eb; border-radius: 16px; min-width: 0; }
+.dashboard-section-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 22px; }
+.dashboard-section-heading h2 { font-size: 17px; font-weight: 650; letter-spacing: -.035em; }
+.dashboard-icon-button { display: inline-flex; width: 30px; height: 30px; align-items: center; justify-content: center; border: 1px solid #e5e7eb; border-radius: 50%; color: #4b5563; flex-shrink: 0; }
+.dashboard-icon-button:hover { background: #f3f4f6; }
+.dashboard-icon-button svg { width: 16px; height: 16px; }
+.dashboard-text-link { color: #e11d2e; font-size: 11px; font-weight: 600; }
+.dashboard-muted, .dashboard-empty { color: #6b7280; font-size: 12px; line-height: 1.8; }
+.dashboard-empty { padding: 15px 0; }
+.dashboard-attendance-line { display: flex; align-items: center; gap: 13px; padding: 11px 0; }
+.dashboard-attendance-line + .dashboard-attendance-line { border-top: 1px solid #f3f4f6; }
+.dashboard-attendance-mark { width: 33px; height: 33px; border-radius: 50%; background: #f3f4f6; display: grid; place-items: center; color: #4b5563; font-size: 12px; }
+.dashboard-attendance-line strong { display: block; font-size: 12px; font-weight: 500; }
+.dashboard-attendance-line b { margin-left: auto; font-size: 15px; font-weight: 650; }
+.dashboard-donut { --progress: 0; width: 150px; height: 150px; margin: 10px auto 18px; border-radius: 50%; background: conic-gradient(#218369 calc(var(--progress) * 1%), #eef2f0 0); display: grid; place-items: center; }
+.dashboard-donut > div { width: 126px; height: 126px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 2px; }
+.dashboard-donut strong { font-size: 28px; font-weight: 650; letter-spacing: -.05em; }
+.dashboard-donut span { font-size: 11px; color: #6b7280; }
+.dashboard-donut-note { color: #6b7280; font-size: 12px; text-align: center; line-height: 1.8; }
+.dashboard-existing > [class*="lg:grid-cols-3"] { display: block; }
+.dashboard-existing > [class*="lg:grid-cols-3"] > * { min-width: 0; }
+.dashboard-existing > * + * { margin-top: 24px; }
+.dashboard-reference .dashboard-existing > div > div > .bg-white,
+.dashboard-reference .dashboard-existing > div > div > .rounded-xl { border-radius: 16px; box-shadow: none; }
+.dashboard-reference .dashboard-existing h3 { font-size: 16px; font-weight: 650; letter-spacing: -.025em; }
+.dashboard-reference .dashboard-existing table { font-size: 12px; }
+.dashboard-reference .dashboard-existing thead { background: #fff; }
+.dashboard-reference .dashboard-existing th { color: #6b7280; font-weight: 500; white-space: nowrap; padding-block: 16px; }
+.dashboard-reference .dashboard-existing td { padding-block: 17px; }
+.dashboard-reference .dashboard-existing [class*="shadow-"] { box-shadow: none; }
+.dashboard-rail { min-width: 0; padding: 28px 22px 36px; border-top: 1px solid #e5e7eb; background: #fff; }
+.dashboard-rail > section { margin-top: 34px; }
+.dashboard-profile { text-align: center; padding: 8px 0 22px; }
+.dashboard-avatar { width: 78px; height: 78px; object-fit: cover; border-radius: 50%; margin: 0 auto 16px; }
+.dashboard-avatar-initials { display: grid; place-items: center; background: #f7eee6; color: #8d5743; font-size: 29px; font-weight: 500; }
+.dashboard-profile h2 { font-size: 20px; font-weight: 650; letter-spacing: -.04em; overflow-wrap: anywhere; }
+.dashboard-profile-id { margin: 7px 0; font-size: 11px; color: #6b7280; overflow-wrap: anywhere; }
+.dashboard-role-label { color: #e11d2e; font-size: 10px; font-weight: 600; }
+.dashboard-profile-details { background: #f7f8fa; padding: 17px; border-radius: 13px; }
+.dashboard-profile-details > div { display: flex; justify-content: space-between; align-items: start; gap: 14px; padding: 8px 0; }
+.dashboard-profile-details dt { color: #6b7280; font-size: 10px; flex-shrink: 0; }
+.dashboard-profile-details dd { font-size: 11px; font-weight: 500; text-align: right; overflow-wrap: anywhere; }
+.dashboard-calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px 0; text-align: center; }
+.dashboard-calendar-weekday { font-size: 10px; color: #6b7280; padding-bottom: 10px; }
+.dashboard-calendar-grid button { position: relative; width: 31px; height: 33px; border-radius: 50%; margin: auto; font-size: 11px; transition: background .15s; }
+.dashboard-calendar-grid button:hover { background: #f3f4f6; }
+.dashboard-calendar-grid .is-muted { color: #9ca3af; }
+.dashboard-calendar-grid .is-selected { background: #fef2f2; color: #b91c2b; font-weight: 600; }
+.dashboard-calendar-grid .is-today::after { content: ""; position: absolute; bottom: 3px; left: calc(50% - 2px); width: 4px; height: 4px; background: #e11d2e; border-radius: 50%; }
+.dashboard-calendar-footer { display: flex; justify-content: space-between; gap: 10px; margin-top: 16px; font-size: 10px; color: #6b7280; }
+.dashboard-calendar-footer button { color: #e11d2e; font-weight: 600; }
+.dashboard-agenda-item { display: flex; gap: 13px; align-items: center; padding: 15px 0; }
+.dashboard-agenda-item + .dashboard-agenda-item { border-top: 1px solid #eef0f2; }
+.dashboard-agenda-symbol { display: grid; place-items: center; width: 41px; height: 44px; border: 1px solid #e5e7eb; border-radius: 10px; flex-shrink: 0; font-size: 15px; }
+.dashboard-agenda-item h3 { font-size: 12px; font-weight: 600; line-height: 1.6; }
+.dashboard-agenda-item p { font-size: 10px; color: #6b7280; margin-top: 3px; }
+.dashboard-agenda-link { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; font-weight: 600; margin-top: 15px; padding-bottom: 14px; border-bottom: 1px solid #e5e7eb; }
+.dashboard-shortcuts a { display: flex; justify-content: space-between; gap: 16px; align-items: center; padding: 15px 0; border-bottom: 1px solid #f0f1f3; }
+.dashboard-shortcuts a:hover strong { color: #e11d2e; }
+.dashboard-shortcuts strong { display: block; font-size: 12px; font-weight: 550; }
+.dashboard-shortcuts div span { display: block; font-size: 10px; color: #6b7280; margin-top: 5px; }
+.dashboard-nav-search-results { position: absolute; top: calc(100% + 8px); left: 0; right: 0; padding: 7px; border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; box-shadow: 0 14px 35px #1f293712; z-index: 60; }
+.dashboard-nav-search-results a { display: flex; justify-content: space-between; gap: 10px; padding: 12px; font-size: 12px; border-radius: 7px; color: #374151; }
+.dashboard-nav-search-results a:hover { background: #fef2f2; color: #e11d2e; }
+.dashboard-nav-search-results p { font-size: 12px; padding: 12px; color: #6b7280; }
+.eduvia-app :is(a, button, input):focus-visible { outline: 2px solid #e11d2e; outline-offset: 3px; }
+.dashboard-reference .dashboard-parent-content > [class*="lg:grid-cols-3"] { display: block; }
+.dashboard-reference .dashboard-parent-content > [class*="lg:grid-cols-3"] > * + * { margin-top: 24px; }
+@media (min-width: 640px) {
+    .dashboard-primary { padding: 28px; }
+    .dashboard-stat-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .dashboard-stat-strip > div + div { padding-left: 18px; border-left: 1px solid #e5e7eb; }
+    .dashboard-overview { grid-template-columns: 1fr 1fr; }
+    .dashboard-rail { padding: 30px; }
+}
+@media (min-width: 1024px) {
+    .eduvia-app .app-sidebar { top: 0; width: 252px; }
+    .eduvia-app .app-header { left: 252px; height: 104px; padding: 0 30px; gap: 22px; }
+    .eduvia-app .app-header .app-brand { display: none; }
+    .eduvia-app .app-viewport { padding-left: 252px; padding-top: 104px; }
+    .eduvia-app[data-sidebar-collapsed="true"] .app-sidebar { width: 80px; }
+    .eduvia-app[data-sidebar-collapsed="true"] .app-header { left: 80px; }
+    .eduvia-app[data-sidebar-collapsed="true"] .app-viewport { padding-left: 80px; }
+    .dashboard-sidebar-brand { display: flex; align-items: center; justify-content: space-between; min-height: 104px; padding: 0 25px; }
+    .dashboard-sidebar-brand img { max-width: 143px; height: auto; }
+    .eduvia-app .dashboard-sidebar-context { padding: 23px 25px; background: #fff; border-bottom: 0; }
+    .eduvia-app .app-sidebar nav { padding: 14px 16px 22px; }
+    .eduvia-app .metis-nav-item { border-radius: 7px; min-height: 44px; padding: 12px 14px; font-size: 12px; font-weight: 500; gap: 14px; }
+    .eduvia-app .metis-nav-item svg { width: 19px; height: 19px; stroke-width: 1.5; }
+    .eduvia-app .metis-nav-item.active { background: #fef2f2; color: #e11d2e; font-weight: 650; }
+    .dashboard-header-greeting { display: block; flex: 1; }
+    .eduvia-app .app-search { margin: 0; padding: 0; max-width: 280px; flex: 1; }
+    .eduvia-app .app-search label { height: 45px; background: #f8f9fa; border-color: transparent; border-radius: 11px; box-shadow: none; }
+    .eduvia-app .app-search kbd { display: none; }
+    .dashboard-primary { padding: 28px 32px 44px; }
+}
+@media (min-width: 1440px) {
+    .dashboard-workspace { grid-template-columns: minmax(0, 1fr) 310px; }
+    .dashboard-rail { border-top: 0; border-left: 1px solid #e5e7eb; padding: 28px 25px; }
+    .eduvia-app .app-search { max-width: 330px; }
+}
+@media (min-width: 1800px) {
+    .dashboard-workspace { grid-template-columns: minmax(0, 1fr) 350px; }
+    .dashboard-primary { padding-inline: 42px; }
+    .dashboard-rail { padding-inline: 30px; }
+    .dashboard-hero { min-height: 290px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .eduvia-app *, .eduvia-app *::before, .eduvia-app *::after { transition-duration: 0s !important; animation: none !important; }
+}
+
+.dashboard-nav-search-results[x-cloak] { display: none !important; }
+
+.dashboard-disclosure { border-top: 1px solid #e5e7eb; padding-top: 18px; }
+.dashboard-disclosure > summary { cursor: pointer; font-size: 13px; font-weight: 600; color: #4b5563; padding-bottom: 18px; }
+.dashboard-disclosure > summary:hover { color: #e11d2e; }
+.dashboard-disclosure > summary:focus-visible { outline: 2px solid #e11d2e; outline-offset: 4px; }
+.eduvia-app[data-sidebar-collapsed="true"] .dashboard-sidebar-brand { padding-inline: 24px; }
+@media (max-width: 639px) {
+    .dashboard-hero-content { padding: 24px; }
+    .dashboard-toolbar { align-items: start; }
+    .dashboard-toolbar h2 { line-height: 1.7; }
+    .dashboard-toolbar a { white-space: nowrap; font-size: 10px; }
+}

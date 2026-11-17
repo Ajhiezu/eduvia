@@ -70,6 +70,8 @@
                         </x-input>
                     </div>
 
+                    <x-input name="two_factor_code" label="Kode autentikator atau pemulihan" autocomplete="one-time-code" maxlength="64" hint="Isi jika autentikasi dua faktor sudah aktif pada akun Anda." />
+
                     <div class="flex items-center justify-between text-sm">
                         <label class="flex items-center gap-2 cursor-pointer select-none">
                             <input

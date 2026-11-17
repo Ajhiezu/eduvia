@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot:headerTitle>Catat Setoran Manual</x-slot:headerTitle>
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         <!-- Header -->
         <div class="flex items-center justify-between pb-6 border-b border-zinc-200">
@@ -44,7 +45,7 @@
                             <div class="font-semibold text-zinc-800">{{ $selectedInvoice->student?->name }} &bull; {{ $selectedInvoice->title }}</div>
                             <div class="flex justify-between text-zinc-600 pt-1 border-t border-zinc-200">
                                 <span>Total Tagihan: <strong>{{ $selectedInvoice->formatted_total }}</strong></span>
-                                <span>Sisa Kewajiban: <strong class="text-[#E11D2E]">{{ $selectedInvoice->formatted_remaining }}</strong></span>
+                                <span>Sisa Kewajiban: <strong class="text-brand-600">{{ $selectedInvoice->formatted_remaining }}</strong></span>
                             </div>
                         </div>
                     @else
@@ -117,7 +118,7 @@
                 <a href="{{ route('finance.payments.index') }}" class="px-5 py-2.5 rounded-lg border border-zinc-300 text-zinc-700 text-xs font-semibold hover:bg-zinc-50">
                     Batal
                 </a>
-                <button type="submit" class="px-6 py-2.5 rounded-lg bg-[#E11D2E] text-white text-xs font-semibold hover:bg-[#c81926] shadow-sm">
+                <button type="submit" class="px-6 py-2.5 rounded-lg bg-brand-600 text-white text-xs font-semibold hover:bg-brand-700 shadow-sm">
                     Simpan & Terbitkan Kuitansi
                 </button>
             </div>

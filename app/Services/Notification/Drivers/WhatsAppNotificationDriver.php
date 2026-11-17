@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Services\Notification\Contracts\NotificationDriverInterface;
 use App\Services\Notification\NotificationPayload;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class WhatsAppNotificationDriver implements NotificationDriverInterface
 {
@@ -27,7 +26,7 @@ class WhatsAppNotificationDriver implements NotificationDriverInterface
         }
 
         // Check if user has opted in (UU PDP & Meta Business Policy)
-        if ($pref && ! $pref->whatsapp_opt_in && ! $payload->isUrgent) {
+        if (! $pref?->whatsapp_opt_in) {
             return [
                 'success' => false,
                 'recipient' => $phoneNumber,
@@ -39,21 +38,21 @@ class WhatsAppNotificationDriver implements NotificationDriverInterface
         $bspToken = config('services.whatsapp.token');
 
         // Sandbox / Local fallback logging when live WhatsApp credentials are not configured
-        if (empty($bspEndpoint) || empty($bspToken) || app()->environment('testing', 'local')) {
-            Log::info('[WHATSAPP BSP MOCK SENT]', [
-                'recipient' => $phoneNumber,
-                'title' => $payload->title,
-                'body' => $payload->body,
-            ]);
-
+        if (config('services.notifications.simulate') && ! app()->isProduction()) {
             return [
-                'success' => true,
+                'success' => false,
                 'recipient' => $phoneNumber,
+                'status' => 'simulated',
+                'error' => 'Simulasi: pesan WhatsApp tidak dikirim.',
             ];
         }
 
+        if (empty($bspEndpoint) || empty($bspToken)) {
+            return ['success' => false, 'recipient' => $phoneNumber, 'status' => 'configuration_error', 'error' => 'Konfigurasi WhatsApp belum lengkap.'];
+        }
+
         try {
-            $response = Http::withToken($bspToken)->post($bspEndpoint, [
+            $response = Http::withToken($bspToken)->connectTimeout(3)->timeout(10)->post($bspEndpoint, [
                 'messaging_product' => 'whatsapp',
                 'to' => $phoneNumber,
                 'type' => 'template',
@@ -72,10 +71,13 @@ class WhatsAppNotificationDriver implements NotificationDriverInterface
                 ],
             ]);
 
+            $accepted = $response->successful() && is_string($response->json('messages.0.id'));
+
             return [
-                'success' => $response->successful(),
+                'success' => $accepted,
                 'recipient' => $phoneNumber,
-                'error' => $response->successful() ? null : $response->body(),
+                'status' => $accepted ? 'accepted' : 'failed',
+                'error' => $accepted ? null : 'Penyedia WhatsApp tidak menerima pesan.',
             ];
         } catch (\Throwable $e) {
             return [

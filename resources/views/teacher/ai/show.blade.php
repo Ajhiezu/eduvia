@@ -1,6 +1,7 @@
 <x-app-layout>
+    <x-slot:headerTitle>{{ $draft->prompt_metadata['topic'] ?? $draft->prompt_metadata['task_title'] ?? $draft->prompt_metadata['assignment_title'] ?? 'Draf Materi AI' }}</x-slot:headerTitle>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2 mb-1">
                     <a href="{{ route('teacher.ai.index') }}" class="text-xs text-zinc-500 hover:text-zinc-900 inline-flex items-center gap-1 font-medium transition-colors">
@@ -15,7 +16,7 @@
                         {{ strtoupper($draft->status->value) }}
                     </x-badge>
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-serif font-bold text-zinc-900 tracking-tight">
+                <h1 class="text-2xl sm:text-3xl font-sans font-bold text-zinc-900 tracking-tight">
                     {{ $draft->prompt_metadata['topic'] ?? $draft->prompt_metadata['task_title'] ?? $draft->prompt_metadata['assignment_title'] ?? 'Draf Materi AI' }}
                 </h1>
                 <p class="text-xs sm:text-sm text-zinc-500 mt-1">
@@ -27,7 +28,7 @@
             <div class="flex flex-wrap items-center gap-2">
                 @if($draft->status->value === 'draft')
                     <!-- Discard Button -->
-                    <form action="{{ route('teacher.ai.drafts.update', $draft) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membuang draf ini? Draf yang dibuang tidak dapat dipulihkan.');">
+                    <form action="{{ route('teacher.ai.drafts.update', $draft) }}" method="POST" data-confirm="Apakah Anda yakin ingin membuang draf ini? Draf yang dibuang tidak dapat dipulihkan.">
                         @csrf
                         <input type="hidden" name="action" value="discard">
                         <button type="submit" class="px-3 py-2 text-xs font-semibold rounded-lg bg-zinc-100 hover:bg-rose-50 text-zinc-700 hover:text-rose-700 border border-zinc-200 transition-colors">
@@ -47,7 +48,7 @@
                 @endif
 
                 @if($draft->feature_type->value === 'question_set' && $draft->status->value !== 'discarded')
-                    <button type="button" @click="$dispatch('open-cbt-modal')" class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg bg-[#E11D2E] hover:bg-[#c81926] text-white shadow-xs transition-colors">
+                    <button type="button" @click="$dispatch('open-cbt-modal')" class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg bg-brand-600 hover:bg-brand-700 text-white shadow-xs transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                         <span>Impor ke Bank Soal CBT</span>
                     </button>
@@ -505,7 +506,7 @@
                                 <button type="button" @click="cbtModalOpen = false" class="px-4 py-2 text-xs font-medium text-zinc-600 hover:text-zinc-900">
                                     Batal
                                 </button>
-                                <button type="submit" class="px-4 py-2 text-xs font-semibold rounded-lg bg-[#E11D2E] hover:bg-[#c81926] text-white shadow-xs">
+                                <button type="submit" class="px-4 py-2 text-xs font-semibold rounded-lg bg-brand-600 hover:bg-brand-700 text-white shadow-xs">
                                     Konfirmasi & Impor
                                 </button>
                             </div>

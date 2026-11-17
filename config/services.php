@@ -41,4 +41,19 @@ return [
         'is_production' => env('MIDTRANS_IS_PRODUCTION', false),
     ],
 
+    'notifications' => [
+        'simulate' => env('NOTIFICATION_SIMULATE', false),
+    ],
+
+    'whatsapp' => [
+        'endpoint' => env('WHATSAPP_ENDPOINT'),
+        'token' => env('WHATSAPP_TOKEN'),
+    ],
+
+    'fcm' => [
+        'project_id' => env('FCM_PROJECT_ID'),
+        'client_email' => env('FCM_CLIENT_EMAIL'),
+        'private_key' => env('FCM_PRIVATE_KEY'),
+    ],
+
 ];

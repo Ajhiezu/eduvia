@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot:headerTitle>Registrasi Aset Baru</x-slot:headerTitle>
     <x-slot name="header">
         <div class="flex items-center gap-3">
             <x-button href="{{ route('operations.inventory.assets.index') }}" variant="ghost" size="sm">
@@ -19,7 +20,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Kategori Aset <span class="text-rose-500">*</span></label>
-                        <select name="inventory_category_id" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                        <select name="inventory_category_id" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                             <option value="">-- Pilih Kategori --</option>
                             @foreach($categories as $cat)
                                 <option value="{{ $cat->id }}" {{ old('inventory_category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }} ({{ $cat->code }})</option>
@@ -49,7 +50,7 @@
 
                     <div>
                         <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Kondisi Fisik Aset <span class="text-rose-500">*</span></label>
-                        <select name="condition" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                        <select name="condition" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                             <option value="good" {{ old('condition') === 'good' ? 'selected' : '' }}>Baik (Berfungsi Normal)</option>
                             <option value="minor_damage" {{ old('condition') === 'minor_damage' ? 'selected' : '' }}>Rusak Ringan</option>
                             <option value="heavy_damage" {{ old('condition') === 'heavy_damage' ? 'selected' : '' }}>Rusak Berat</option>
@@ -59,7 +60,7 @@
 
                     <div>
                         <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Status Penggunaan <span class="text-rose-500">*</span></label>
-                        <select name="status" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                        <select name="status" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                             <option value="in_use" {{ old('status') === 'in_use' ? 'selected' : '' }}>Sedang Digunakan</option>
                             <option value="in_storage" {{ old('status') === 'in_storage' ? 'selected' : '' }}>Tersimpan di Gudang</option>
                             <option value="maintenance" {{ old('status') === 'maintenance' ? 'selected' : '' }}>Dalam Perbaikan / Servis</option>
@@ -81,7 +82,7 @@
 
                     <div class="md:col-span-2">
                         <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Catatan Spesifikasi Aset</label>
-                        <textarea name="notes" rows="3" class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]" placeholder="Spesifikasi RAM, garansi, sumber dana BOS/Yayasan...">{{ old('notes') }}</textarea>
+                        <textarea name="notes" rows="3" class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]" placeholder="Spesifikasi RAM, garansi, sumber dana BOS/Yayasan...">{{ old('notes') }}</textarea>
                     </div>
                 </div>
 

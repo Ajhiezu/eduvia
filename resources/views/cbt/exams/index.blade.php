@@ -23,7 +23,7 @@
         @endif
 
         <!-- Action & Navigation Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
                     Jadwal & Paket Ujian (CBT)
@@ -222,7 +222,7 @@
                                     </button>
                                 </form>
                             @elseif($exam->status === \App\Models\Exam::STATUS_PUBLISHED)
-                                <form action="{{ route('exams.close', $exam) }}" method="POST" onsubmit="return confirm('Tutup ujian ini sekarang? Siswa tidak akan dapat memulai sesi baru.');" class="inline">
+                                <form action="{{ route('exams.close', $exam) }}" method="POST" data-confirm="Tutup ujian ini sekarang? Siswa tidak akan dapat memulai sesi baru." class="inline">
                                     @csrf
                                     <button type="submit" class="p-1.5 text-amber-600 hover:text-amber-800 hover:bg-amber-50 rounded-md" title="Tutup Ujian">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -232,7 +232,7 @@
                                 </form>
                             @endif
 
-                            <form action="{{ route('exams.destroy', $exam) }}" method="POST" onsubmit="return confirm('Hapus paket ujian ini?');" class="inline">
+                            <form action="{{ route('exams.destroy', $exam) }}" method="POST" data-confirm="Hapus paket ujian ini?" class="inline">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-md" title="Hapus Ujian">

@@ -18,7 +18,7 @@
         @endif
 
         <!-- Action & Navigation Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
                     Pendidik & Tenaga Kependidikan (PTK)
@@ -92,7 +92,7 @@
                         id="search"
                         value="{{ request('search') }}"
                         placeholder="Cari nama, email, NIP, atau NUPTK..."
-                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3.5 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3.5 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
                     />
                 </div>
 
@@ -105,7 +105,7 @@
                         name="role"
                         id="role"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
                         <option value="">Semua Peran</option>
                         <option value="teacher" {{ request('role') === 'teacher' ? 'selected' : '' }}>Guru / Pendidik</option>
@@ -123,7 +123,7 @@
                         name="position"
                         id="position"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
                         <option value="">Semua Jabatan</option>
                         @foreach ($positions as $pos)
@@ -144,7 +144,7 @@
                             name="status"
                             id="status"
                             onchange="this.form.submit()"
-                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
+                            class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20"
                         >
                             <option value="">Semua Status</option>
                             <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Aktif</option>
@@ -285,7 +285,7 @@
                                             </a>
 
                                             <!-- Toggle Active/Inactive Quick Action -->
-                                            <form action="{{ route('staff.toggle-status', $member) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin mengubah status keaktifan akun {{ $member->name }}?');">
+                                            <form action="{{ route('staff.toggle-status', $member) }}" method="POST" class="inline" data-confirm="Apakah Anda yakin ingin mengubah status keaktifan akun {{ $member->name }}?">
                                                 @csrf
                                                 <button
                                                     type="submit"

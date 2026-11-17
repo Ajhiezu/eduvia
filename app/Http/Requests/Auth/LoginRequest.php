@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Services\TwoFactorAuthService;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -31,6 +32,7 @@ class LoginRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:255'],
             'password' => ['required', 'string'],
             'remember' => ['sometimes', 'boolean'],
+            'two_factor_code' => ['nullable', 'string', 'max:64'],
         ];
     }
 
@@ -62,6 +64,15 @@ class LoginRequest extends FormRequest
 
             throw ValidationException::withMessages([
                 'email' => __('Akun Anda berstatus non-aktif. Silakan hubungi administrator sekolah.'),
+            ]);
+        }
+
+        if ($user->two_factor_confirmed_at && ! app(TwoFactorAuthService::class)->verifyForUser($user, (string) $this->input('two_factor_code', ''))) {
+            Auth::logout();
+            RateLimiter::hit($this->throttleKey(), 60);
+
+            throw ValidationException::withMessages([
+                'two_factor_code' => 'Masukkan kode autentikator atau kode pemulihan yang valid.',
             ]);
         }
 

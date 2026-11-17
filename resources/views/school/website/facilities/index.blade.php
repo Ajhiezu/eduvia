@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('headerTitle')Kelola Fasilitas & Program Unggulan@endsection
+
 @section('content')
 <div class="space-y-6">
 
@@ -62,7 +64,7 @@
                             </div>
                             <div class="flex items-center gap-1.5 shrink-0">
                                 <a href="{{ route('website.facilities.edit', $prog) }}" class="px-2 py-1 text-[11px] font-semibold rounded bg-zinc-100 hover:bg-zinc-200">Edit</a>
-                                <form method="POST" action="{{ route('website.facilities.destroy', $prog) }}" onsubmit="return confirm('Hapus program ini?');">
+                                <form method="POST" action="{{ route('website.facilities.destroy', $prog) }}" data-confirm="Hapus program ini?">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="px-2 py-1 text-[11px] font-semibold rounded hover:bg-rose-50 text-rose-600">Hapus</button>
@@ -98,7 +100,7 @@
                             </div>
                             <div class="flex items-center gap-1.5 shrink-0">
                                 <a href="{{ route('website.facilities.edit', $fac) }}" class="px-2 py-1 text-[11px] font-semibold rounded bg-zinc-100 hover:bg-zinc-200">Edit</a>
-                                <form method="POST" action="{{ route('website.facilities.destroy', $fac) }}" onsubmit="return confirm('Hapus fasilitas ini?');">
+                                <form method="POST" action="{{ route('website.facilities.destroy', $fac) }}" data-confirm="Hapus fasilitas ini?">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="px-2 py-1 text-[11px] font-semibold rounded hover:bg-rose-50 text-rose-600">Hapus</button>

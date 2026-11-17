@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot:headerTitle>Edit Data Buku</x-slot:headerTitle>
     <x-slot name="header">
         <div class="flex items-center gap-3">
             <x-button href="{{ route('operations.library.books.show', $book) }}" variant="ghost" size="sm">
@@ -44,7 +45,7 @@
 
                     <div>
                         <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Kategori Buku <span class="text-rose-500">*</span></label>
-                        <select name="category" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                        <select name="category" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                             @foreach($categories as $cat)
                                 <option value="{{ $cat }}" {{ old('category', $book->category) === $cat ? 'selected' : '' }}>{{ $cat }}</option>
                             @endforeach
@@ -71,7 +72,7 @@
 
                     <div class="md:col-span-2">
                         <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Sinopsis / Deskripsi Buku</label>
-                        <textarea name="description" rows="3" class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">{{ old('description', $book->description) }}</textarea>
+                        <textarea name="description" rows="3" class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">{{ old('description', $book->description) }}</textarea>
                     </div>
                 </div>
 

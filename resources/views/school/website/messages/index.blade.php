@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('headerTitle')Pesan Pengunjung & Pertanyaan Publik@endsection
+
 @section('content')
 <div class="space-y-6" x-data="{
     selectedIds: [],
@@ -365,7 +367,7 @@
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                         </a>
 
-                                        <form method="POST" action="{{ route('website.messages.destroy', $msg) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pesan ini?')">
+                                        <form method="POST" action="{{ route('website.messages.destroy', $msg) }}" data-confirm="Apakah Anda yakin ingin menghapus pesan ini?">
                                             @csrf
                                             @method('DELETE')
                                             <button

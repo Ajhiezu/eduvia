@@ -1,6 +1,7 @@
 <x-app-layout>
+    <x-slot:headerTitle>{{ $asset->name }}</x-slot:headerTitle>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="flex items-center gap-3">
                 <x-button href="{{ route('operations.inventory.assets.index') }}" variant="ghost" size="sm">
                     &larr; Inventaris
@@ -14,7 +15,7 @@
                 <x-button href="{{ route('operations.inventory.assets.edit', $asset) }}" variant="secondary" size="sm">
                     Edit Aset
                 </x-button>
-                <form action="{{ route('operations.inventory.assets.destroy', $asset) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus catatan aset ini?')">
+                <form action="{{ route('operations.inventory.assets.destroy', $asset) }}" method="POST" data-confirm="Apakah Anda yakin ingin menghapus catatan aset ini?">
                     @csrf
                     @method('DELETE')
                     <x-button type="submit" variant="danger" size="sm">Hapus</x-button>

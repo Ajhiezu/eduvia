@@ -1,6 +1,7 @@
 <x-app-layout>
+    <x-slot:headerTitle>Sirkulasi Peminjaman Buku</x-slot:headerTitle>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight text-zinc-900">Sirkulasi Peminjaman Buku</h1>
                 <p class="text-sm text-zinc-500 mt-1">Pencatatan transaksi peminjaman, jatuh tempo, pengembalian, dan denda keterlambatan.</p>
@@ -58,7 +59,7 @@
                     <x-input type="text" name="search" :value="$search" placeholder="Cari kode transaksi, judul buku, barcode, peminjam..." />
                 </div>
                 <div>
-                    <select name="status" class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <select name="status" class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                         <option value="">Semua Status</option>
                         <option value="borrowed" {{ $status === 'borrowed' ? 'selected' : '' }}>Sedang Dipinjam</option>
                         <option value="overdue" {{ $status === 'overdue' ? 'selected' : '' }}>Terlambat</option>
@@ -121,7 +122,7 @@
                                 </td>
                                 <td class="px-4 py-3 text-right">
                                     @if($loan->status === 'borrowed')
-                                        <form action="{{ route('operations.library.loans.return', $loan) }}" method="POST" onsubmit="return confirm('Konfirmasi pengembalian buku ini?')">
+                                        <form action="{{ route('operations.library.loans.return', $loan) }}" method="POST" data-confirm="Konfirmasi pengembalian buku ini?">
                                             @csrf
                                             <x-button type="submit" variant="primary" size="xs">
                                                 Kembalikan

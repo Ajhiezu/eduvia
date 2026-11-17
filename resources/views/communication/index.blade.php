@@ -6,7 +6,7 @@
     <div class="space-y-6">
 
         <!-- Top Header & Actions -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-zinc-200">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-zinc-200">
             <div>
                 <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
                     Komunikasi & Konsultasi
@@ -19,7 +19,7 @@
             <div class="flex items-center gap-2">
                 <a
                     href="{{ route('conversations.create') }}"
-                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#E11D2E] hover:bg-[#C81423] text-white shadow-xs transition-colors"
+                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs transition-colors"
                 >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     <span>Mulai Percakapan Baru</span>
@@ -42,9 +42,9 @@
                     name="search"
                     value="{{ request('search') }}"
                     placeholder="Cari subjek / nama..."
-                    class="text-xs rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E] w-48 sm:w-64"
+                    class="text-xs rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E] w-48 sm:w-64"
                 >
-                <select name="status" class="text-xs rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                <select name="status" class="text-xs rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                     <option value="">Semua Status Percakapan</option>
                     <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Aktif</option>
                     <option value="closed" {{ request('status') === 'closed' ? 'selected' : '' }}>Selesai / Ditutup</option>
@@ -110,7 +110,7 @@
                             {{ $conv->last_message_at ? $conv->last_message_at->diffForHumans() : $conv->created_at->diffForHumans() }}
                         </span>
                         @if ($unread > 0)
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#E11D2E] text-white animate-pulse">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-brand-600 text-white animate-pulse">
                                 {{ $unread }} baru
                             </span>
                         @endif

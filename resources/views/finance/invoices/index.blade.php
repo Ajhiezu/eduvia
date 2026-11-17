@@ -1,7 +1,8 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <x-slot:headerTitle>Daftar Tagihan Siswa (Invoices)</x-slot:headerTitle>
+    <div class="space-y-6">
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-zinc-200">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-zinc-200">
             <div>
                 <nav class="flex items-center gap-2 text-xs text-zinc-500 mb-2">
                     <span class="text-zinc-500">Keuangan Sekolah</span>
@@ -12,20 +13,14 @@
                 <p class="text-sm text-zinc-500 mt-1">Penerbitan, pemantauan saldo piutang, dan status pembayaran SPP serta biaya pendidikan.</p>
             </div>
             <div class="flex flex-wrap items-center gap-2.5">
-                <a
-                    href="{{ route('finance.invoices.bulk') }}"
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-900 text-white text-xs font-semibold hover:bg-zinc-800 transition-colors shadow-xs"
-                >
+                <x-button href="{{ route('finance.invoices.bulk') }}" variant="secondary" size="sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                     <span>Terbitkan Massal (SPP)</span>
-                </a>
-                <a
-                    href="{{ route('finance.invoices.create') }}"
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#E11D2E] text-white text-xs font-semibold hover:bg-[#c81926] transition-colors shadow-xs"
-                >
+                </x-button>
+                <x-button href="{{ route('finance.invoices.create') }}" variant="primary" size="sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     <span>Buat Tagihan Tunggal</span>
-                </a>
+                </x-button>
             </div>
         </div>
 
@@ -69,12 +64,12 @@
                         name="search"
                         value="{{ request('search') }}"
                         placeholder="Ketik nama siswa, NIS, atau no INV..."
-                        class="w-full px-3.5 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
+                        class="w-full px-3.5 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
                     >
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-zinc-700 mb-1.5">Status Pembayaran</label>
-                    <select name="status" class="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20">
+                    <select name="status" class="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20">
                         <option value="">Semua Status</option>
                         <option value="issued" {{ request('status') === 'issued' ? 'selected' : '' }}>Diterbitkan (Belum Bayar)</option>
                         <option value="partially_paid" {{ request('status') === 'partially_paid' ? 'selected' : '' }}>Sebagian Dibayar</option>
@@ -86,7 +81,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-zinc-700 mb-1.5">Tahun Ajaran</label>
-                    <select name="academic_year_id" class="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20">
+                    <select name="academic_year_id" class="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20">
                         <option value="">Semua Tahun Ajaran</option>
                         @foreach ($academicYears as $ay)
                             <option value="{{ $ay->id }}" {{ request('academic_year_id') == $ay->id ? 'selected' : '' }}>{{ $ay->name }}</option>
@@ -95,7 +90,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-zinc-700 mb-1.5">Kelas / Rombel</label>
-                    <select name="classroom_id" class="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20">
+                    <select name="classroom_id" class="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20">
                         <option value="">Semua Kelas</option>
                         @foreach ($classrooms as $cr)
                             <option value="{{ $cr->id }}" {{ request('classroom_id') == $cr->id ? 'selected' : '' }}>Kelas {{ $cr->name }}</option>

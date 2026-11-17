@@ -6,7 +6,7 @@
     <div class="space-y-6">
 
         <!-- Top Header & Actions -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-zinc-200">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-zinc-200">
             <div>
                 <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
                     Pengumuman & Warta Sekolah
@@ -20,7 +20,7 @@
                 <div class="flex items-center gap-2">
                     <a
                         href="{{ route('announcements.create') }}"
-                        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#E11D2E] hover:bg-[#C81423] text-white shadow-xs transition-colors"
+                        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs transition-colors"
                     >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                         <span>Buat Pengumuman</span>
@@ -44,9 +44,9 @@
                     name="search"
                     value="{{ request('search') }}"
                     placeholder="Cari kata kunci..."
-                    class="text-xs rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E] w-48 sm:w-64"
+                    class="text-xs rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E] w-48 sm:w-64"
                 >
-                <select name="category" class="text-xs rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                <select name="category" class="text-xs rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                     <option value="">Semua Kategori</option>
                     @foreach (\App\Models\SchoolAnnouncement::CATEGORIES as $key => $label)
                         <option value="{{ $key }}" {{ request('category') === $key ? 'selected' : '' }}>{{ $label }}</option>
@@ -54,7 +54,7 @@
                 </select>
 
                 @if (auth()->user()->hasRole(\App\Enums\UserRole::SUPER_ADMIN, \App\Enums\UserRole::SCHOOL_ADMIN, \App\Enums\UserRole::TEACHER))
-                    <select name="status" class="text-xs rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <select name="status" class="text-xs rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                         <option value="">Semua Status</option>
                         <option value="published" {{ request('status') === 'published' ? 'selected' : '' }}>Diterbitkan</option>
                         <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draf</option>

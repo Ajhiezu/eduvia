@@ -1,7 +1,8 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <x-slot:headerTitle>Status Tagihan & Pembayaran SPP</x-slot:headerTitle>
+    <div class="space-y-6">
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-zinc-200">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-zinc-200">
             <div>
                 <nav class="flex items-center gap-2 text-xs text-zinc-500 mb-2">
                     <a href="{{ route('parent.dashboard') }}" class="hover:text-zinc-800">Portal Orang Tua</a>
@@ -19,7 +20,7 @@
                     @foreach ($activeChildren as $child)
                         <a
                             href="{{ route('parent.finance.index', ['child_id' => $child->id]) }}"
-                            class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ $activeChild?->id === $child->id ? 'bg-white text-[#E11D2E] shadow-2xs' : 'text-zinc-600 hover:text-zinc-900' }}"
+                            class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ $activeChild?->id === $child->id ? 'bg-white text-brand-600 shadow-2xs' : 'text-zinc-600 hover:text-zinc-900' }}"
                         >
                             {{ $child->name }}
                         </a>
@@ -42,7 +43,7 @@
                     Akun Anda belum memiliki anak yang terverifikasi aktif. Hubungi bagian tata usaha sekolah atau masukkan kode tautan pada menu data anak.
                 </p>
                 <div class="pt-2">
-                    <a href="{{ route('parent.children.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#E11D2E] text-white text-xs font-semibold hover:bg-[#c81926]">
+                    <a href="{{ route('parent.children.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-600 text-white text-xs font-semibold hover:bg-brand-700">
                         Tautkan Akun Anak
                     </a>
                 </div>
@@ -142,7 +143,7 @@
                                             @if (! $inv->isPaid())
                                                 <a
                                                     href="{{ route('parent.finance.pay', $inv) }}"
-                                                    class="px-3 py-1.5 rounded-lg bg-[#E11D2E] text-white text-xs font-semibold hover:bg-[#c81926] shadow-2xs"
+                                                    class="px-3 py-1.5 rounded-lg bg-brand-600 text-white text-xs font-semibold hover:bg-brand-700 shadow-2xs"
                                                 >
                                                     Bayar / Konfirmasi
                                                 </a>

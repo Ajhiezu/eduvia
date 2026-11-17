@@ -3,7 +3,9 @@
         Portal Orang Tua & Wali Murid
     </x-slot:headerTitle>
 
-    <div class="space-y-6">
+    <div class="dashboard-workspace">
+    <div class="dashboard-primary">
+    <div class="dashboard-parent-content space-y-6">
 
         <!-- ================================================================== -->
         <!-- TOP WELCOME & CHILD SWITCHER BAR                                   -->
@@ -36,7 +38,7 @@
                         @foreach ($activeChildren as $child)
                             <a
                                 href="{{ route('parent.dashboard', ['child_id' => $child->id]) }}"
-                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ $activeChild && $activeChild->id === $child->id ? 'bg-[#E11D2E] text-white shadow-xs' : 'text-zinc-700 hover:bg-white hover:text-zinc-900' }}"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ $activeChild && $activeChild->id === $child->id ? 'bg-brand-600 text-white shadow-xs' : 'text-zinc-700 hover:bg-white hover:text-zinc-900' }}"
                             >
                                 <span>{{ $child->name }}</span>
                                 @if ($child->classroomEnrollments->first()?->classroom)
@@ -55,7 +57,7 @@
                 @else
                     <a
                         href="{{ route('parent.children.index') }}"
-                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-[#E11D2E] hover:bg-[#C81423] text-white shadow-xs transition-colors shrink-0"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs transition-colors shrink-0"
                     >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                         <span>Tautkan Akun Anak</span>
@@ -79,7 +81,7 @@
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
                     <a
                         href="{{ route('parent.children.index') }}"
-                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-[#E11D2E] hover:bg-[#C81423] text-white shadow-xs transition-colors w-full sm:w-auto"
+                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs transition-colors w-full sm:w-auto"
                     >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
                         <span>Masukkan Kode Penautan</span>
@@ -129,7 +131,7 @@
                         </a>
                         <a
                             href="{{ route('parent.reports') }}"
-                            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#E11D2E] hover:bg-[#C81423] text-white shadow-xs transition-colors"
+                            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs transition-colors"
                         >
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                             <span>Buku Rapor</span>
@@ -423,5 +425,8 @@
             </div>
         @endif
 
+    </div>
+    </div>
+    <x-dashboard-profile :user="$parent" :school="$school" :academic-year="$academicYear" :semester="$semester" :enrollment="$enrollment" :today-schedules="$todaySchedules" />
     </div>
 </x-layouts.app>

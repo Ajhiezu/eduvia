@@ -11,6 +11,7 @@ use App\Models\PaymentGatewayTransaction;
 use App\Models\Receipt;
 use App\Models\School;
 use App\Models\User;
+use App\Services\Payment\PaymentGatewayInterface;
 use App\Services\Payment\PaymentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -34,6 +35,8 @@ class AutomatedPaymentGatewayTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        config(['services.midtrans.server_key' => 'SB-Mid-server-eduvia-mock-key']);
 
         $this->school = School::factory()->create([
             'name' => 'SMP Eduvia Bandung',
@@ -290,5 +293,86 @@ class AutomatedPaymentGatewayTest extends TestCase
 
         $this->expectException(\LogicException::class);
         $entry->update(['amount' => 600000]);
+    }
+
+    public function test_checkout_does_not_reuse_a_transaction_for_a_different_invoice_selection(): void
+    {
+        $this->actingAs($this->parent, 'sanctum')->postJson('/api/v1/payments/checkout', [
+            'student_id' => $this->student->id, 'invoice_ids' => [$this->invoice1->id], 'payment_method' => 'bca_va',
+        ])->assertOk();
+
+        $this->postJson('/api/v1/payments/checkout', [
+            'student_id' => $this->student->id, 'invoice_ids' => [$this->invoice1->id, $this->invoice2->id], 'payment_method' => 'bca_va',
+        ])->assertUnprocessable();
+
+        $this->assertDatabaseCount('payment_gateway_transactions', 1);
+        $this->assertDatabaseCount('payment_allocations', 1);
+    }
+
+    public function test_active_gateway_instructions_cannot_be_locally_expired_to_change_payment_method(): void
+    {
+        $response = $this->actingAs($this->parent, 'sanctum')->postJson('/api/v1/payments/checkout', [
+            'student_id' => $this->student->id, 'invoice_ids' => [$this->invoice1->id], 'payment_method' => 'bca_va',
+        ]);
+        $response->assertOk();
+
+        $this->postJson('/api/v1/payments/checkout', [
+            'student_id' => $this->student->id, 'invoice_ids' => [$this->invoice1->id], 'payment_method' => 'qris',
+        ])->assertUnprocessable();
+
+        $this->assertDatabaseHas('payment_gateway_transactions', ['order_id' => $response->json('data.order_id'), 'transaction_status' => 'pending']);
+        $this->assertDatabaseCount('payment_gateway_transactions', 1);
+    }
+
+    public function test_signed_webhook_with_incorrect_amount_cannot_settle_an_invoice(): void
+    {
+        $tx = app(PaymentService::class)->checkout($this->parent, $this->student->id, [$this->invoice1->id], 'bca_va');
+        $signature = hash('sha512', $tx->order_id.'200'.'1'.'SB-Mid-server-eduvia-mock-key');
+
+        $this->postJson('/api/v1/webhooks/payment-gateway', [
+            'order_id' => $tx->order_id, 'status_code' => '200', 'gross_amount' => '1',
+            'signature_key' => $signature, 'transaction_status' => 'settlement',
+        ])->assertBadRequest();
+
+        $this->assertDatabaseCount('payments', 0);
+        $this->assertDatabaseHas('invoices', ['id' => $this->invoice1->id, 'paid_amount' => 0]);
+    }
+
+    public function test_stale_status_sync_cannot_duplicate_a_settled_payment(): void
+    {
+        $tx = app(PaymentService::class)->checkout($this->parent, $this->student->id, [$this->invoice1->id], 'bca_va');
+        $staleTransaction = $tx->replicate();
+        $staleTransaction->id = $tx->id;
+        $signature = hash('sha512', $tx->order_id.'200'.'500000'.'SB-Mid-server-eduvia-mock-key');
+        $this->postJson('/api/v1/webhooks/payment-gateway', [
+            'order_id' => $tx->order_id, 'status_code' => '200', 'gross_amount' => '500000',
+            'signature_key' => $signature, 'transaction_status' => 'settlement',
+        ])->assertOk();
+
+        $gateway = $this->mock(PaymentGatewayInterface::class);
+        $gateway->shouldReceive('getStatus')->once()->with($tx->order_id)
+            ->andReturn(['transaction_status' => 'settlement', 'gross_amount' => '500000.00']);
+        app(PaymentService::class)->syncTransaction($staleTransaction);
+
+        $this->assertDatabaseCount('payments', 1);
+        $this->assertDatabaseCount('receipts', 1);
+        $this->assertDatabaseCount('financial_ledger_entries', 2);
+    }
+
+    public function test_settlement_discovered_during_checkout_remains_committed_when_paid_invoice_is_rejected(): void
+    {
+        $tx = app(PaymentService::class)->checkout($this->parent, $this->student->id, [$this->invoice1->id], 'bca_va');
+        $gateway = $this->mock(PaymentGatewayInterface::class);
+        $gateway->shouldReceive('getStatus')->once()->with($tx->order_id)
+            ->andReturn(['transaction_status' => 'settlement', 'gross_amount' => '500000.00']);
+
+        $this->actingAs($this->parent, 'sanctum')->postJson('/api/v1/payments/checkout', [
+            'student_id' => $this->student->id, 'invoice_ids' => [$this->invoice1->id], 'payment_method' => 'bca_va',
+        ])->assertUnprocessable();
+
+        $this->assertDatabaseHas('payment_gateway_transactions', ['id' => $tx->id, 'transaction_status' => 'settlement']);
+        $this->assertDatabaseHas('invoices', ['id' => $this->invoice1->id, 'paid_amount' => 500000, 'status' => Invoice::STATUS_PAID]);
+        $this->assertDatabaseCount('payments', 1);
+        $this->assertDatabaseCount('receipts', 1);
     }
 }

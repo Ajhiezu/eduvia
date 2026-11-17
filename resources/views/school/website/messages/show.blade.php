@@ -27,7 +27,7 @@
                 <span>Daftar Pesan</span>
             </a>
 
-            <form method="POST" action="{{ route('website.messages.destroy', $message) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pesan ini secara permanen?')">
+            <form method="POST" action="{{ route('website.messages.destroy', $message) }}" data-confirm="Apakah Anda yakin ingin menghapus pesan ini secara permanen?">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold border border-rose-200 bg-rose-50 hover:bg-rose-100 text-[#E11D2E] transition-colors">

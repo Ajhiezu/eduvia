@@ -6,7 +6,7 @@
     <div class="space-y-6">
 
         <!-- Top Header & Child Switcher -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-zinc-200">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-zinc-200">
             <div>
                 <div class="flex items-center gap-2">
                     <a href="{{ route('parent.dashboard') }}" class="text-xs text-zinc-500 hover:text-zinc-900">&larr; Beranda Pantauan</a>
@@ -21,18 +21,7 @@
                 </p>
             </div>
 
-            @if ($activeChildren->count() > 1)
-                <div class="flex items-center gap-1.5 bg-zinc-100 p-1 rounded-xl">
-                    @foreach ($activeChildren as $child)
-                        <a
-                            href="{{ route('parent.dashboard', ['child_id' => $child->id]) }}"
-                            class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ $activeChild && $activeChild->id === $child->id ? 'bg-[#E11D2E] text-white shadow-xs' : 'text-zinc-600 hover:text-zinc-900' }}"
-                        >
-                            {{ $child->name }}
-                        </a>
-                    @endforeach
-                </div>
-            @endif
+            <x-child-switcher :children="$activeChildren" :active-child="$activeChild" :return-url="route('parent.assignments')" />
         </div>
 
         @if (! $activeChild)

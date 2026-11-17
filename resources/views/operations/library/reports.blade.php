@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot:headerTitle>Laporan & Statistik Perpustakaan</x-slot:headerTitle>
     <x-slot name="header">
         <div class="flex items-center gap-3">
             <x-button href="{{ route('operations.library.loans.index') }}" variant="ghost" size="sm">

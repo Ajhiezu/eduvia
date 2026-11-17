@@ -18,7 +18,7 @@
         @endif
 
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
                     Data Calon Siswa (Pendaftar PPDB)
@@ -86,7 +86,7 @@
                     <select
                         id="period_id"
                         name="period_id"
-                        class="w-full mt-1 px-3 py-2.5 text-sm bg-white border border-zinc-200 rounded-lg text-zinc-800 focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-[#E11D2E]"
+                        class="w-full mt-1 px-3 py-2.5 text-sm bg-white border border-zinc-200 rounded-lg text-zinc-800 focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-brand-600"
                     >
                         <option value="">Semua Periode</option>
                         @foreach ($periods as $p)
@@ -103,7 +103,7 @@
                     <select
                         id="track_id"
                         name="track_id"
-                        class="w-full mt-1 px-3 py-2.5 text-sm bg-white border border-zinc-200 rounded-lg text-zinc-800 focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-[#E11D2E]"
+                        class="w-full mt-1 px-3 py-2.5 text-sm bg-white border border-zinc-200 rounded-lg text-zinc-800 focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-brand-600"
                     >
                         <option value="">Semua Jalur</option>
                         @foreach ($tracks as $t)
@@ -120,7 +120,7 @@
                     <select
                         id="status"
                         name="status"
-                        class="w-full mt-1 px-3 py-2.5 text-sm bg-white border border-zinc-200 rounded-lg text-zinc-800 focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-[#E11D2E]"
+                        class="w-full mt-1 px-3 py-2.5 text-sm bg-white border border-zinc-200 rounded-lg text-zinc-800 focus:outline-none focus:ring-2 focus:ring-[#E11D2E]/20 focus:border-brand-600"
                     >
                         <option value="">Semua Status</option>
                         <option value="pending" @selected($status == 'pending')>Menunggu Verifikasi</option>

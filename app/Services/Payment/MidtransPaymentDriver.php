@@ -15,13 +15,13 @@ class MidtransPaymentDriver implements PaymentGatewayInterface
 
     public function __construct(?string $serverKey = null, ?bool $isProduction = null)
     {
-        $this->serverKey = $serverKey ?? (string) config('services.midtrans.server_key', env('MIDTRANS_SERVER_KEY', 'SB-Mid-server-eduvia-mock-key'));
-        $this->isProduction = $isProduction ?? (bool) config('services.midtrans.is_production', env('MIDTRANS_IS_PRODUCTION', false));
+        $this->serverKey = $serverKey ?? (string) config('services.midtrans.server_key');
+        $this->isProduction = $isProduction ?? (bool) config('services.midtrans.is_production', false);
         $this->baseUrl = $this->isProduction ? 'https://api.midtrans.com/v2' : 'https://api.sandbox.midtrans.com/v2';
     }
 
     /**
-     * Charge transaction via Midtrans Core API or mock fallback.
+     * Charge through Midtrans or the explicit development simulation.
      */
     public function charge(array $params): array
     {
@@ -30,7 +30,7 @@ class MidtransPaymentDriver implements PaymentGatewayInterface
         $method = $params['payment_method'];
 
         // If in mock/test environment without real credentials, return deterministic sandbox mock response
-        if (app()->environment('testing') || str_contains($this->serverKey, 'mock')) {
+        if ($this->usesSimulation()) {
             return $this->generateMockChargeResponse($orderId, $amount, $method);
         }
 
@@ -79,6 +79,7 @@ class MidtransPaymentDriver implements PaymentGatewayInterface
 
         try {
             $response = Http::withBasicAuth($this->serverKey, '')
+                ->connectTimeout(3)->timeout(10)
                 ->acceptJson()
                 ->post("{$this->baseUrl}/charge", $payload);
 
@@ -91,10 +92,7 @@ class MidtransPaymentDriver implements PaymentGatewayInterface
 
             return $this->parseChargeResponse($orderId, $method, $resData);
         } catch (\Throwable $e) {
-            Log::warning('Midtrans network exception, fallback to sandbox response in non-prod', ['error' => $e->getMessage()]);
-            if (! $this->isProduction) {
-                return $this->generateMockChargeResponse($orderId, $amount, $method);
-            }
+            Log::warning('Midtrans charge failed', ['error' => $e->getMessage()]);
             throw $e;
         }
     }
@@ -229,19 +227,20 @@ class MidtransPaymentDriver implements PaymentGatewayInterface
      */
     public function getStatus(string $orderId): array
     {
-        if (app()->environment('testing') || str_contains($this->serverKey, 'mock')) {
+        if ($this->usesSimulation()) {
             return [
                 'status_code' => '200',
-                'transaction_status' => 'settlement',
+                'transaction_status' => 'pending',
                 'order_id' => $orderId,
             ];
         }
 
         $response = Http::withBasicAuth($this->serverKey, '')
+            ->connectTimeout(3)->timeout(10)
             ->acceptJson()
             ->get("{$this->baseUrl}/{$orderId}/status");
 
-        return $response->json() ?? [];
+        return $response->throw()->json() ?? [];
     }
 
     /**
@@ -249,9 +248,30 @@ class MidtransPaymentDriver implements PaymentGatewayInterface
      */
     public function verifySignature(string $orderId, string $statusCode, string $grossAmount, string $signatureKey): bool
     {
+        if ($this->serverKey === '') {
+            return false;
+        }
+
         // Format of Midtrans signature: SHA512(order_id + status_code + gross_amount + ServerKey)
         $expectedSignature = hash('sha512', $orderId.$statusCode.$grossAmount.$this->serverKey);
 
         return hash_equals($expectedSignature, $signatureKey);
+    }
+
+    protected function usesSimulation(): bool
+    {
+        if (app()->isProduction() && (! $this->isProduction || $this->serverKey === '' || str_contains($this->serverKey, 'mock'))) {
+            throw new \RuntimeException('Konfigurasi Midtrans produksi belum valid.');
+        }
+
+        if (app()->environment('testing')) {
+            return true;
+        }
+
+        if ($this->serverKey === '') {
+            throw new \RuntimeException('Kredensial Midtrans belum dikonfigurasi.');
+        }
+
+        return ! $this->isProduction && str_contains($this->serverKey, 'mock');
     }
 }

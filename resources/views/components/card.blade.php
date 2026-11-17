@@ -5,9 +5,18 @@
     'padding' => true,
 ])
 
+@php
+    $paddingClasses = match ($padding) {
+        false, 'none' => '',
+        'sm' => 'p-4',
+        'lg' => 'p-6 sm:p-8',
+        default => 'p-4 sm:p-6',
+    };
+@endphp
+
 <div {{ $attributes->merge([
-    'class' => 'bg-white rounded-xl border border-zinc-200 overflow-hidden transition-all duration-150 '
-        . ($hover ? 'hover:border-zinc-300 hover:shadow-xs ' : '')
+    'class' => 'app-card min-w-0 bg-white rounded-2xl border border-zinc-200 overflow-hidden transition-all duration-150 '
+        . ($hover ? 'hover:border-brand-600/30 hover:shadow-sm ' : '')
 ]) }}>
     @if ($title || isset($action) || isset($header))
         <div class="px-4 sm:px-5 py-3.5 sm:py-4 border-b border-zinc-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
@@ -31,7 +40,7 @@
         </div>
     @endif
 
-    <div class="{{ $padding ? 'p-4 sm:p-6' : '' }}">
+    <div class="{{ $paddingClasses }}">
         {{ $slot }}
     </div>
 

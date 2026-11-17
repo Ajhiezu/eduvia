@@ -31,7 +31,7 @@
         @endif
 
         <!-- Session Header Bar -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2 text-xs text-zinc-500 mb-1">
                     <a href="{{ route('attendance-sessions.index') }}" class="hover:text-zinc-800">&larr; Kembali ke Daftar Sesi</a>
@@ -190,11 +190,11 @@
                                     <td class="py-3 px-4">
                                         <div class="flex items-center gap-2">
                                             <div class="w-6 h-6 rounded-full bg-zinc-200 text-zinc-700 font-bold flex items-center justify-center text-[10px] shrink-0">
-                                                {{ substr($record->student->name, 0, 1) }}
+                                                {{ substr($record->student?->name ?? '?', 0, 1) }}
                                             </div>
                                             <div>
-                                                <span class="font-bold text-zinc-900 block">{{ $record->student->name }}</span>
-                                                <span class="text-[10px] text-zinc-400 block">{{ $record->student->email }}</span>
+                                                <span class="font-bold text-zinc-900 block">{{ $record->student?->name ?? 'Data siswa tidak tersedia' }}</span>
+                                                <span class="text-[10px] text-zinc-400 block">{{ $record->student?->email ?? '-' }}</span>
                                             </div>
                                         </div>
                                     </td>

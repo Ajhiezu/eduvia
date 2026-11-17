@@ -18,7 +18,7 @@
         @endif
 
         <!-- Action & Navigation Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
                     Rombongan Belajar & Kelas
@@ -51,7 +51,7 @@
                         name="search"
                         value="{{ $search }}"
                         placeholder="Cari nama rombel, kode, atau wali kelas..."
-                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3.5 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3.5 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
                     >
                 </div>
 
@@ -60,7 +60,7 @@
                     <select
                         name="academic_year_id"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
                         <option value="">Semua Tahun Ajaran</option>
                         @foreach ($academicYears as $year)
@@ -76,7 +76,7 @@
                     <select
                         name="grade_level_id"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
                         <option value="">Semua Tingkat Kelas</option>
                         @foreach ($gradeLevels as $gl)
@@ -93,7 +93,7 @@
                         Filter Data
                     </x-button>
                     @if ($search || $academicYearId || $gradeLevelId || $status !== null)
-                        <a href="{{ route('classrooms.index') }}" class="text-xs text-zinc-500 hover:text-[#E11D2E] font-medium px-2 py-1 shrink-0 transition-colors">
+                        <a href="{{ route('classrooms.index') }}" class="text-xs text-zinc-500 hover:text-brand-600 font-medium px-2 py-1 shrink-0 transition-colors">
                             Reset
                         </a>
                     @endif
@@ -174,7 +174,7 @@
                                     Ubah
                                 </x-button>
 
-                                <form method="POST" action="{{ route('classrooms.destroy', $cls) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus rombongan belajar ini?');" class="inline">
+                                <form method="POST" action="{{ route('classrooms.destroy', $cls) }}" data-confirm="Apakah Anda yakin ingin menghapus rombongan belajar ini?" class="inline">
                                     @csrf
                                     @method('DELETE')
                                     <button

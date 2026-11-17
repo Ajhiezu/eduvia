@@ -65,7 +65,7 @@
                 </form>
 
                 <!-- Bulk Submit Button -->
-                <form action="{{ route('reports.cards.bulk-submit', $classroom) }}" method="POST" onsubmit="return confirm('Ajukan seluruh buku rapor siswa yang telah siap untuk diverifikasi sekolah?');">
+                <form action="{{ route('reports.cards.bulk-submit', $classroom) }}" method="POST" data-confirm="Ajukan seluruh buku rapor siswa yang telah siap untuk diverifikasi sekolah?">
                     @csrf
                     <input type="hidden" name="semester_id" value="{{ $selectedSemesterId }}">
                     <x-button type="submit" variant="secondary" size="sm">
@@ -78,7 +78,7 @@
 
                 @if(auth()->user()->isSuperAdmin() || auth()->user()->isSchoolAdmin())
                     <!-- Admin Bulk Publish Button -->
-                    <form action="{{ route('reports.cards.bulk-publish', $classroom) }}" method="POST" onsubmit="return confirm('Terbitkan seluruh buku rapor kelas ini secara resmi? Snapshot permanen akan dikunci.');">
+                    <form action="{{ route('reports.cards.bulk-publish', $classroom) }}" method="POST" data-confirm="Terbitkan seluruh buku rapor kelas ini secara resmi? Snapshot permanen akan dikunci.">
                         @csrf
                         <input type="hidden" name="semester_id" value="{{ $selectedSemesterId }}">
                         <x-button type="submit" variant="primary" size="sm" class="bg-emerald-600 hover:bg-emerald-700">

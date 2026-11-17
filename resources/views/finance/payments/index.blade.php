@@ -1,7 +1,8 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <x-slot:headerTitle>Riwayat Pembayaran Masuk</x-slot:headerTitle>
+    <div class="space-y-6">
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-zinc-200">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-zinc-200">
             <div>
                 <nav class="flex items-center gap-2 text-xs text-zinc-500 mb-2">
                     <span class="text-zinc-500">Keuangan Sekolah</span>
@@ -19,14 +20,14 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     <span>Antrean Verifikasi</span>
                     @if ($totalPendingCount > 0)
-                        <span class="px-1.5 py-0.5 rounded-full bg-[#E11D2E] text-white text-[10px] font-bold">
+                        <span class="px-1.5 py-0.5 rounded-full bg-brand-600 text-white text-[10px] font-bold">
                             {{ $totalPendingCount }}
                         </span>
                     @endif
                 </a>
                 <a
                     href="{{ route('finance.payments.create') }}"
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#E11D2E] text-white text-xs font-semibold hover:bg-[#c81926] transition-colors shadow-xs"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-600 text-white text-xs font-semibold hover:bg-brand-700 transition-colors shadow-xs"
                 >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     <span>Catat Setoran Manual</span>
@@ -64,11 +65,11 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
                 <div class="lg:col-span-2">
                     <label class="block text-sm font-medium text-zinc-700 mb-1.5">Cari Transaksi / Siswa</label>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="No Pembayaran, Nama Siswa, No Tagihan..." class="w-full px-3.5 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="No Pembayaran, Nama Siswa, No Tagihan..." class="w-full px-3.5 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-zinc-700 mb-1.5">Metode</label>
-                    <select name="method" class="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20">
+                    <select name="method" class="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20">
                         <option value="">Semua Metode</option>
                         <option value="cash" {{ request('method') === 'cash' ? 'selected' : '' }}>Tunai (Kasir)</option>
                         <option value="bank_transfer" {{ request('method') === 'bank_transfer' ? 'selected' : '' }}>Transfer Bank</option>
@@ -76,11 +77,11 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-zinc-700 mb-1.5">Dari Tanggal</label>
-                    <input type="date" name="start_date" value="{{ request('start_date') }}" class="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20">
+                    <input type="date" name="start_date" value="{{ request('start_date') }}" class="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-zinc-700 mb-1.5">Sampai Tanggal</label>
-                    <input type="date" name="end_date" value="{{ request('end_date') }}" class="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20">
+                    <input type="date" name="end_date" value="{{ request('end_date') }}" class="w-full px-3 py-2.5 rounded-lg border border-zinc-200 text-sm focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20">
                 </div>
             </div>
             <div class="flex items-center justify-end gap-3 pt-3 border-t border-zinc-100">

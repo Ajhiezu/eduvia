@@ -18,7 +18,7 @@
         @endif
 
         <!-- Action & Navigation Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
                     Materi Pembelajaran
@@ -69,7 +69,7 @@
                         name="search"
                         value="{{ request('search') }}"
                         placeholder="Cari judul, topik, atau kata kunci..."
-                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3.5 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3.5 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20 placeholder-zinc-400"
                     />
                 </div>
 
@@ -78,7 +78,7 @@
                     <select
                         name="teaching_assignment_id"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
                         <option value="">Semua Mapel & Rombel</option>
                         @foreach ($teachingAssignments as $ta)
@@ -94,7 +94,7 @@
                     <select
                         name="status"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
                         <option value="">Semua Status</option>
                         <option value="published" {{ request('status') === 'published' ? 'selected' : '' }}>Terbit</option>
@@ -230,7 +230,7 @@
                                             </a>
 
                                             @if ($material->status !== 'archived')
-                                                <form action="{{ route('learning-materials.archive', $material) }}" method="POST" class="inline" onsubmit="return confirm('Arsipkan materi ini agar tidak aktif?');">
+                                                <form action="{{ route('learning-materials.archive', $material) }}" method="POST" class="inline" data-confirm="Arsipkan materi ini agar tidak aktif?">
                                                     @csrf
                                                     <button type="submit" class="text-zinc-400 hover:text-amber-600 p-1.5 rounded hover:bg-zinc-100" title="Arsipkan">
                                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -240,7 +240,7 @@
                                                 </form>
                                             @endif
 
-                                            <form action="{{ route('learning-materials.destroy', $material) }}" method="POST" class="inline" onsubmit="return confirm('Hapus permanen materi ini beserta berkasnya?');">
+                                            <form action="{{ route('learning-materials.destroy', $material) }}" method="POST" class="inline" data-confirm="Hapus permanen materi ini beserta berkasnya?">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="text-zinc-400 hover:text-red-600 p-1.5 rounded hover:bg-zinc-100" title="Hapus">

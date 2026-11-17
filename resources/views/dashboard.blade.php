@@ -1,191 +1,116 @@
 <x-layouts.app>
-    <x-slot:headerTitle>
-        Dashboard
-    </x-slot:headerTitle>
+    <x-slot:headerTitle>Dashboard</x-slot:headerTitle>
+    @php
+        $dashboardUser = auth()->user();
+        $isStudentDashboard = $dashboardUser->hasRole(\App\Enums\UserRole::STUDENT);
+        $isTeacherDashboard = $dashboardUser->hasRole(\App\Enums\UserRole::TEACHER);
+        $isAdminDashboard = $dashboardUser->hasRole(\App\Enums\UserRole::SUPER_ADMIN, \App\Enums\UserRole::SCHOOL_ADMIN);
+        $dashboardLabel = match (true) {
+            $isStudentDashboard => 'Dashboard Siswa',
+            $isTeacherDashboard => 'Dashboard Guru',
+            $isAdminDashboard => 'Dashboard Administrator',
+            default => 'Dashboard Staf',
+        };
+        $heroRoute = $isStudentDashboard ? 'student.schedule.index' : ($isTeacherDashboard ? 'teacher.schedule.index' : 'dashboard');
+        $summaryStats = match (true) {
+            $isStudentDashboard => [
+                ['Rombongan Belajar', $enrollment?->classroom?->name ?? 'Belum terdaftar'],
+                ['Tingkat Kehadiran', ($attendanceSummary['total'] ?? 0) > 0 ? ($attendanceSummary['rate'].'%') : 'Belum ada data'],
+                ['Tahun Ajaran', $academicYear?->name ?? 'Belum diatur'],
+                ['Semester', $semester?->name ?? 'Belum diatur'],
+            ],
+            $isTeacherDashboard => [
+                ['Penugasan Mengajar', ($teachingAssignments ?? collect())->count()],
+                ['Sesi Presensi', $totalTeacherSessions ?? 0],
+                ['Sesi Selesai', $finalizedTeacherSessions ?? 0],
+                ['Wali Kelas', ($homeroomClassrooms ?? collect())->count()],
+            ],
+            $isAdminDashboard => [
+                ['Peserta Didik', number_format($totalStudents ?? 0, 0, ',', '.')],
+                ['Tenaga Pendidik', number_format($totalTeachers ?? 0, 0, ',', '.')],
+                ['Rombongan Belajar', $totalClassrooms ?? 0],
+                ['Pendaftar Baru', $totalApplicants ?? 0],
+            ],
+            default => [],
+        };
+    @endphp
 
-    <div class="space-y-6">
-
-        <!-- ================================================================== -->
-        <!-- TOP TITLE & QUICK ACTION BAR (ROLE-TAILORED)                      -->
-        <!-- ================================================================== -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-zinc-200/80">
-            <div>
-                <h1 class="text-2xl font-extrabold text-zinc-900 tracking-tight">
-                    @if (auth()->user()->hasRole(\App\Enums\UserRole::STUDENT))
-                        Dashboard Siswa
-                    @elseif (auth()->user()->hasRole(\App\Enums\UserRole::TEACHER))
-                        Dashboard Guru
-                    @else
-                        Dashboard Administrator
-                    @endif
-                </h1>
-                <p class="text-xs text-zinc-500 mt-1">
-                    @if (auth()->user()->hasRole(\App\Enums\UserRole::STUDENT))
-                        Selamat datang kembali, <strong class="text-zinc-800">{{ auth()->user()->name }}</strong>. Semangat belajar dan pantau aktivitas akademik Anda.
-                    @elseif (auth()->user()->hasRole(\App\Enums\UserRole::TEACHER))
-                        Selamat datang kembali, <strong class="text-zinc-800">{{ auth()->user()->name }}</strong>. Kelola pembelajaran, rombongan belajar, dan presensi siswa.
-                    @else
-                        Selamat datang kembali, <strong class="text-zinc-800">{{ auth()->user()->name }}</strong>. Ikhtisar operasional sekolah dan fondasi platform Eduvia.
-                    @endif
-                </p>
+    <div class="dashboard-workspace">
+        <div class="dashboard-primary">
+            <div class="dashboard-toolbar">
+                <h2>Beranda <span>/</span> {{ $dashboardLabel }}</h2>
+                <a href="{{ route('dashboard') }}" aria-label="Segarkan data dashboard">Segarkan data &circlearrowright;</a>
             </div>
 
-            <!-- Role Action Group -->
-            <div class="flex items-center gap-2 flex-wrap">
-                <a
-                    href="{{ route('dashboard') }}"
-                    class="p-2 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-600 transition-colors shadow-2xs"
-                    title="Segarkan Data"
-                >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                    </svg>
-                </a>
+            <section class="dashboard-hero" aria-label="Ruang akademik Eduvia">
+                <img src="{{ asset('images/edmunhigh/hero-students.jpg') }}" alt="" fetchpriority="high" />
+                <div class="dashboard-hero-content">
+                    <p>{{ $academicYear?->name ?? 'Eduvia' }} &middot; {{ $semester?->name ?? 'Ruang Akademik' }}</p>
+                    <h2>{{ $isTeacherDashboard ? 'Mendampingi belajar, membangun masa depan.' : ($isAdminDashboard ? 'Ruang tumbuh untuk seluruh warga sekolah.' : 'Selamat belajar. Saatnya melangkah lebih jauh.') }}</h2>
+                    @if ($isAdminDashboard)
+                        <a href="{{ route('school.profile') }}">Kelola Profil Sekolah <span aria-hidden="true">&nearr;</span></a>
+                    @elseif ($isStudentDashboard || $isTeacherDashboard)
+                        <a href="{{ route($heroRoute) }}">Lihat jadwal {{ $isTeacherDashboard ? 'mengajar' : 'pelajaran' }} <span aria-hidden="true">&nearr;</span></a>
+                    @endif
+                </div>
+            </section>
 
-                @if (auth()->user()->hasRole(\App\Enums\UserRole::SUPER_ADMIN, \App\Enums\UserRole::SCHOOL_ADMIN))
-                    <a
-                        href="{{ route('settings.system') }}"
-                        class="p-2 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-600 transition-colors shadow-2xs"
-                        title="Pengaturan Sistem"
-                    >
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                    </a>
+            @if ($summaryStats)
+                <dl class="dashboard-stat-strip">
+                    @foreach ($summaryStats as [$label, $value])
+                        <div><dt>{{ $label }}</dt><dd>{{ $value }}</dd></div>
+                    @endforeach
+                </dl>
+            @endif
 
-                    <x-button href="{{ route('school.profile') }}" variant="primary" size="sm">
-                        <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        <span>Kelola Profil Sekolah</span>
-                    </x-button>
-                @elseif (auth()->user()->hasRole(\App\Enums\UserRole::TEACHER))
-                    <x-button href="{{ route('attendance-sessions.create') }}" variant="primary" size="sm">
-                        <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        <span>Buat Sesi Presensi</span>
-                    </x-button>
-                @elseif (auth()->user()->hasRole(\App\Enums\UserRole::STUDENT))
-                    <x-button href="{{ route('attendance.my') }}" variant="primary" size="sm">
-                        <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        <span>Presensi Saya</span>
-                    </x-button>
-                @endif
-            </div>
-        </div>
+            @if ($isStudentDashboard)
+                <div class="dashboard-overview">
+                    <section class="dashboard-panel">
+                        <div class="dashboard-section-heading"><h2>Presensi</h2><a href="{{ route('attendance.my') }}" class="dashboard-text-link">Lihat semua &nearr;</a></div>
+                        @foreach (['present' => 'Hadir', 'late' => 'Terlambat', 'permit' => 'Izin', 'sick' => 'Sakit', 'absent' => 'Tanpa keterangan'] as $status => $label)
+                            <div class="dashboard-attendance-line"><span class="dashboard-attendance-mark" aria-hidden="true">{{ mb_substr($label, 0, 1) }}</span><strong>{{ $label }}</strong><b>{{ $attendanceSummary[$status] ?? 0 }}</b></div>
+                        @endforeach
+                    </section>
+                    <section class="dashboard-panel">
+                        <div class="dashboard-section-heading"><h2>Ringkasan Kehadiran</h2></div>
+                        @if (($attendanceSummary['total'] ?? 0) > 0)
+                            <div class="dashboard-donut" style="--progress: {{ max(0, min(100, (float) $attendanceSummary['rate'])) }}" role="img" aria-label="Kehadiran {{ $attendanceSummary['rate'] }} persen">
+                                <div><strong>{{ $attendanceSummary['rate'] }}%</strong><span>kehadiran</span></div>
+                            </div>
+                            <p class="dashboard-donut-note">{{ ($attendanceSummary['present'] ?? 0) + ($attendanceSummary['late'] ?? 0) }} dari {{ $attendanceSummary['total'] }} sesi tercatat hadir.<br>Termasuk kehadiran terlambat.</p>
+                        @else
+                            <div class="dashboard-donut" aria-hidden="true"><div><strong>&mdash;</strong><span>belum ada data</span></div></div>
+                            <p class="dashboard-donut-note">Ringkasan akan tampil setelah<br>presensi pertama Anda dicatat.</p>
+                        @endif
+                    </section>
+                </div>
+            @elseif ($isAdminDashboard)
+                <section class="dashboard-panel">
+                    <div class="dashboard-section-heading"><h2>Aktivitas Presensi Terbaru</h2><a href="{{ route('attendance-sessions.index') }}" class="dashboard-text-link">Lihat semua &nearr;</a></div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead><tr class="border-b border-zinc-200 text-zinc-500"><th class="pb-4 font-medium">Kelas</th><th class="pb-4 font-medium">Guru</th><th class="pb-4 font-medium">Tanggal</th><th class="pb-4 font-medium">Status</th></tr></thead>
+                            <tbody>
+                                @forelse (($recentSessions ?? collect()) as $sessionItem)
+                                    <tr class="border-b border-zinc-100"><td class="py-4 pr-4 font-medium">{{ $sessionItem->classroom?->name ?? '-' }}</td><td class="py-4 pr-4">{{ $sessionItem->teacher?->name ?? '-' }}</td><td class="py-4 pr-4 whitespace-nowrap">{{ $sessionItem->date?->translatedFormat('d M Y') ?? '-' }}</td><td class="py-4"><x-badge :variant="$sessionItem->status === 'finalized' ? 'success' : 'neutral'">{{ $sessionItem->status === 'finalized' ? 'Selesai' : 'Draf' }}</x-badge></td></tr>
+                                @empty
+                                    <tr><td colspan="4" class="dashboard-empty">Belum ada aktivitas presensi yang tercatat.</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            @endif
 
-        <!-- ================================================================== -->
-        <!-- ROLE 1: DASHBOARD SISWA (STUDENT VIEW)                             -->
-        <!-- ================================================================== -->
+            <div class="dashboard-existing">
         @if (auth()->user()->hasRole(\App\Enums\UserRole::STUDENT))
-            <!-- 4-Column Student Metric Strip -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Metric 1: Rombongan Belajar -->
-                <div class="bg-white rounded-xl border border-zinc-200 p-5 flex flex-col justify-between transition-all duration-150 hover:border-zinc-300">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Rombongan Belajar</p>
-                            <h3 class="text-lg font-bold text-zinc-900 mt-1 truncate" title="{{ $enrollment?->classroom?->name ?? 'Belum Terdaftar' }}">
-                                {{ $enrollment?->classroom?->name ?? 'Belum Terdaftar' }}
-                            </h3>
-                        </div>
-                        <div class="w-10 h-10 rounded-lg bg-zinc-100 text-zinc-600 flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
-                        <span class="text-zinc-500">NISN: <strong>{{ $studentProfile?->nisn ?? '-' }}</strong></span>
-                        <span class="inline-flex items-center gap-1 text-emerald-600 font-semibold">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            {{ ucfirst($enrollment?->enrollment_status ?? 'Aktif') }}
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Metric 2: Tingkat Kehadiran -->
-                <div class="bg-white rounded-xl border border-zinc-200 p-5 flex flex-col justify-between transition-all duration-150 hover:border-zinc-300">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Tingkat Kehadiran</p>
-                            <h3 class="text-2xl font-extrabold text-zinc-900 mt-1 tracking-tight">
-                                {{ $attendanceSummary['rate'] ?? 100 }}%
-                            </h3>
-                        </div>
-                        <div class="w-10 h-10 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
-                        <span class="text-zinc-500">Hadir: <strong>{{ ($attendanceSummary['present'] ?? 0) + ($attendanceSummary['late'] ?? 0) }}/{{ $attendanceSummary['total'] ?? 0 }} Sesi</strong></span>
-                        <span class="inline-flex items-center gap-1 text-brand-600 font-semibold">
-                            Presensi Aktif
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Metric 3: Tahun Ajaran -->
-                <div class="bg-white rounded-xl border border-zinc-200 p-5 flex flex-col justify-between transition-all duration-150 hover:border-zinc-300">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Tahun Ajaran</p>
-                            <h3 class="text-xl font-extrabold text-zinc-900 mt-1 tracking-tight">
-                                {{ $academicYear?->name ?? '2025/2026' }}
-                            </h3>
-                        </div>
-                        <div class="w-10 h-10 rounded-lg bg-zinc-100 text-zinc-600 flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
-                        <span class="text-zinc-500">Periode Akademik</span>
-                        <span class="inline-flex items-center gap-1 text-emerald-600 font-semibold">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            Berjalan
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Metric 4: Semester Berjalan -->
-                <div class="bg-white rounded-xl border border-zinc-200 p-5 flex flex-col justify-between transition-all duration-150 hover:border-zinc-300">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Semester Berjalan</p>
-                            <h3 class="text-xl font-extrabold text-zinc-900 mt-1 tracking-tight">
-                                {{ $semester?->name ?? 'Semester Ganjil' }}
-                            </h3>
-                        </div>
-                        <div class="w-10 h-10 rounded-lg bg-zinc-100 text-zinc-600 flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
-                        <span class="text-zinc-500">Tipe: <strong>{{ ucfirst($semester?->semester_type?->value ?? 'Ganjil') }}</strong></span>
-                        <span class="inline-flex items-center gap-1 text-emerald-600 font-semibold">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            Aktif
-                        </span>
-                    </div>
-                </div>
-            </div>
-
             <!-- Student Main Split Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Left 2 Columns -->
                 <div class="lg:col-span-2 space-y-6">
                     <!-- Student Academic Profile Card -->
-                    <x-card title="Biodata & Status Siswa" subtitle="Informasi registrasi akademik peserta didik resmi di Eduvia.">
+                    <details class="dashboard-disclosure"><summary>Biodata & Status Siswa</summary>
+<x-card title="Biodata & Status Siswa" subtitle="Informasi registrasi akademik peserta didik resmi di Eduvia.">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                             <div class="p-3.5 rounded-lg bg-zinc-50/70 border border-zinc-100">
                                 <span class="text-zinc-400 font-medium block text-[11px]">Nama Lengkap</span>
@@ -213,6 +138,7 @@
                             </div>
                         </div>
                     </x-card>
+</details>
 
                     <!-- Student Attendance Summary Card -->
                     <x-card title="Riwayat Presensi Belajar Terbaru" subtitle="Catatan kehadiran Anda pada pertemuan tatap muka dan pembelajaran.">
@@ -288,209 +214,13 @@
                     </x-card>
                 </div>
 
-                <!-- Right 1 Column -->
-                <div class="space-y-6">
-                    <!-- Student User Account Card -->
-                    <x-card title="Informasi Akun Siswa">
-                        <div class="flex items-center gap-3 pb-4 mb-4 border-b border-zinc-100">
-                            <div class="w-12 h-12 rounded-xl bg-brand-600 text-white font-extrabold flex items-center justify-center text-base shadow-xs shrink-0">
-                                {{ substr(auth()->user()->name, 0, 1) }}
-                            </div>
-                            <div class="min-w-0">
-                                <h4 class="font-bold text-zinc-900 text-sm truncate">{{ auth()->user()->name }}</h4>
-                                <p class="text-xs text-zinc-500 truncate">{{ auth()->user()->email }}</p>
-                            </div>
-                        </div>
 
-                        <dl class="space-y-2.5 text-xs">
-                            <div class="flex items-center justify-between pb-2 border-b border-zinc-100">
-                                <dt class="text-zinc-500">Peran Akun</dt>
-                                <dd>
-                                    <x-badge :variant="auth()->user()->role->badgeVariant()" size="sm">
-                                        {{ auth()->user()->role->label() }}
-                                    </x-badge>
-                                </dd>
-                            </div>
-                            <div class="flex items-center justify-between pb-2 border-b border-zinc-100">
-                                <dt class="text-zinc-500">Status Akun</dt>
-                                <dd>
-                                    <x-badge variant="success" size="sm" dot>Aktif</x-badge>
-                                </dd>
-                            </div>
-                            <div class="flex items-center justify-between pb-2 border-b border-zinc-100">
-                                <dt class="text-zinc-500">Sekolah</dt>
-                                <dd class="font-semibold text-zinc-800 text-right truncate max-w-[150px]" title="{{ $school?->name }}">
-                                    {{ $school?->short_name ?? $school?->name ?? 'Nusantara Utama' }}
-                                </dd>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <dt class="text-zinc-500">NPSN</dt>
-                                <dd class="font-semibold text-zinc-800">{{ $school?->npsn ?? '-' }}</dd>
-                            </div>
-                        </dl>
-                    </x-card>
-
-                    <!-- Student Quick Link Card -->
-                    <x-card title="Pintasan Aktivitas Belajar">
-                        <div class="space-y-2.5">
-                            <a
-                                href="{{ route('student.materials.index') }}"
-                                class="flex items-center gap-3 p-3 rounded-lg border border-zinc-100 hover:border-brand-200 bg-zinc-50/50 hover:bg-brand-50/30 transition-all group"
-                            >
-                                <div class="w-8 h-8 rounded-lg bg-white border border-zinc-200 flex items-center justify-center text-brand-600 shadow-2xs group-hover:border-brand-300">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                                    </svg>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h5 class="text-xs font-bold text-zinc-900 group-hover:text-brand-700">Materi Pelajaran</h5>
-                                    <p class="text-[11px] text-zinc-500 mt-0.5">Baca modul & tonton video materi ajar.</p>
-                                </div>
-                                <svg class="w-4 h-4 text-zinc-400 group-hover:text-brand-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                            </a>
-
-                            <a
-                                href="{{ route('student.assignments.index') }}"
-                                class="flex items-center gap-3 p-3 rounded-lg border border-zinc-100 hover:border-brand-200 bg-zinc-50/50 hover:bg-brand-50/30 transition-all group"
-                            >
-                                <div class="w-8 h-8 rounded-lg bg-white border border-zinc-200 flex items-center justify-center text-brand-600 shadow-2xs group-hover:border-brand-300">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-                                    </svg>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h5 class="text-xs font-bold text-zinc-900 group-hover:text-brand-700">Tugas & Evaluasi</h5>
-                                    <p class="text-[11px] text-zinc-500 mt-0.5">Kerjakan tugas & lihat evaluasi nilai.</p>
-                                </div>
-                                <svg class="w-4 h-4 text-zinc-400 group-hover:text-brand-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                            </a>
-
-                            <a
-                                href="{{ route('attendance.my') }}"
-                                class="flex items-center gap-3 p-3 rounded-lg border border-zinc-100 hover:border-brand-200 bg-zinc-50/50 hover:bg-brand-50/30 transition-all group"
-                            >
-                                <div class="w-8 h-8 rounded-lg bg-white border border-zinc-200 flex items-center justify-center text-brand-600 shadow-2xs group-hover:border-brand-300">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h5 class="text-xs font-bold text-zinc-900 group-hover:text-brand-700">Presensi Saya</h5>
-                                    <p class="text-[11px] text-zinc-500 mt-0.5">Lihat seluruh riwayat kehadiran Anda.</p>
-                                </div>
-                                <svg class="w-4 h-4 text-zinc-400 group-hover:text-brand-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                            </a>
-                        </div>
-                    </x-card>
-                </div>
             </div>
 
         <!-- ================================================================== -->
         <!-- ROLE 2: DASHBOARD GURU (TEACHER VIEW)                              -->
         <!-- ================================================================== -->
         @elseif (auth()->user()->hasRole(\App\Enums\UserRole::TEACHER))
-            <!-- 4-Column Teacher Metric Strip -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Metric 1: Wali Kelas -->
-                <div class="bg-white rounded-xl border border-zinc-200 p-5 flex flex-col justify-between transition-all duration-150 hover:border-zinc-300">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Wali Kelas</p>
-                            <h3 class="text-lg font-bold text-zinc-900 mt-1 truncate">
-                                {{ isset($homeroomClassrooms) && $homeroomClassrooms->isNotEmpty() ? $homeroomClassrooms->pluck('name')->join(', ') : 'Bukan Wali Kelas' }}
-                            </h3>
-                        </div>
-                        <div class="w-10 h-10 rounded-lg bg-zinc-100 text-zinc-600 flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
-                        <span class="text-zinc-500">Rombel Binaan</span>
-                        <span class="inline-flex items-center gap-1 text-emerald-600 font-semibold">
-                            {{ isset($homeroomClassrooms) && $homeroomClassrooms->isNotEmpty() ? 'Aktif' : 'Tenaga Pendidik' }}
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Metric 2: Penugasan Mengajar -->
-                <div class="bg-white rounded-xl border border-zinc-200 p-5 flex flex-col justify-between transition-all duration-150 hover:border-zinc-300">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Jadwal Mengajar</p>
-                            <h3 class="text-2xl font-extrabold text-zinc-900 mt-1 tracking-tight">
-                                {{ isset($teachingAssignments) ? $teachingAssignments->count() : 0 }} Jadwal
-                            </h3>
-                        </div>
-                        <div class="w-10 h-10 rounded-lg bg-zinc-100 text-zinc-600 flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
-                        <span class="text-zinc-500">Mata Pelajaran Diampu</span>
-                        <span class="inline-flex items-center gap-1 text-emerald-600 font-semibold">
-                            Tersedia
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Metric 3: Total Sesi Presensi -->
-                <div class="bg-white rounded-xl border border-zinc-200 p-5 flex flex-col justify-between transition-all duration-150 hover:border-zinc-300">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Sesi Presensi</p>
-                            <h3 class="text-2xl font-extrabold text-zinc-900 mt-1 tracking-tight">
-                                {{ $totalTeacherSessions ?? 0 }} Sesi
-                            </h3>
-                        </div>
-                        <div class="w-10 h-10 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
-                        <span class="text-zinc-500">Final: <strong>{{ $finalizedTeacherSessions ?? 0 }}</strong> &bull; Draft: <strong>{{ $draftTeacherSessions ?? 0 }}</strong></span>
-                        <span class="inline-flex items-center gap-1 text-brand-600 font-semibold">
-                            Tercatat
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Metric 4: Semester Berjalan -->
-                <div class="bg-white rounded-xl border border-zinc-200 p-5 flex flex-col justify-between transition-all duration-150 hover:border-zinc-300">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Semester Berjalan</p>
-                            <h3 class="text-xl font-extrabold text-zinc-900 mt-1 tracking-tight">
-                                {{ $semester?->name ?? 'Semester Ganjil' }}
-                            </h3>
-                        </div>
-                        <div class="w-10 h-10 rounded-lg bg-zinc-100 text-zinc-600 flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
-                        <span class="text-zinc-500">{{ $academicYear?->name ?? '2025/2026' }}</span>
-                        <span class="inline-flex items-center gap-1 text-emerald-600 font-semibold">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            Aktif
-                        </span>
-                    </div>
-                </div>
-            </div>
-
             <!-- Teacher Main Split Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Left 2 Columns -->
@@ -580,252 +310,20 @@
                     </x-card>
                 </div>
 
-                <!-- Right 1 Column -->
-                <div class="space-y-6">
-                    <!-- Teacher Profile Card -->
-                    <x-card title="Informasi Tenaga Pendidik">
-                        <div class="flex items-center gap-3 pb-4 mb-4 border-b border-zinc-100">
-                            <div class="w-12 h-12 rounded-xl bg-brand-600 text-white font-extrabold flex items-center justify-center text-base shadow-xs shrink-0">
-                                {{ substr(auth()->user()->name, 0, 1) }}
-                            </div>
-                            <div class="min-w-0">
-                                <h4 class="font-bold text-zinc-900 text-sm truncate">{{ auth()->user()->name }}</h4>
-                                <p class="text-xs text-zinc-500 truncate">{{ auth()->user()->email }}</p>
-                            </div>
-                        </div>
 
-                        <dl class="space-y-2.5 text-xs">
-                            <div class="flex items-center justify-between pb-2 border-b border-zinc-100">
-                                <dt class="text-zinc-500">Peran Sistem</dt>
-                                <dd>
-                                    <x-badge :variant="auth()->user()->role->badgeVariant()" size="sm">
-                                        {{ auth()->user()->role->label() }}
-                                    </x-badge>
-                                </dd>
-                            </div>
-                            <div class="flex items-center justify-between pb-2 border-b border-zinc-100">
-                                <dt class="text-zinc-500">Status Akun</dt>
-                                <dd>
-                                    <x-badge variant="success" size="sm" dot>Aktif</x-badge>
-                                </dd>
-                            </div>
-                            <div class="flex items-center justify-between pb-2 border-b border-zinc-100">
-                                <dt class="text-zinc-500">Sekolah</dt>
-                                <dd class="font-semibold text-zinc-800 text-right truncate max-w-[150px]" title="{{ $school?->name }}">
-                                    {{ $school?->short_name ?? $school?->name ?? 'Nusantara Utama' }}
-                                </dd>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <dt class="text-zinc-500">Akses Presensi</dt>
-                                <dd class="font-semibold text-emerald-700">Penuh</dd>
-                            </div>
-                        </dl>
-                    </x-card>
-
-                    <!-- Teacher Quick Action Shortcuts -->
-                    <x-card title="Pintasan Guru">
-                        <div class="space-y-2.5">
-                            <a
-                                href="{{ route('learning-materials.index') }}"
-                                class="flex items-center gap-3 p-3 rounded-lg border border-zinc-100 hover:border-brand-200 bg-zinc-50/50 hover:bg-brand-50/30 transition-all group"
-                            >
-                                <div class="w-8 h-8 rounded-lg bg-white border border-zinc-200 flex items-center justify-center text-brand-600 shadow-2xs group-hover:border-brand-300">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                                    </svg>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h5 class="text-xs font-bold text-zinc-900 group-hover:text-brand-700">Materi Pembelajaran</h5>
-                                    <p class="text-[11px] text-zinc-500 mt-0.5">Kelola modul materi, video & dokumen ajar.</p>
-                                </div>
-                                <svg class="w-4 h-4 text-zinc-400 group-hover:text-brand-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                            </a>
-
-                            <a
-                                href="{{ route('assignments.index') }}"
-                                class="flex items-center gap-3 p-3 rounded-lg border border-zinc-100 hover:border-brand-200 bg-zinc-50/50 hover:bg-brand-50/30 transition-all group"
-                            >
-                                <div class="w-8 h-8 rounded-lg bg-white border border-zinc-200 flex items-center justify-center text-brand-600 shadow-2xs group-hover:border-brand-300">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-                                    </svg>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h5 class="text-xs font-bold text-zinc-900 group-hover:text-brand-700">Tugas & Evaluasi</h5>
-                                    <p class="text-[11px] text-zinc-500 mt-0.5">Kelola penugasan & berikan penilaian siswa.</p>
-                                </div>
-                                <svg class="w-4 h-4 text-zinc-400 group-hover:text-brand-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                            </a>
-
-                            <a
-                                href="{{ route('attendance-sessions.create') }}"
-                                class="flex items-center gap-3 p-3 rounded-lg border border-zinc-100 hover:border-brand-200 bg-zinc-50/50 hover:bg-brand-50/30 transition-all group"
-                            >
-                                <div class="w-8 h-8 rounded-lg bg-white border border-zinc-200 flex items-center justify-center text-brand-600 shadow-2xs group-hover:border-brand-300">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                                    </svg>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h5 class="text-xs font-bold text-zinc-900 group-hover:text-brand-700">Buat Sesi Presensi</h5>
-                                    <p class="text-[11px] text-zinc-500 mt-0.5">Catat kehadiran kelas tatap muka hari ini.</p>
-                                </div>
-                                <svg class="w-4 h-4 text-zinc-400 group-hover:text-brand-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                            </a>
-
-                            <a
-                                href="{{ route('attendance-sessions.index') }}"
-                                class="flex items-center gap-3 p-3 rounded-lg border border-zinc-100 hover:border-brand-200 bg-zinc-50/50 hover:bg-brand-50/30 transition-all group"
-                            >
-                                <div class="w-8 h-8 rounded-lg bg-white border border-zinc-200 flex items-center justify-center text-brand-600 shadow-2xs group-hover:border-brand-300">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-                                    </svg>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h5 class="text-xs font-bold text-zinc-900 group-hover:text-brand-700">Kelola Sesi Presensi</h5>
-                                    <p class="text-[11px] text-zinc-500 mt-0.5">Daftar semua sesi presensi dan draft.</p>
-                                </div>
-                                <svg class="w-4 h-4 text-zinc-400 group-hover:text-brand-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                            </a>
-
-                            <a
-                                href="{{ route('attendance.report') }}"
-                                class="flex items-center gap-3 p-3 rounded-lg border border-zinc-100 hover:border-brand-200 bg-zinc-50/50 hover:bg-brand-50/30 transition-all group"
-                            >
-                                <div class="w-8 h-8 rounded-lg bg-white border border-zinc-200 flex items-center justify-center text-brand-600 shadow-2xs group-hover:border-brand-300">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h5 class="text-xs font-bold text-zinc-900 group-hover:text-brand-700">Rekap Presensi Siswa</h5>
-                                    <p class="text-[11px] text-zinc-500 mt-0.5">Laporan agregat kehadiran per kelas.</p>
-                                </div>
-                                <svg class="w-4 h-4 text-zinc-400 group-hover:text-brand-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                            </a>
-                        </div>
-                    </x-card>
-                </div>
             </div>
 
         <!-- ================================================================== -->
         <!-- ROLE 3: DASHBOARD ADMINISTRATOR (SUPER_ADMIN & SCHOOL_ADMIN)      -->
         <!-- ================================================================== -->
-        @else
-            <!-- 4-Column Admin Metric Strip -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Metric 1: Sekolah Aktif -->
-                <div class="bg-white rounded-xl border border-zinc-200 p-5 flex flex-col justify-between transition-all duration-150 hover:border-zinc-300">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Identitas Sekolah</p>
-                            <h3 class="text-base font-bold text-zinc-900 mt-1 truncate" title="{{ $school?->name ?? 'Yayasan Perguruan Nusantara Utama' }}">
-                                {{ $school?->short_name ?? $school?->name ?? 'Yayasan Nusantara Utama' }}
-                            </h3>
-                        </div>
-                        <div class="w-10 h-10 rounded-lg bg-zinc-100 text-zinc-600 flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
-                        <span class="text-zinc-500">NPSN: <strong>{{ $school?->npsn ?? '20104567' }}</strong></span>
-                        <span class="inline-flex items-center gap-1 text-emerald-600 font-semibold">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            Aktif
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Metric 2: Tahun Ajaran Aktif -->
-                <div class="bg-white rounded-xl border border-zinc-200 p-5 flex flex-col justify-between transition-all duration-150 hover:border-zinc-300">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Tahun Ajaran</p>
-                            <h3 class="text-xl font-extrabold text-zinc-900 mt-1 tracking-tight">
-                                {{ $academicYear?->name ?? '2025/2026' }}
-                            </h3>
-                        </div>
-                        <div class="w-10 h-10 rounded-lg bg-zinc-100 text-zinc-600 flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
-                        <span class="text-zinc-500">Periode Akademik</span>
-                        <span class="inline-flex items-center gap-1 text-emerald-600 font-semibold">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            Berjalan
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Metric 3: Peserta Didik & Rombel -->
-                <div class="bg-white rounded-xl border border-zinc-200 p-5 flex flex-col justify-between transition-all duration-150 hover:border-zinc-300">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Peserta Didik</p>
-                            <h3 class="text-xl font-extrabold text-zinc-900 mt-1 tracking-tight">
-                                {{ $totalStudents ?? 0 }} Siswa
-                            </h3>
-                        </div>
-                        <div class="w-10 h-10 rounded-lg bg-zinc-100 text-zinc-600 flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
-                        <span class="text-zinc-500">Rombel: <strong>{{ $totalClassrooms ?? 0 }} Kelas</strong></span>
-                        <span class="inline-flex items-center gap-1 text-emerald-600 font-semibold">
-                            Kesiswaan
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Metric 4: Pendaftaran PPDB / SPMB -->
-                <div class="bg-white rounded-xl border border-zinc-200 p-5 flex flex-col justify-between transition-all duration-150 hover:border-zinc-300">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Pendaftar PPDB</p>
-                            <h3 class="text-xl font-extrabold text-zinc-900 mt-1 tracking-tight">
-                                {{ $totalApplicants ?? 0 }} Calon
-                            </h3>
-                        </div>
-                        <div class="w-10 h-10 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
-                        <span class="text-zinc-500">Terverifikasi: <strong>{{ $verifiedApplicants ?? 0 }}</strong></span>
-                        <span class="inline-flex items-center gap-1 text-brand-600 font-semibold">
-                            PPDB / SPMB
-                        </span>
-                    </div>
-                </div>
-            </div>
-
+        @elseif ($isAdminDashboard)
             <!-- Admin Main Split Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Left 2 Columns -->
                 <div class="lg:col-span-2 space-y-6">
                     <!-- Modul 1 Status Card -->
-                    <x-card title="Fondasi Sistem & Konfigurasi Sekolah (Modul 1)" subtitle="Modul operasional telah terintegrasi dan siap digunakan.">
+                    <details class="dashboard-disclosure"><summary>Pengaturan & Informasi Sekolah</summary>
+<x-card title="Fondasi Sistem & Konfigurasi Sekolah (Modul 1)" subtitle="Modul operasional telah terintegrasi dan siap digunakan.">
                         <div class="space-y-3">
                             <!-- Item 1: Profil Sekolah -->
                             <div class="flex items-center justify-between p-3.5 rounded-lg border border-zinc-100 hover:border-zinc-200 bg-zinc-50/50 hover:bg-zinc-50 transition-all">
@@ -921,6 +419,7 @@
                             </div>
                         </div>
                     </x-card>
+</details>
 
                     <!-- Academic, Students & PPDB Overview -->
                     <x-card title="Modul Akademik, Kesiswaan & PPDB" subtitle="Pusat kelola rombongan belajar, data siswa, dan penerimaan peserta didik baru.">
@@ -989,7 +488,8 @@
 
                     <!-- Interactive Role Verification Card (Only For Super Admin) -->
                     @if (auth()->user()->isSuperAdmin())
-                        <x-card title="Pengujian Otorisasi Role (Backend Security Gate)" subtitle="Verifikasi mekanisme pembatasan akses berbasis peran bagi Super Admin.">
+                        <details class="dashboard-disclosure"><summary>Pemeriksaan Akses Administrator</summary>
+<x-card title="Pengujian Otorisasi Role (Backend Security Gate)" subtitle="Verifikasi mekanisme pembatasan akses berbasis peran bagi Super Admin.">
                             <p class="text-xs text-zinc-500 mb-4 leading-relaxed">
                                 Endpoint pengujian dilindungi middleware <code class="bg-zinc-100 px-1.5 py-0.5 rounded text-[11px] font-mono text-zinc-700">role:super_admin,school_admin</code> untuk memastikan otorisasi ditegakkan pada lapisan server.
                             </p>
@@ -1039,102 +539,19 @@
                                 </div>
                             </div>
                         </x-card>
+</details>
                     @endif
                 </div>
 
-                <!-- Right 1 Column -->
-                <div class="space-y-6">
-                    <!-- User Profile Session Card -->
-                    <x-card title="Informasi Sesi Pengguna">
-                        <div class="flex items-center gap-3 pb-4 mb-4 border-b border-zinc-100">
-                            <div class="w-12 h-12 rounded-xl bg-brand-600 text-white font-extrabold flex items-center justify-center text-base shadow-xs shrink-0">
-                                {{ substr(auth()->user()->name, 0, 1) }}
-                            </div>
-                            <div class="min-w-0">
-                                <h4 class="font-bold text-zinc-900 text-sm truncate">{{ auth()->user()->name }}</h4>
-                                <p class="text-xs text-zinc-500 truncate">{{ auth()->user()->email }}</p>
-                            </div>
-                        </div>
 
-                        <dl class="space-y-2.5 text-xs">
-                            <div class="flex items-center justify-between pb-2 border-b border-zinc-100">
-                                <dt class="text-zinc-500">Peran Sistem</dt>
-                                <dd>
-                                    <x-badge :variant="auth()->user()->role->badgeVariant()" size="sm">
-                                        {{ auth()->user()->role->label() }}
-                                    </x-badge>
-                                </dd>
-                            </div>
-                            <div class="flex items-center justify-between pb-2 border-b border-zinc-100">
-                                <dt class="text-zinc-500">Status Akun</dt>
-                                <dd>
-                                    <x-badge variant="success" size="sm" dot>Aktif</x-badge>
-                                </dd>
-                            </div>
-                            <div class="flex items-center justify-between pb-2 border-b border-zinc-100">
-                                <dt class="text-zinc-500">Metode Autentikasi</dt>
-                                <dd class="font-semibold text-zinc-700">Session Cookie</dd>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <dt class="text-zinc-500">Hak Kelola Sekolah</dt>
-                                <dd class="font-semibold text-zinc-700">Penuh</dd>
-                            </div>
-                        </dl>
-                    </x-card>
-
-                    <!-- Quick Shortcuts for Admins -->
-                    <x-card title="Pintasan Presensi & Kehadiran">
-                        <div class="space-y-2.5">
-                            <a
-                                href="{{ route('attendance-sessions.index') }}"
-                                class="flex items-center gap-3 p-3 rounded-lg border border-zinc-100 hover:border-brand-200 bg-zinc-50/50 hover:bg-brand-50/30 transition-all group"
-                            >
-                                <div class="w-8 h-8 rounded-lg bg-white border border-zinc-200 flex items-center justify-center text-brand-600 shadow-2xs group-hover:border-brand-300">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-                                    </svg>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h5 class="text-xs font-bold text-zinc-900 group-hover:text-brand-700">Sesi Presensi Belajar</h5>
-                                    <p class="text-[11px] text-zinc-500 mt-0.5">Kelola seluruh sesi tatap muka sekolah.</p>
-                                </div>
-                                <svg class="w-4 h-4 text-zinc-400 group-hover:text-brand-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                            </a>
-
-                            <a
-                                href="{{ route('attendance.report') }}"
-                                class="flex items-center gap-3 p-3 rounded-lg border border-zinc-100 hover:border-brand-200 bg-zinc-50/50 hover:bg-brand-50/30 transition-all group"
-                            >
-                                <div class="w-8 h-8 rounded-lg bg-white border border-zinc-200 flex items-center justify-center text-brand-600 shadow-2xs group-hover:border-brand-300">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h5 class="text-xs font-bold text-zinc-900 group-hover:text-brand-700">Rekap Presensi Sekolah</h5>
-                                    <p class="text-[11px] text-zinc-500 mt-0.5">Laporan agregat kehadiran seluruh rombel.</p>
-                                </div>
-                                <svg class="w-4 h-4 text-zinc-400 group-hover:text-brand-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                            </a>
-                        </div>
-                    </x-card>
-
-                    <!-- Help & Support Center Card -->
-                    <x-card title="Pusat Bantuan & Layanan" subtitle="Panduan operasional & dukungan teknis Eduvia.">
-                        <p class="text-xs text-zinc-500 mb-4 leading-relaxed">
-                            Akses dokumentasi panduan penggunaan modul administrasi, e-learning, presensi, dan penilaian untuk seluruh staf pengajar dan tenaga kependidikan.
-                        </p>
-                        <a href="{{ route('school.public.contact', ['school' => $currentSchool?->slug ?? 'nusantara-utama']) }}" class="inline-flex items-center justify-center w-full px-4 py-2 text-xs font-semibold rounded-xl border border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition-colors">
-                            <span>Hubungi Bantuan Dukungan &rarr;</span>
-                        </a>
-                    </x-card>
-                </div>
             </div>
+        @else
+            <x-card title="Ruang Kerja Staf">
+                <p class="text-sm text-zinc-500">Gunakan menu di samping untuk mengakses layanan sesuai penugasan Anda.</p>
+            </x-card>
         @endif
-
+            </div>
+        </div>
+        <x-dashboard-profile :user="$dashboardUser" :school="$school" :academic-year="$academicYear" :semester="$semester" :enrollment="$enrollment ?? null" :teaching-assignments="$teachingAssignments ?? null" />
     </div>
 </x-layouts.app>

@@ -3,7 +3,7 @@
     'description' => 'Tidak ada entri data yang dapat ditampilkan untuk kriteria saat ini.',
 ])
 
-<div {{ $attributes->merge(['class' => 'flex flex-col items-center justify-center text-center p-8 sm:p-12 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50']) }}>
+<div {{ $attributes->merge(['class' => 'min-w-0 flex flex-col items-center justify-center text-center p-6 sm:p-10 rounded-2xl border border-zinc-200 bg-white']) }}>
     <div class="w-14 h-14 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center justify-center text-slate-400 mb-4">
         @if (isset($icon))
             {{ $icon }}
@@ -15,10 +15,10 @@
     </div>
 
     <h4 class="text-base font-bold text-slate-800 leading-snug">{{ $title }}</h4>
-    <p class="text-xs sm:text-sm text-slate-500 max-w-sm mt-1 mb-5 leading-relaxed">{{ $description }}</p>
+    <p class="text-sm text-slate-500 max-w-sm mt-2 leading-relaxed break-words">{{ $description }}</p>
 
     @if (isset($action))
-        <div>
+        <div class="mt-5">
             {{ $action }}
         </div>
     @endif

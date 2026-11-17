@@ -1,7 +1,8 @@
 <x-app-layout>
+    <x-slot:headerTitle>{{ $invoice->invoice_number }}</x-slot:headerTitle>
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8" x-data="{ showPayModal: false, showCancelModal: false, showReverseModal: false, selectedPaymentId: null }">
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-zinc-200">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-zinc-200">
             <div>
                 <nav class="flex items-center gap-2 text-xs text-zinc-500 mb-2">
                     <a href="{{ route('finance.invoices.index') }}" class="hover:text-zinc-800">Manajemen Tagihan</a>
@@ -28,7 +29,7 @@
                 @if (! $invoice->isPaid() && $invoice->status !== 'cancelled')
                     <a
                         href="{{ route('finance.payments.create', ['invoice_id' => $invoice->id]) }}"
-                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#E11D2E] text-white text-xs font-semibold hover:bg-[#c81926] transition-colors shadow-2xs"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-600 text-white text-xs font-semibold hover:bg-brand-700 transition-colors shadow-2xs"
                     >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                         <span>Catat Pembayaran</span>
@@ -103,7 +104,7 @@
                 </div>
                 <div class="flex justify-between text-sm font-extrabold pt-2 border-t border-zinc-100 text-zinc-900">
                     <span>Sisa Piutang:</span>
-                    <span class="{{ $invoice->remaining_balance > 0 ? 'text-[#E11D2E]' : 'text-emerald-700' }} font-mono">
+                    <span class="{{ $invoice->remaining_balance > 0 ? 'text-brand-600' : 'text-emerald-700' }} font-mono">
                         {{ $invoice->formatted_remaining }}
                     </span>
                 </div>
@@ -156,7 +157,7 @@
                         @endif
                         <tr class="border-t border-zinc-200">
                             <td colspan="4" class="px-5 py-3 text-right font-bold text-zinc-900 text-sm">Total Bersih:</td>
-                            <td class="px-5 py-3 text-right font-mono font-extrabold text-[#E11D2E] text-sm">{{ $invoice->formatted_total }}</td>
+                            <td class="px-5 py-3 text-right font-mono font-extrabold text-brand-600 text-sm">{{ $invoice->formatted_total }}</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -210,7 +211,7 @@
                                 </td>
                                 <td class="px-5 py-3.5 text-right">
                                     @if ($pay->status === 'verified')
-                                        <form method="POST" action="{{ route('finance.payments.reverse', $pay) }}" onsubmit="return confirm('Koreksi / Batalkan pembayaran ini? Saldo tagihan akan dikembalikan.');" class="inline">
+                                        <form method="POST" action="{{ route('finance.payments.reverse', $pay) }}" data-confirm="Koreksi / Batalkan pembayaran ini? Saldo tagihan akan dikembalikan." class="inline">
                                             @csrf
                                             <input type="hidden" name="reason" value="Koreksi transaksi oleh admin">
                                             <button type="submit" class="text-xs text-rose-600 hover:text-rose-800 font-semibold">

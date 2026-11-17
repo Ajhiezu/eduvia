@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('headerTitle')Kelola Konten: Berita, Acara & Prestasi@endsection
+
 @section('content')
 <div class="space-y-6">
 
@@ -154,7 +156,7 @@
                                         </a>
 
                                         <!-- Delete Form -->
-                                        <form method="POST" action="{{ route('website.posts.destroy', $post) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus konten ini?');">
+                                        <form method="POST" action="{{ route('website.posts.destroy', $post) }}" data-confirm="Apakah Anda yakin ingin menghapus konten ini?">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="px-2 py-1 text-[11px] font-semibold rounded hover:bg-rose-50 text-rose-600 transition-colors">

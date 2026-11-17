@@ -18,7 +18,7 @@
         @endif
 
         <!-- Action & Navigation Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
                     Daftar Tahun Ajaran
@@ -120,7 +120,7 @@
                                 </x-button>
 
                                 @if (! $year->is_active)
-                                    <form method="POST" action="{{ route('academic-years.destroy', $year) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus tahun ajaran ini? Tindakan ini tidak dapat dibatalkan.');" class="inline">
+                                    <form method="POST" action="{{ route('academic-years.destroy', $year) }}" data-confirm="Apakah Anda yakin ingin menghapus tahun ajaran ini? Tindakan ini tidak dapat dibatalkan." class="inline">
                                         @csrf
                                         @method('DELETE')
                                         <button

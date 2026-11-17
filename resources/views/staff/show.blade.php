@@ -109,7 +109,7 @@
 
                     <!-- Toggle Status Button -->
                     @if (auth()->id() !== $staff->id)
-                        <form action="{{ route('staff.toggle-status', $staff) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin mengubah status akun {{ $staff->name }}?');">
+                        <form action="{{ route('staff.toggle-status', $staff) }}" method="POST" class="inline" data-confirm="Apakah Anda yakin ingin mengubah status akun {{ $staff->name }}?">
                             @csrf
                             @if ($staff->is_active)
                                 <x-button type="submit" variant="danger" size="sm">
@@ -315,7 +315,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                         <div>
                             <label for="classroom_id" class="block text-sm font-medium text-zinc-700 mb-1.5">
-                                Rombel / Kelas <span class="text-[#E11D2E]">*</span>
+                                Rombel / Kelas <span class="text-brand-600">*</span>
                             </label>
                             <select name="classroom_id" id="classroom_id" required class="w-full rounded-lg border-zinc-200 text-base py-2.5 pl-3.5 pr-11">
                                 <option value="">-- Pilih Kelas --</option>
@@ -327,7 +327,7 @@
 
                         <div>
                             <label for="subject_id" class="block text-sm font-medium text-zinc-700 mb-1.5">
-                                Mata Pelajaran <span class="text-[#E11D2E]">*</span>
+                                Mata Pelajaran <span class="text-brand-600">*</span>
                             </label>
                             <select name="subject_id" id="subject_id" required class="w-full rounded-lg border-zinc-200 text-base py-2.5 pl-3.5 pr-11">
                                 <option value="">-- Pilih Mapel --</option>
@@ -339,7 +339,7 @@
 
                         <div>
                             <label for="academic_year_id" class="block text-sm font-medium text-zinc-700 mb-1.5">
-                                Tahun Ajaran <span class="text-[#E11D2E]">*</span>
+                                Tahun Ajaran <span class="text-brand-600">*</span>
                             </label>
                             <select name="academic_year_id" id="academic_year_id" required class="w-full rounded-lg border-zinc-200 text-base py-2.5 pl-3.5 pr-11">
                                 @foreach ($academicYears as $ay)
@@ -350,7 +350,7 @@
 
                         <div>
                             <label for="hours_per_week" class="block text-sm font-medium text-zinc-700 mb-1.5">
-                                Jam / Minggu <span class="text-[#E11D2E]">*</span>
+                                Jam / Minggu <span class="text-brand-600">*</span>
                             </label>
                             <input type="number" name="hours_per_week" id="hours_per_week" value="4" min="1" max="50" required class="w-full rounded-lg border-zinc-200 text-base py-2.5 px-3.5 font-mono">
                         </div>
@@ -404,7 +404,7 @@
                                         </x-badge>
                                     </td>
                                     <td class="px-4 py-3 text-right">
-                                        <form action="{{ route('staff.teaching-assignments.destroy', $ta) }}" method="POST" class="inline" onsubmit="return confirm('Hapus / nonaktifkan penugasan mengajar ini?');">
+                                        <form action="{{ route('staff.teaching-assignments.destroy', $ta) }}" method="POST" class="inline" data-confirm="Hapus / nonaktifkan penugasan mengajar ini?">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="p-1 rounded text-zinc-400 hover:text-rose-600 hover:bg-zinc-100" title="Hapus Penugasan">

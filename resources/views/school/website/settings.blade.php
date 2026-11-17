@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('headerTitle')Pengaturan Website Publik & Profil Sekolah@endsection
+
 @section('content')
 <div class="max-w-5xl mx-auto space-y-6">
 

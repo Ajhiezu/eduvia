@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\School;
 use App\Models\User;
+use App\Services\TwoFactorAuthService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -23,6 +24,7 @@ class AuthController extends Controller
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
             'device_name' => ['nullable', 'string', 'max:100'],
+            'two_factor_code' => ['nullable', 'string', 'max:64'],
         ]);
 
         $user = User::where('email', $validated['email'])->first();
@@ -41,6 +43,14 @@ class AuthController extends Controller
             return $this->apiError(
                 message: 'Akun Anda sedang dinonaktifkan. Silakan hubungi pihak sekolah.',
                 statusCode: 403
+            );
+        }
+
+        if ($user->two_factor_confirmed_at && ! app(TwoFactorAuthService::class)->verifyForUser($user, $validated['two_factor_code'] ?? '')) {
+            return $this->apiError(
+                message: 'Masukkan kode autentikator atau kode pemulihan yang valid.',
+                statusCode: 422,
+                errors: ['two_factor_code' => ['Verifikasi dua faktor diperlukan.']]
             );
         }
 

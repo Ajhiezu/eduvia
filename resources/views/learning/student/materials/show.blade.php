@@ -154,7 +154,7 @@
 
         <!-- Completion Action Bar -->
         <x-card padding class="border-zinc-200 bg-zinc-50/50">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h3 class="text-sm font-bold text-zinc-900">
                         Penyelesaian Pembelajaran

@@ -18,7 +18,7 @@
         @endif
 
         <!-- Action Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
                     Daftar Semester
@@ -48,7 +48,7 @@
                     <select
                         name="academic_year_id"
                         onchange="this.form.submit()"
-                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20"
+                        class="w-full rounded-lg border border-zinc-200 text-zinc-900 text-sm py-2.5 px-3 focus:border-brand-600 focus:ring-2 focus:ring-[#E11D2E]/20"
                     >
                         <option value="">Semua Tahun Ajaran</option>
                         @foreach ($academicYears as $year)
@@ -142,7 +142,7 @@
                                 </x-button>
 
                                 @if (! $semester->is_active)
-                                    <form method="POST" action="{{ route('semesters.destroy', $semester) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus semester ini?');" class="inline">
+                                    <form method="POST" action="{{ route('semesters.destroy', $semester) }}" data-confirm="Apakah Anda yakin ingin menghapus semester ini?" class="inline">
                                         @csrf
                                         @method('DELETE')
                                         <button

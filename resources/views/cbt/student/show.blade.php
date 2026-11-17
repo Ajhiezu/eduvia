@@ -120,7 +120,7 @@
                     @elseif (! $isAvailable)
                         <span class="text-xs font-bold text-blue-600">Ujian Belum Dimulai</span>
                     @else
-                        <form action="{{ route('student.exams.start', $exam) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin memulai ujian sekarang? Timer akan segera berjalan.');">
+                        <form action="{{ route('student.exams.start', $exam) }}" method="POST" data-confirm="Apakah Anda yakin ingin memulai ujian sekarang? Timer akan segera berjalan.">
                             @csrf
                             <x-button type="submit" variant="primary" size="md">
                                 Mulai Mengerjakan Ujian Sekarang &rarr;

@@ -91,6 +91,41 @@ class AttendanceTest extends TestCase
         ]);
     }
 
+    public function test_attendance_sheet_renders_when_a_student_is_unavailable_to_the_tenant(): void
+    {
+        $this->teacher->update(['school_id' => $this->school->id]);
+        $this->student2->update(['school_id' => $this->school->id]);
+        $session = AttendanceSession::create([
+            'school_id' => $this->school->id,
+            'classroom_id' => $this->classroom->id,
+            'teaching_assignment_id' => $this->assignment->id,
+            'academic_year_id' => $this->academicYear->id,
+            'teacher_id' => $this->teacher->id,
+            'meeting_number' => 1,
+            'date' => '2026-07-20',
+            'status' => 'draft',
+        ]);
+        AttendanceRecord::create([
+            'attendance_session_id' => $session->id,
+            'student_id' => $this->student1->id,
+            'status' => 'present',
+        ]);
+        AttendanceRecord::create([
+            'attendance_session_id' => $session->id,
+            'student_id' => $this->student2->id,
+            'status' => 'late',
+        ]);
+
+        $response = $this->actingAs($this->teacher)->get(route('attendance-sessions.show', $session));
+
+        $response->assertOk();
+        $response->assertSee('Data siswa tidak tersedia');
+        $response->assertSee($this->student2->name);
+        $response->assertDontSee($this->student1->email);
+        $response->assertViewHas('records', fn ($records): bool => $records->count() === 2);
+        $response->assertViewHas('summary', fn (array $summary): bool => $summary['total'] === 2 && $summary['rate'] === 100.0);
+    }
+
     public function test_guest_cannot_access_attendance_sessions(): void
     {
         $this->get(route('attendance-sessions.index'))->assertRedirect(route('login'));

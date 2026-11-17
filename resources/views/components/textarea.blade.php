@@ -12,11 +12,13 @@
 
 @php
     $textareaId = $id ?? ($name ? $name . '_' . uniqid() : 'textarea_' . uniqid());
-    $hasError = $name ? $errors->has($name) : !empty($error);
     $errorMessage = $error ?? ($name ? $errors->first($name) : null);
+    $hasError = $errorMessage !== null && $errorMessage !== '';
+    $descriptionId = $hasError ? $textareaId . '-error' : ($hint ? $textareaId . '-hint' : null);
+    $describedBy = trim(($attributes->get('aria-describedby') ?? '') . ' ' . ($descriptionId ?? ''));
 @endphp
 
-<div class="w-full text-left">
+<div class="min-w-0 w-full text-left">
     @if ($label)
         <label for="{{ $textareaId }}" class="block text-sm font-medium text-zinc-700 mb-1.5">
             <span>{{ $label }}</span>
@@ -29,28 +31,30 @@
     <textarea
         id="{{ $textareaId }}"
         name="{{ $name }}"
+        aria-invalid="{{ $hasError ? 'true' : 'false' }}"
+        @if ($describedBy)
+            aria-describedby="{{ $describedBy }}"
+        @endif
         rows="{{ $rows }}"
         placeholder="{{ $placeholder }}"
         {{ $required ? 'required' : '' }}
         {{ $disabled ? 'disabled' : '' }}
-        {{ $attributes->merge([
-            'class' => 'w-full min-h-[96px] rounded-lg border text-base text-zinc-900 placeholder:text-zinc-400 bg-white transition-all px-3.5 py-2.5 leading-relaxed '
-                . ($hasError
-                    ? 'border-rose-400 focus:border-rose-500 focus:ring-2 focus:ring-rose-200'
-                    : 'border-zinc-200 hover:border-zinc-300 focus:border-[#E11D2E] focus:ring-2 focus:ring-[#E11D2E]/20')
+        {{ $attributes->except('aria-describedby')->merge([
+            'class' => 'form-control w-full min-h-[96px] rounded-lg border text-base text-zinc-900 placeholder:text-zinc-400 bg-white transition-all px-3.5 py-2.5 leading-relaxed '
+                . 'border-zinc-200 hover:border-zinc-300 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15 '
                 . ($disabled ? ' bg-zinc-100 text-zinc-400 cursor-not-allowed' : '')
         ]) }}
     >{{ old($name, $slot) }}</textarea>
 
     @if ($hasError)
-        <p class="text-[13px] font-medium text-rose-600 flex items-center gap-1.5 mt-1.5" id="{{ $textareaId }}-error">
+        <p class="form-error font-medium flex items-start gap-1.5" id="{{ $textareaId }}-error">
             <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
             </svg>
             {{ $errorMessage }}
         </p>
     @elseif ($hint)
-        <p class="text-[13px] text-zinc-500 mt-1.5">{{ $hint }}</p>
+        <p id="{{ $textareaId }}-hint" class="form-hint">{{ $hint }}</p>
     @endif
 </div>
 

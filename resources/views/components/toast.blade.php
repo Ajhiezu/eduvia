@@ -1,28 +1,11 @@
 <div
-    x-data="{
-        toasts: [],
-        add(message, type = 'info') {
-            const id = Date.now() + Math.random();
-            this.toasts.push({ id, message, type });
-            setTimeout(() => this.remove(id), 5000);
-        },
-        remove(id) {
-            this.toasts = this.toasts.filter(t => t.id !== id);
-        }
-    }"
-    x-init="
-        @if (session('success') || session('status'))
-            add('{{ session('success') ?? session('status') }}', 'success');
-        @endif
-        @if (session('error'))
-            add('{{ session('error') }}', 'danger');
-        @endif
-        @if (session('warning'))
-            add('{{ session('warning') }}', 'warning');
-        @endif
-    "
+    x-data="toastNotifications({
+        success: {{ Illuminate\Support\Js::from(session('success') ?? session('status')) }},
+        danger: {{ Illuminate\Support\Js::from(session('error')) }},
+        warning: {{ Illuminate\Support\Js::from(session('warning')) }}
+    })"
     x-on:notify.window="add($event.detail.message, $event.detail.type)"
-    class="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-4 sm:px-0"
+    class="fixed bottom-4 left-4 right-4 z-[60] flex flex-col gap-2.5 sm:left-auto sm:w-96 max-w-[calc(100vw-2rem)] pointer-events-none"
     role="region"
     aria-label="Notifikasi"
 >
@@ -35,25 +18,32 @@
             x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-90"
-            class="pointer-events-auto rounded-xl p-3.5 shadow-xl border flex items-center justify-between gap-3 text-sm font-medium bg-white"
+            @mouseenter="pause(toast.id)"
+            @mouseleave="if (!$el.contains(document.activeElement)) resume(toast)"
+            @focusin="pause(toast.id)"
+            @focusout="if (!$el.contains($event.relatedTarget) && !$el.matches(':hover')) resume(toast)"
+            :role="toast.type === 'danger' ? 'alert' : 'status'"
+            aria-atomic="true"
+            class="pointer-events-auto min-w-0 rounded-xl p-3.5 shadow-lg border flex items-start justify-between gap-3 text-sm font-medium bg-white"
             :class="{
                 'border-emerald-200 text-emerald-900 shadow-emerald-500/10': toast.type === 'success',
                 'border-rose-200 text-rose-900 shadow-rose-500/10': toast.type === 'danger',
                 'border-amber-200 text-amber-900 shadow-amber-500/10': toast.type === 'warning',
-                'border-brand-200 text-brand-900 shadow-brand-500/10': toast.type === 'info' || !toast.type
+                'border-blue-200 text-blue-900 shadow-blue-500/10': toast.type === 'info' || !toast.type
             }"
         >
-            <div class="flex items-center gap-2.5">
+            <div class="min-w-0 flex items-start gap-2.5">
                 <span
-                    class="w-2 h-2 rounded-full shrink-0"
+                    class="mt-1.5 w-2 h-2 rounded-full shrink-0"
+                    aria-hidden="true"
                     :class="{
                         'bg-emerald-500': toast.type === 'success',
                         'bg-rose-500': toast.type === 'danger',
                         'bg-amber-500': toast.type === 'warning',
-                        'bg-brand-600': toast.type === 'info' || !toast.type
+                        'bg-blue-600': toast.type === 'info' || !toast.type
                     }"
                 ></span>
-                <span x-text="toast.message" class="text-xs sm:text-sm"></span>
+                <span x-text="toast.message" class="text-sm leading-relaxed break-words [overflow-wrap:anywhere]"></span>
             </div>
 
             <button

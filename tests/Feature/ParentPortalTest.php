@@ -21,6 +21,7 @@ use App\Models\TeachingAssignment;
 use App\Models\User;
 use App\Notifications\NewSchoolAnnouncementNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class ParentPortalTest extends TestCase
@@ -221,6 +222,47 @@ class ParentPortalTest extends TestCase
         $response->assertSee('Anak Pertama');
         $response->assertSee('X-MIPA-1');
         $response->assertSee('Wali Murid Resmi');
+    }
+
+    #[DataProvider('academicMenus')]
+    public function test_child_switcher_keeps_the_current_academic_menu(string $routeName): void
+    {
+        foreach ([$this->student, $this->studentTwo] as $student) {
+            ParentStudentRelation::factory()->create([
+                'school_id' => $this->school->id,
+                'parent_id' => $this->parent->id,
+                'student_id' => $student->id,
+                'relationship_type' => 'father',
+                'status' => 'active',
+                'verified_at' => now(),
+            ]);
+        }
+
+        $childUrl = route('parent.switch-child', ['child' => $this->studentTwo->id]);
+
+        $this->actingAs($this->parent)->get(route($routeName))
+            ->assertOk()
+            ->assertSee('href="'.$childUrl.'"', false)
+            ->assertSee('data-child-menu="'.route($routeName).'"', false);
+
+        $this->post($childUrl)->assertRedirect(route('parent.dashboard'));
+
+        $this->get(route($routeName))
+            ->assertOk()
+            ->assertViewHas('activeChild', fn (User $child): bool => $child->is($this->studentTwo));
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function academicMenus(): array
+    {
+        return [
+            'attendance' => ['parent.attendance'],
+            'assignments' => ['parent.assignments'],
+            'grades' => ['parent.grades'],
+            'reports' => ['parent.reports'],
+        ];
     }
 
     /**

@@ -25,7 +25,7 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-zinc-700 mb-1">Pilih Akun Orang Tua / Wali *</label>
-                    <select name="parent_id" required class="w-full text-xs rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <select name="parent_id" required class="w-full text-xs rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                         <option value="">-- Pilih Orang Tua / Wali --</option>
                         @foreach ($parents as $p)
                             <option value="{{ $p->id }}" {{ old('parent_id') == $p->id ? 'selected' : '' }}>
@@ -40,7 +40,7 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-zinc-700 mb-1">Pilih Akun Siswa (Anak) *</label>
-                    <select name="student_id" required class="w-full text-xs rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <select name="student_id" required class="w-full text-xs rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                         <option value="">-- Pilih Siswa --</option>
                         @foreach ($students as $s)
                             <option value="{{ $s->id }}" {{ old('student_id') == $s->id ? 'selected' : '' }}>
@@ -56,7 +56,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-zinc-700 mb-1">Jenis Hubungan *</label>
-                        <select name="relationship_type" required class="w-full text-xs rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                        <select name="relationship_type" required class="w-full text-xs rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                             <option value="father" {{ old('relationship_type') === 'father' ? 'selected' : '' }}>Ayah Kandung</option>
                             <option value="mother" {{ old('relationship_type') === 'mother' ? 'selected' : '' }}>Ibu Kandung</option>
                             <option value="guardian" {{ old('relationship_type') === 'guardian' ? 'selected' : '' }}>Wali Murid</option>
@@ -66,7 +66,7 @@
 
                     <div>
                         <label class="block text-xs font-semibold text-zinc-700 mb-1">Status Verifikasi *</label>
-                        <select name="status" required class="w-full text-xs rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                        <select name="status" required class="w-full text-xs rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                             <option value="active" {{ old('status') === 'active' ? 'selected' : '' }}>Langsung Aktif & Terverifikasi</option>
                             <option value="pending" {{ old('status') === 'pending' ? 'selected' : '' }}>Menunggu Verifikasi</option>
                         </select>
@@ -75,12 +75,12 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-zinc-700 mb-1">Catatan Tambahan (Opsional)</label>
-                    <textarea name="notes" rows="2" placeholder="Catatan verifikasi dokumen / keterangan keluarga..." class="w-full text-xs rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">{{ old('notes') }}</textarea>
+                    <textarea name="notes" rows="2" placeholder="Catatan verifikasi dokumen / keterangan keluarga..." class="w-full text-xs rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">{{ old('notes') }}</textarea>
                 </div>
 
                 <div class="pt-4 border-t border-zinc-100 flex items-center justify-end gap-3">
                     <a href="{{ route('admin.parents.index') }}" class="px-4 py-2 rounded-xl text-xs font-semibold text-zinc-600 hover:bg-zinc-100">Batal</a>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#E11D2E] hover:bg-[#C81423] text-white shadow-xs transition-colors">
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs transition-colors">
                         Simpan Relasi
                     </button>
                 </div>

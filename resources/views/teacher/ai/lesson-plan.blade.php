@@ -1,6 +1,7 @@
 <x-app-layout>
+    <x-slot:headerTitle>Penyusun Modul Ajar / RPP</x-slot:headerTitle>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2 mb-1">
                     <a href="{{ route('teacher.ai.index') }}" class="text-xs text-zinc-500 hover:text-zinc-900 inline-flex items-center gap-1 font-medium transition-colors">
@@ -9,7 +10,7 @@
                     <span class="text-zinc-300">&bull;</span>
                     <span class="text-[10px] font-bold tracking-widest uppercase text-brand-600 font-sans">GENERATOR MODUL AJAR</span>
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-serif font-bold text-zinc-900 tracking-tight">
+                <h1 class="text-2xl sm:text-3xl font-sans font-bold text-zinc-900 tracking-tight">
                     Penyusun Modul Ajar / RPP
                 </h1>
                 <p class="text-xs sm:text-sm text-zinc-500 mt-1">
@@ -129,7 +130,7 @@
                                 Batal
                             </a>
                             <button type="submit" :disabled="submitting"
-                                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#E11D2E] hover:bg-[#c81926] text-white text-xs font-semibold shadow-xs disabled:opacity-60 transition-colors">
+                                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-xs disabled:opacity-60 transition-colors">
                                 <svg x-show="submitting" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>

@@ -1,7 +1,8 @@
 <x-app-layout>
+    <x-slot:headerTitle>Pusat Operasional Sekolah</x-slot:headerTitle>
     <div class="space-y-6">
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-zinc-200">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-zinc-200">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight text-zinc-900">Pusat Operasional Sekolah</h1>
                 <p class="text-sm text-zinc-500 mt-1">Ikhtisar tata kelola operasional: PPDB, perpustakaan, aset sarpras, fasilitas/lab, dan persuratan resmi.</p>
@@ -31,7 +32,7 @@
             <div class="bg-white rounded-2xl p-5 border border-zinc-200/80 shadow-xs hover:border-red-200 transition-all">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider">PPDB / SPMB</span>
-                    <span class="p-2 bg-red-50 text-[#E11D2E] rounded-xl">
+                    <span class="p-2 bg-red-50 text-brand-600 rounded-xl">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
                         </svg>
@@ -45,7 +46,7 @@
                     <span>{{ $ppdbAccepted }} Diterima</span>
                     <span class="text-emerald-600 font-semibold">{{ $ppdbEnrolled }} Terdaftar</span>
                 </div>
-                <a href="{{ route('admissions.dashboard') }}" class="block mt-3 text-xs font-semibold text-[#E11D2E] hover:underline">Kelola PPDB &rarr;</a>
+                <a href="{{ route('admissions.dashboard') }}" class="block mt-3 text-xs font-semibold text-brand-600 hover:underline">Kelola PPDB &rarr;</a>
             </div>
 
             <!-- Library Summary -->

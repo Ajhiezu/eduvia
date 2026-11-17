@@ -1,6 +1,7 @@
 <x-app-layout>
+    <x-slot:headerTitle>{{ $book->title }}</x-slot:headerTitle>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="flex items-center gap-3">
                 <x-button href="{{ route('operations.library.books.index') }}" variant="ghost" size="sm">
                     &larr; Katalog
@@ -22,7 +23,7 @@
                 <x-button href="{{ route('operations.library.books.edit', $book) }}" variant="secondary" size="sm">
                     Edit Buku
                 </x-button>
-                <form action="{{ route('operations.library.books.destroy', $book) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus buku ini beserta seluruh eksemplarnya?')">
+                <form action="{{ route('operations.library.books.destroy', $book) }}" method="POST" data-confirm="Apakah Anda yakin ingin menghapus buku ini beserta seluruh eksemplarnya?">
                     @csrf
                     @method('DELETE')
                     <x-button type="submit" variant="danger" size="sm">Hapus</x-button>

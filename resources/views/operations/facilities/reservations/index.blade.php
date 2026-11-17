@@ -1,6 +1,7 @@
 <x-app-layout>
+    <x-slot:headerTitle>Jadwal & Reservasi Fasilitas</x-slot:headerTitle>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight text-zinc-900">Jadwal & Reservasi Fasilitas</h1>
                 <p class="text-sm text-zinc-500 mt-1">Kelola permohonan peminjaman laboratorium, bengkel praktik, aula, dan ruang rapat.</p>
@@ -28,7 +29,7 @@
         <div class="bg-white p-4 rounded-2xl border border-zinc-200 shadow-xs">
             <form method="GET" action="{{ route('operations.facilities.reservations.index') }}" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
                 <div>
-                    <select name="room_id" class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <select name="room_id" class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                         <option value="">Semua Ruangan / Lab</option>
                         @foreach($rooms as $r)
                             <option value="{{ $r->id }}" {{ $roomId == $r->id ? 'selected' : '' }}>{{ $r->name }}</option>
@@ -36,7 +37,7 @@
                     </select>
                 </div>
                 <div>
-                    <select name="status" class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <select name="status" class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                         <option value="">Semua Status</option>
                         <option value="pending" {{ $status === 'pending' ? 'selected' : '' }}>Menunggu Persetujuan</option>
                         <option value="approved" {{ $status === 'approved' ? 'selected' : '' }}>Disetujui</option>
@@ -45,7 +46,7 @@
                     </select>
                 </div>
                 <div>
-                    <input type="date" name="date" value="{{ $date }}" class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <input type="date" name="date" value="{{ $date }}" class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                 </div>
                 <div>
                     <x-button type="submit" variant="secondary" size="md" class="w-full justify-center">Filter</x-button>
@@ -103,13 +104,13 @@
                                             </form>
 
                                             <!-- Simple Reject Form -->
-                                            <form action="{{ route('operations.facilities.reservations.reject', $res) }}" method="POST" onsubmit="return confirm('Tolak permohonan reservasi ini?')">
+                                            <form action="{{ route('operations.facilities.reservations.reject', $res) }}" method="POST" data-confirm="Tolak permohonan reservasi ini?">
                                                 @csrf
                                                 <input type="hidden" name="rejection_reason" value="Jadwal ruangan bertabrakan atau ruangan sedang dalam pemeliharaan berkala.">
                                                 <x-button type="submit" variant="secondary" size="xs">Tolak</x-button>
                                             </form>
                                         @elseif($res->status === 'approved')
-                                            <form action="{{ route('operations.facilities.reservations.cancel', $res) }}" method="POST" onsubmit="return confirm('Batalkan jadwal peminjaman ini?')">
+                                            <form action="{{ route('operations.facilities.reservations.cancel', $res) }}" method="POST" data-confirm="Batalkan jadwal peminjaman ini?">
                                                 @csrf
                                                 <x-button type="submit" variant="ghost" size="xs" class="text-zinc-500 hover:text-rose-600">Batalkan</x-button>
                                             </form>

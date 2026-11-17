@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot:headerTitle>Edit Data Fasilitas</x-slot:headerTitle>
     <x-slot name="header">
         <div class="flex items-center gap-3">
             <x-button href="{{ route('operations.facilities.rooms.show', $room) }}" variant="ghost" size="sm">
@@ -28,7 +29,7 @@
 
                     <div>
                         <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Jenis Fasilitas <span class="text-rose-500">*</span></label>
-                        <select name="type" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                        <select name="type" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                             @foreach($roomTypes as $k => $label)
                                 <option value="{{ $k }}" {{ old('type', $room->type) === $k ? 'selected' : '' }}>{{ $label }}</option>
                             @endforeach
@@ -49,7 +50,7 @@
 
                     <div>
                         <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Status Aktif <span class="text-rose-500">*</span></label>
-                        <select name="is_active" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                        <select name="is_active" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                             <option value="1" {{ old('is_active', $room->is_active) ? 'selected' : '' }}>Aktif</option>
                             <option value="0" {{ !old('is_active', $room->is_active) ? 'selected' : '' }}>Nonaktif</option>
                         </select>
@@ -57,7 +58,7 @@
 
                     <div class="md:col-span-2">
                         <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Deskripsi Fasilitas & Peralatan Tersedia</label>
-                        <textarea name="facilities_description" rows="3" class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">{{ old('facilities_description', $room->facilities_description) }}</textarea>
+                        <textarea name="facilities_description" rows="3" class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">{{ old('facilities_description', $room->facilities_description) }}</textarea>
                     </div>
                 </div>
 

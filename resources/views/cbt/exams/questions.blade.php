@@ -23,7 +23,7 @@
         @endif
 
         <!-- Action & Navigation Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <a href="{{ route('exams.index') }}" class="inline-flex items-center text-xs font-semibold text-zinc-500 hover:text-zinc-800 transition-colors mb-1">
                     <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -51,7 +51,7 @@
                         </x-button>
                     </form>
                 @elseif ($exam->status === \App\Models\Exam::STATUS_PUBLISHED)
-                    <form action="{{ route('exams.close', $exam) }}" method="POST" onsubmit="return confirm('Tutup ujian ini?');">
+                    <form action="{{ route('exams.close', $exam) }}" method="POST" data-confirm="Tutup ujian ini?">
                         @csrf
                         <x-button type="submit" variant="secondary" size="sm">
                             Tutup Ujian
@@ -154,7 +154,7 @@
                                     </div>
 
                                     @if ($exam->status !== \App\Models\Exam::STATUS_CLOSED)
-                                        <form action="{{ route('exams.questions.remove', [$exam, $item]) }}" method="POST" onsubmit="return confirm('Hapus soal ini dari paket ujian?');">
+                                        <form action="{{ route('exams.questions.remove', [$exam, $item]) }}" method="POST" data-confirm="Hapus soal ini dari paket ujian?">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="p-1 text-zinc-400 hover:text-red-600 rounded transition-colors" title="Keluarkan Soal">

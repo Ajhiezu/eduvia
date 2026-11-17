@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot:headerTitle>Laporan & Rekapitulasi Sarana Prasarana</x-slot:headerTitle>
     <x-slot name="header">
         <div class="flex items-center gap-3">
             <x-button href="{{ route('operations.inventory.assets.index') }}" variant="ghost" size="sm">

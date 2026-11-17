@@ -1,7 +1,8 @@
 <x-app-layout>
+    <x-slot:headerTitle>{{ $invoice->invoice_number }}</x-slot:headerTitle>
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-zinc-200">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-zinc-200">
             <div>
                 <nav class="flex items-center gap-2 text-xs text-zinc-500 mb-2">
                     <a href="{{ route('student.finance.index') }}" class="hover:text-zinc-800">Tagihan Saya</a>
@@ -46,7 +47,7 @@
                 </div>
                 <div class="flex justify-between text-sm font-bold pt-2 border-t border-zinc-100 text-zinc-900">
                     <span>Sisa Piutang:</span>
-                    <span class="{{ $invoice->remaining_balance > 0 ? 'text-[#E11D2E]' : 'text-emerald-700' }} font-mono">
+                    <span class="{{ $invoice->remaining_balance > 0 ? 'text-brand-600' : 'text-emerald-700' }} font-mono">
                         {{ $invoice->formatted_remaining }}
                     </span>
                 </div>

@@ -18,7 +18,7 @@
         @endif
 
         <!-- Action & Navigation Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <a href="{{ route('assignments.show', $assignment) }}" class="inline-flex items-center gap-1.5 text-xs text-zinc-500 hover:text-brand-600 mb-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -272,7 +272,7 @@
 
                 <!-- Request Revision Card -->
                 <x-card padding class="border-zinc-200">
-                    <form action="{{ route('assignments.submissions.request-revision', [$assignment, $submission]) }}" method="POST" class="space-y-3" onsubmit="return confirm('Minta siswa mengulang atau merevisi jawaban tugas ini?');">
+                    <form action="{{ route('assignments.submissions.request-revision', [$assignment, $submission]) }}" method="POST" class="space-y-3" data-confirm="Minta siswa mengulang atau merevisi jawaban tugas ini?">
                         @csrf
                         <div class="pb-2 border-b border-zinc-100">
                             <h2 class="text-xs font-bold uppercase tracking-wider text-amber-700 flex items-center gap-1.5">

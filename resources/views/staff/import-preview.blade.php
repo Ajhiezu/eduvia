@@ -5,7 +5,7 @@
 
     <div class="space-y-6">
         <!-- Breadcrumb & Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2 text-xs text-zinc-500 mb-1">
                     <a href="{{ route('staff.index') }}" class="hover:text-brand-600 transition-colors">Pendidik & Staf</a>
@@ -143,7 +143,7 @@
                     </x-button>
 
                     @if (count($validItems) > 0)
-                        <form method="POST" action="{{ route('staff.import.process') }}" onsubmit="return confirm('Proses impor sebanyak {{ count($validItems) }} pegawai?');" class="w-full sm:w-auto">
+                        <form method="POST" action="{{ route('staff.import.process') }}" data-confirm="Proses impor sebanyak {{ count($validItems) }} pegawai?" class="w-full sm:w-auto">
                             @csrf
                             <input type="hidden" name="items" value="{{ json_encode($validItems) }}">
                             <x-button type="submit" variant="primary" size="md" class="w-full sm:w-auto justify-center">

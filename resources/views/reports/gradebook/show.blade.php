@@ -64,7 +64,7 @@
                         Edit Nilai / Deskripsi
                     </x-button>
 
-                    <form action="{{ route('reports.gradebook.submit', $gradebook) }}" method="POST" onsubmit="return confirm('Kirimkan rekap nilai ini untuk verifikasi pihak sekolah? Nilai akan dikunci sementara.');">
+                    <form action="{{ route('reports.gradebook.submit', $gradebook) }}" method="POST" data-confirm="Kirimkan rekap nilai ini untuk verifikasi pihak sekolah? Nilai akan dikunci sementara.">
                         @csrf
                         <x-button type="submit" variant="primary" size="sm">
                             <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -108,7 +108,7 @@
             $kkm = $weights['passing_grade'] ?? 75;
         @endphp
         <x-card padding class="border-zinc-200 bg-zinc-50/50">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
+            <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
                 <div class="space-y-1">
                     <span class="font-bold text-zinc-900 uppercase text-[11px] tracking-wider">Formula Pembobotan Terapan:</span>
                     <div class="text-zinc-600">

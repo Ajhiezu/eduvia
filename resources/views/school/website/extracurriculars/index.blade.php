@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('headerTitle')Kelola Kegiatan Ekstrakurikuler@endsection
+
 @section('content')
 <div class="space-y-6">
 
@@ -84,7 +86,7 @@
                                         <a href="{{ route('website.extracurriculars.edit', $item) }}" class="px-2.5 py-1 text-[11px] font-semibold rounded bg-zinc-100 hover:bg-zinc-200 text-zinc-800 transition-colors">
                                             Edit
                                         </a>
-                                        <form method="POST" action="{{ route('website.extracurriculars.destroy', $item) }}" onsubmit="return confirm('Hapus ekstrakurikuler ini?');">
+                                        <form method="POST" action="{{ route('website.extracurriculars.destroy', $item) }}" data-confirm="Hapus ekstrakurikuler ini?">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="px-2 py-1 text-[11px] font-semibold rounded hover:bg-rose-50 text-rose-600 transition-colors">

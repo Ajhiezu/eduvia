@@ -1,7 +1,8 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8" x-data="{ showRejectModal: false, activePaymentId: null, activePaymentNumber: '' }">
+    <x-slot:headerTitle>Antrean Verifikasi Pembayaran</x-slot:headerTitle>
+    <div class="space-y-6" x-data="{ showRejectModal: false, activePaymentId: null, activePaymentNumber: '' }">
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-zinc-200">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-zinc-200">
             <div>
                 <nav class="flex items-center gap-2 text-xs text-zinc-500 mb-2">
                     <a href="{{ route('finance.payments.index') }}" class="hover:text-zinc-800">Riwayat Pembayaran</a>
@@ -95,7 +96,7 @@
                                 <td class="px-5 py-3.5 text-right">
                                     <div class="flex items-center justify-end gap-2">
                                         <!-- Approve Form -->
-                                        <form method="POST" action="{{ route('finance.payments.verify', $item) }}" onsubmit="return confirm('Verifikasi pembayaran ini? Kuitansi resmi akan diterbitkan otomatis.');">
+                                        <form method="POST" action="{{ route('finance.payments.verify', $item) }}" data-confirm="Verifikasi pembayaran ini? Kuitansi resmi akan diterbitkan otomatis.">
                                             @csrf
                                             <button
                                                 type="submit"

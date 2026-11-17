@@ -18,7 +18,7 @@
         @endif
 
         <!-- Action & Navigation Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
                     Tugas & Evaluasi Pembelajaran
@@ -81,19 +81,19 @@
         </x-card>
 
         <!-- Assignments Table / Cards -->
-        <x-card padding="none" class="overflow-hidden">
+        <x-card :padding="false" class="overflow-hidden">
             @if ($assignments->isEmpty())
-                <div class="p-8 text-center">
-                    <div class="w-12 h-12 rounded-full bg-zinc-100 text-zinc-400 mx-auto flex items-center justify-center mb-3">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-sm font-bold text-zinc-800">Tidak ada tugas ditemukan</h3>
-                    <p class="text-xs text-zinc-400 mt-1 max-w-sm mx-auto">
-                        Saat ini belum ada tugas yang perlu dikerjakan atau sesuai kriteria pencarianmu.
-                    </p>
-                </div>
+                <x-empty-state
+                    :title="request('search') ? 'Tugas tidak ditemukan' : 'Belum ada tugas untukmu'"
+                    :description="request('search') ? 'Coba kata kunci lain atau hapus pencarian untuk melihat semua tugas.' : 'Tugas dari guru akan muncul di sini. Periksa kembali setelah kegiatan pembelajaran berikutnya.'"
+                    class="border-0"
+                >
+                    @if (request('search'))
+                        <x-slot:action>
+                            <x-button href="{{ route('student.assignments.index') }}" variant="secondary" size="sm">Hapus pencarian</x-button>
+                        </x-slot:action>
+                    @endif
+                </x-empty-state>
             @else
                 <div class="overflow-x-auto" data-scrollable>
                     <table class="w-full text-left text-xs min-w-[640px]">

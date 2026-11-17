@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot:headerTitle>Edit Data Aset</x-slot:headerTitle>
     <x-slot name="header">
         <div class="flex items-center gap-3">
             <x-button href="{{ route('operations.inventory.assets.show', $asset) }}" variant="ghost" size="sm">
@@ -20,7 +21,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Kategori Aset <span class="text-rose-500">*</span></label>
-                        <select name="inventory_category_id" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                        <select name="inventory_category_id" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                             @foreach($categories as $cat)
                                 <option value="{{ $cat->id }}" {{ old('inventory_category_id', $asset->inventory_category_id) == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
                             @endforeach
@@ -49,7 +50,7 @@
 
                     <div>
                         <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Status Penggunaan <span class="text-rose-500">*</span></label>
-                        <select name="status" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                        <select name="status" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                             <option value="in_use" {{ old('status', $asset->status) === 'in_use' ? 'selected' : '' }}>Sedang Digunakan</option>
                             <option value="in_storage" {{ old('status', $asset->status) === 'in_storage' ? 'selected' : '' }}>Tersimpan di Gudang</option>
                             <option value="maintenance" {{ old('status', $asset->status) === 'maintenance' ? 'selected' : '' }}>Dalam Perbaikan</option>
@@ -71,7 +72,7 @@
 
                     <div class="md:col-span-2">
                         <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Catatan Spesifikasi Aset</label>
-                        <textarea name="notes" rows="3" class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">{{ old('notes', $asset->notes) }}</textarea>
+                        <textarea name="notes" rows="3" class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">{{ old('notes', $asset->notes) }}</textarea>
                     </div>
                 </div>
 

@@ -17,7 +17,7 @@
         @endif
 
         <!-- Action & Navigation Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
                     Bank Soal Ujian (CBT)
@@ -198,7 +198,7 @@
                                             </svg>
                                         </a>
 
-                                        <form action="{{ route('exam-questions.destroy', $q) }}" method="POST" onsubmit="return confirm('Hapus atau arsipkan butir soal ini?');" class="inline">
+                                        <form action="{{ route('exam-questions.destroy', $q) }}" method="POST" data-confirm="Hapus atau arsipkan butir soal ini?" class="inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-md transition-colors" title="Hapus Soal">

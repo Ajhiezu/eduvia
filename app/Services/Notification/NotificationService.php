@@ -21,7 +21,7 @@ class NotificationService
     /**
      * Send notification payload across permitted channels.
      *
-     * @return array<string, array{success: bool, recipient: string, error?: string|null}>
+     * @return array<string, array{success: bool, recipient: string, status?: string, error?: string|null}>
      */
     public function send(NotificationPayload $payload): array
     {
@@ -44,7 +44,6 @@ class NotificationService
 
             return ['deduplicated' => ['success' => false, 'recipient' => 'throttled', 'error' => 'Deduplicated']];
         }
-        Cache::put($dedupKey, true, 60);
 
         // 2. Fetch User Notification Preferences
         $pref = NotificationPreference::where('user_id', $payload->userId)->first();
@@ -81,7 +80,7 @@ class NotificationService
                 'recipient' => $fcmRes['recipient'],
                 'title' => $payload->title,
                 'body_preview' => mb_substr($payload->body, 0, 500),
-                'status' => $fcmRes['success'] ? 'sent' : 'failed',
+                'status' => $fcmRes['status'] ?? ($fcmRes['success'] ? 'sent' : 'failed'),
                 'error_message' => $fcmRes['error'] ?? null,
                 'sent_at' => $fcmRes['success'] ? now() : null,
             ]);
@@ -101,7 +100,7 @@ class NotificationService
                 'recipient' => $waRes['recipient'],
                 'title' => $payload->title,
                 'body_preview' => mb_substr($payload->body, 0, 500),
-                'status' => $waRes['success'] ? 'sent' : 'failed',
+                'status' => $waRes['status'] ?? ($waRes['success'] ? 'sent' : 'failed'),
                 'error_message' => $waRes['error'] ?? null,
                 'sent_at' => $waRes['success'] ? now() : null,
             ]);
@@ -121,10 +120,14 @@ class NotificationService
                 'recipient' => $mailRes['recipient'],
                 'title' => $payload->title,
                 'body_preview' => mb_substr($payload->body, 0, 500),
-                'status' => $mailRes['success'] ? 'sent' : 'failed',
+                'status' => $mailRes['status'] ?? ($mailRes['success'] ? 'sent' : 'failed'),
                 'error_message' => $mailRes['error'] ?? null,
                 'sent_at' => $mailRes['success'] ? now() : null,
             ]);
+        }
+
+        if (collect($results)->contains(fn (array $result): bool => $result['success'])) {
+            Cache::put($dedupKey, true, 60);
         }
 
         return $results;

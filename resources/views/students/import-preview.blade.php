@@ -5,7 +5,7 @@
 
     <div class="space-y-6">
         <!-- Breadcrumb & Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2 text-xs text-zinc-500 mb-1">
                     <a href="{{ route('students.index') }}" class="hover:text-brand-600 transition-colors">Peserta Didik</a>

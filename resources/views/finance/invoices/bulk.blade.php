@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot:headerTitle>Penerbitan Tagihan Massal (SPP)</x-slot:headerTitle>
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         <!-- Header -->
         <div class="flex items-center justify-between pb-6 border-b border-zinc-200">
@@ -38,7 +39,7 @@
             </p>
         </div>
 
-        <form method="POST" action="{{ route('finance.invoices.bulk.store') }}" class="space-y-6" onsubmit="return confirm('Apakah Anda yakin ingin menerbitkan tagihan massal untuk kriteria ini?');">
+        <form method="POST" action="{{ route('finance.invoices.bulk.store') }}" class="space-y-6" data-confirm="Apakah Anda yakin ingin menerbitkan tagihan massal untuk kriteria ini?">
             @csrf
 
             <div class="bg-white p-6 rounded-2xl border border-zinc-200 shadow-xs space-y-4 text-xs">
@@ -120,7 +121,7 @@
                 <a href="{{ route('finance.invoices.index') }}" class="px-5 py-2.5 rounded-lg border border-zinc-300 text-zinc-700 text-xs font-semibold hover:bg-zinc-50">
                     Batal
                 </a>
-                <button type="submit" class="px-6 py-2.5 rounded-lg bg-[#E11D2E] text-white text-xs font-semibold hover:bg-[#c81926] shadow-sm">
+                <button type="submit" class="px-6 py-2.5 rounded-lg bg-brand-600 text-white text-xs font-semibold hover:bg-brand-700 shadow-sm">
                     Mulai Terbitkan Tagihan Massal
                 </button>
             </div>

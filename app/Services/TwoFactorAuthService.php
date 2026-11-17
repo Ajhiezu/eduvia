@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class TwoFactorAuthService
@@ -43,7 +45,7 @@ class TwoFactorAuthService
      */
     public function calculateCode(string $secret, ?int $timestamp = null): string
     {
-        $timestamp = $timestamp ?? time();
+        $timestamp = $timestamp ?? now()->timestamp;
         $timeSlice = (int) floor($timestamp / 30);
 
         $secretBinary = $this->base32Decode($secret);
@@ -69,7 +71,7 @@ class TwoFactorAuthService
      */
     public function verifyCode(string $secret, string $code, int $discrepancy = 1): bool
     {
-        $currentTime = time();
+        $currentTime = now()->timestamp;
         $code = trim($code);
 
         for ($i = -$discrepancy; $i <= $discrepancy; $i++) {
@@ -84,6 +86,8 @@ class TwoFactorAuthService
 
     /**
      * Generate a batch of random alphanumeric recovery codes.
+     *
+     * @return list<string>
      */
     public function generateRecoveryCodes(int $count = 8): array
     {
@@ -97,14 +101,17 @@ class TwoFactorAuthService
 
     /**
      * Enable 2FA on a user.
+     *
+     * @param  list<string>  $recoveryCodes
      */
     public function enable(User $user, string $secret, array $recoveryCodes): void
     {
-        $user->update([
+        $user->forceFill([
             'two_factor_secret' => encrypt($secret),
-            'two_factor_recovery_codes' => encrypt(json_encode($recoveryCodes)),
+            'two_factor_recovery_codes' => encrypt(json_encode($recoveryCodes, JSON_THROW_ON_ERROR)),
             'two_factor_confirmed_at' => now(),
-        ]);
+            'remember_token' => Str::random(60),
+        ])->save();
     }
 
     /**
@@ -112,11 +119,12 @@ class TwoFactorAuthService
      */
     public function disable(User $user): void
     {
-        $user->update([
+        $user->forceFill([
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
             'two_factor_confirmed_at' => null,
-        ]);
+            'remember_token' => Str::random(60),
+        ])->save();
     }
 
     /**
@@ -124,28 +132,46 @@ class TwoFactorAuthService
      */
     public function verifyAndConsumeRecoveryCode(User $user, string $code): bool
     {
-        if (! $user->two_factor_recovery_codes) {
-            return false;
-        }
+        return DB::transaction(function () use ($user, $code): bool {
+            $lockedUser = User::whereKey($user->id)->lockForUpdate()->firstOrFail();
 
-        $codes = json_decode(decrypt($user->two_factor_recovery_codes), true);
-        if (! is_array($codes)) {
-            return false;
-        }
+            if (! $lockedUser->two_factor_recovery_codes) {
+                return false;
+            }
 
-        $code = strtoupper(trim($code));
-        $key = array_search($code, $codes, true);
+            $codes = json_decode(decrypt($lockedUser->two_factor_recovery_codes), true);
+            if (! is_array($codes)) {
+                return false;
+            }
 
-        if ($key !== false) {
+            $key = array_search(strtoupper(trim($code)), $codes, true);
+            if ($key === false) {
+                return false;
+            }
+
             unset($codes[$key]);
-            $user->update([
-                'two_factor_recovery_codes' => encrypt(json_encode(array_values($codes))),
+            $lockedUser->update([
+                'two_factor_recovery_codes' => encrypt(json_encode(array_values($codes), JSON_THROW_ON_ERROR)),
             ]);
 
             return true;
+        });
+    }
+
+    public function verifyForUser(User $user, string $code): bool
+    {
+        if (! $user->two_factor_confirmed_at || ! $user->two_factor_secret || $code === '') {
+            return false;
         }
 
-        return false;
+        if (preg_match('/^\d{6}$/D', $code) === 1) {
+            $secret = decrypt($user->two_factor_secret);
+
+            return $this->verifyCode($secret, $code)
+                && Cache::add('two_factor_used:'.$user->id.':'.hash('sha256', $secret.$code), true, 90);
+        }
+
+        return $this->verifyAndConsumeRecoveryCode($user, $code);
     }
 
     /**

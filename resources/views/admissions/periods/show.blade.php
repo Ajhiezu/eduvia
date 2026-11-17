@@ -12,7 +12,7 @@
         @endif
 
         <!-- Back Navigation & Title -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2">
                     <x-button href="{{ route('admissions.periods.index') }}" variant="secondary" size="xs">

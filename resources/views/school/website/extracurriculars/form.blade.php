@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('headerTitle'){{ $item->exists ? 'Edit Ekstrakurikuler' : 'Tambah Ekstrakurikuler Baru' }}@endsection
+
 @section('content')
 <div class="max-w-3xl mx-auto space-y-6">
 

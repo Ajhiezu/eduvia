@@ -1,6 +1,7 @@
 <x-app-layout>
+    <x-slot:headerTitle>Inventaris & Sarana Prasarana</x-slot:headerTitle>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight text-zinc-900">Inventaris & Sarana Prasarana</h1>
                 <p class="text-sm text-zinc-500 mt-1">Registrasi aset, mutasi lokasi, inspeksi kondisi fisik, dan nilai perolehan sarpras sekolah.</p>
@@ -47,7 +48,7 @@
                     <x-input type="text" name="search" :value="$search" placeholder="Cari nama aset, kode, lokasi ruangan, merk..." />
                 </div>
                 <div>
-                    <select name="condition" class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <select name="condition" class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                         <option value="">Semua Kondisi</option>
                         <option value="good" {{ $condition === 'good' ? 'selected' : '' }}>Baik</option>
                         <option value="minor_damage" {{ $condition === 'minor_damage' ? 'selected' : '' }}>Rusak Ringan</option>
@@ -93,7 +94,7 @@
                                 </td>
                                 <td class="px-4 py-3 font-mono text-zinc-700">{{ $asset->formattedCost() }}</td>
                                 <td class="px-4 py-3 text-right">
-                                    <a href="{{ route('operations.inventory.assets.show', $asset) }}" class="text-xs font-bold text-[#E11D2E] hover:underline">
+                                    <a href="{{ route('operations.inventory.assets.show', $asset) }}" class="text-xs font-bold text-brand-600 hover:underline">
                                         Rincian &rarr;
                                     </a>
                                 </td>

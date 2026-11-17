@@ -12,6 +12,7 @@ use App\Http\Controllers\AssignmentGradingController;
 use App\Http\Controllers\AttendanceReportController;
 use App\Http\Controllers\AttendanceSessionController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\TwoFactorAuthenticationController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\ClassroomStudentController;
 use App\Http\Controllers\CorrespondenceController;
@@ -109,6 +110,10 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 
 // Protected Application Shell (Phase 0 Foundation)
 Route::middleware('auth')->group(function () {
+    Route::get('/account/security', [TwoFactorAuthenticationController::class, 'show'])->name('account.security');
+    Route::post('/account/two-factor/setup', [TwoFactorAuthenticationController::class, 'setup'])->middleware('throttle:5,1')->name('account.two-factor.setup');
+    Route::post('/account/two-factor/confirm', [TwoFactorAuthenticationController::class, 'confirm'])->middleware('throttle:5,1')->name('account.two-factor.confirm');
+    Route::delete('/account/two-factor', [TwoFactorAuthenticationController::class, 'destroy'])->middleware('throttle:5,1')->name('account.two-factor.destroy');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Foundation Verification Endpoint: Restricted to Administrative roles

@@ -6,7 +6,7 @@
     <div class="max-w-4xl mx-auto space-y-6">
 
         <!-- Top Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-zinc-200">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-zinc-200">
             <div>
                 <a href="{{ route('parent.dashboard') }}" class="text-xs text-zinc-500 hover:text-zinc-900 inline-flex items-center gap-1 font-semibold">
                     &larr; Kembali ke Dashboard
@@ -48,7 +48,7 @@
                                 value="{{ old('code') }}"
                                 placeholder="Contoh: EDUV-ABCD-1234"
                                 required
-                                class="w-full uppercase tracking-wider text-xs font-mono font-bold rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E] placeholder:normal-case placeholder:font-sans placeholder:font-normal"
+                                class="w-full uppercase tracking-wider text-xs font-mono font-bold rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E] placeholder:normal-case placeholder:font-sans placeholder:font-normal"
                             >
                             @error('code')
                                 <p class="text-xs text-rose-600 font-semibold mt-1">{{ $message }}</p>
@@ -56,7 +56,7 @@
                         </div>
                         <button
                             type="submit"
-                            class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl text-xs font-bold bg-[#E11D2E] hover:bg-[#C81423] text-white shadow-xs transition-colors shrink-0"
+                            class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-xs transition-colors shrink-0"
                         >
                             <span>Tautkan Akun</span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>

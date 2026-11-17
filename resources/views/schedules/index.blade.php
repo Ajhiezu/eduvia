@@ -24,7 +24,7 @@
         @endif
 
         <!-- Action & Navigation Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2">
                     <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
@@ -621,7 +621,7 @@
                                         Edit
                                     </x-button>
 
-                                    <form method="POST" action="{{ route('schedules.destroy', $item) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus jadwal ini?');">
+                                    <form method="POST" action="{{ route('schedules.destroy', $item) }}" data-confirm="Apakah Anda yakin ingin menghapus jadwal ini?">
                                         @csrf
                                         @method('DELETE')
                                         <button
@@ -749,7 +749,7 @@
                                                 </svg>
                                             </a>
 
-                                            <form method="POST" action="{{ route('schedules.destroy', $item) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus jadwal ini?');">
+                                            <form method="POST" action="{{ route('schedules.destroy', $item) }}" data-confirm="Apakah Anda yakin ingin menghapus jadwal ini?">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button

@@ -1,6 +1,7 @@
 <x-app-layout>
+    <x-slot:headerTitle>Katalog Buku Perpustakaan</x-slot:headerTitle>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="app-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight text-zinc-900">Katalog Buku Perpustakaan</h1>
                 <p class="text-sm text-zinc-500 mt-1">Daftar koleksi buku fisik dan sumber daya digital perpustakaan sekolah.</p>
@@ -31,7 +32,7 @@
                     <x-input type="text" name="search" :value="$search" placeholder="Cari judul buku, penulis, ISBN, atau nomor panggil..." />
                 </div>
                 <div class="flex gap-2">
-                    <select name="category" class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <select name="category" class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                         <option value="">Semua Kategori</option>
                         @foreach($categories as $cat)
                             <option value="{{ $cat }}" {{ $category === $cat ? 'selected' : '' }}>{{ $cat }}</option>
@@ -86,9 +87,17 @@
                     </div>
                 </div>
             @empty
-                <div class="col-span-full bg-white rounded-2xl p-12 text-center text-zinc-400 border border-zinc-200">
-                    <p class="text-sm font-medium">Belum ada buku dalam katalog perpustakaan sesuai kriteria pencarian.</p>
-                </div>
+                <x-empty-state
+                    class="col-span-full"
+                    :title="$search || $category ? 'Buku tidak ditemukan' : 'Katalog buku masih kosong'"
+                    :description="$search || $category ? 'Coba kata kunci lain atau hapus filter untuk melihat seluruh koleksi.' : 'Tambahkan koleksi buku melalui tombol Tambah Buku Baru di atas.'"
+                >
+                    @if ($search || $category)
+                        <x-slot:action>
+                            <x-button href="{{ route('operations.library.books.index') }}" variant="secondary" size="sm">Hapus filter</x-button>
+                        </x-slot:action>
+                    @endif
+                </x-empty-state>
             @endforelse
         </div>
 

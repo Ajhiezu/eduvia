@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('headerTitle')Kelola Galeri Media & Album Foto@endsection
+
 @section('content')
 <div class="space-y-6">
 
@@ -92,7 +94,7 @@
                                     <span class="text-[11px] font-semibold text-zinc-800 truncate" title="{{ $photo->title }}">
                                         {{ $photo->title }}
                                     </span>
-                                    <form method="POST" action="{{ route('website.galleries.destroy', $photo) }}" onsubmit="return confirm('Hapus foto ini?');">
+                                    <form method="POST" action="{{ route('website.galleries.destroy', $photo) }}" data-confirm="Hapus foto ini?">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-rose-500 hover:text-rose-700 p-1 text-xs shrink-0" title="Hapus foto">

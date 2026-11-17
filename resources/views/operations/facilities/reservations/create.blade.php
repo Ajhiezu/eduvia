@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot:headerTitle>Form Pengajuan Peminjaman Ruangan & Lab</x-slot:headerTitle>
     <x-slot name="header">
         <div class="flex items-center gap-3">
             <x-button href="{{ route('operations.facilities.reservations.index') }}" variant="ghost" size="sm">
@@ -18,7 +19,7 @@
 
                 <div>
                     <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Pilih Ruangan / Laboratorium <span class="text-rose-500">*</span></label>
-                    <select name="school_room_id" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]">
+                    <select name="school_room_id" required class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]">
                         <option value="">-- Pilih Fasilitas --</option>
                         @foreach($rooms as $r)
                             <option value="{{ $r->id }}" {{ (old('school_room_id') ?? request('room_id')) == $r->id ? 'selected' : '' }}>
@@ -51,7 +52,7 @@
 
                 <div>
                     <label class="block text-sm font-semibold text-zinc-700 mb-1.5">Catatan Tambahan / Kebutuhan Alat Khusus</label>
-                    <textarea name="notes" rows="2" class="w-full text-sm rounded-xl border-zinc-300 focus:border-[#E11D2E] focus:ring-[#E11D2E]" placeholder="Misal: Mohon disiapkan kabel HDMI dan mic wireless...">{{ old('notes') }}</textarea>
+                    <textarea name="notes" rows="2" class="w-full text-sm rounded-xl border-zinc-300 focus:border-brand-600 focus:ring-[#E11D2E]" placeholder="Misal: Mohon disiapkan kabel HDMI dan mic wireless...">{{ old('notes') }}</textarea>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-zinc-100">

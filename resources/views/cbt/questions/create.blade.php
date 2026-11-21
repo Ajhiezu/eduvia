@@ -95,13 +95,12 @@
                         <label class="block text-xs font-bold text-zinc-700 mb-1">
                             Jenjang / Tingkat Kelas
                         </label>
-                        <input
-                            type="text"
-                            name="grade_level"
-                            value="{{ old('grade_level') }}"
-                            placeholder="Contoh: 10, 11, 12, VII, dsb."
-                            class="w-full text-xs rounded-lg border-zinc-200 focus:border-brand-500 focus:ring-brand-500"
-                        />
+                        <select name="grade_level_id" class="w-full text-xs rounded-lg border-zinc-200 focus:border-brand-500 focus:ring-brand-500">
+                            <option value="">Semua tingkat kelas</option>
+                            @foreach ($gradeLevels as $gradeLevel)
+                                <option value="{{ $gradeLevel->id }}" @selected((string) old('grade_level_id') === (string) $gradeLevel->id)>{{ $gradeLevel->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
 

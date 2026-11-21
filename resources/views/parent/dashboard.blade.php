@@ -10,7 +10,7 @@
         <!-- ================================================================== -->
         <!-- TOP WELCOME & CHILD SWITCHER BAR                                   -->
         <!-- ================================================================== -->
-        <div class="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-6 shadow-xs">
+        <div class="workspace-parent-welcome bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-6 shadow-xs">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div class="flex items-center gap-3.5">
                     <div class="w-12 h-12 rounded-2xl bg-brand-50 border border-brand-200 text-brand-600 flex items-center justify-center font-extrabold text-xl shadow-xs shrink-0">
@@ -92,12 +92,11 @@
             <!-- ============================================================== -->
             <!-- ACTIVE CHILD PROFILE BANNER & ACADEMIC STATUS                  -->
             <!-- ============================================================== -->
-            <div class="bg-linear-to-r from-zinc-900 via-zinc-800 to-zinc-900 text-white rounded-2xl p-5 sm:p-6 shadow-md relative overflow-hidden">
-                <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-brand-600/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="workspace-child-card bg-white text-zinc-800 border border-zinc-200 rounded-2xl p-5 sm:p-6 relative">
 
                 <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
                     <div class="flex items-center gap-4">
-                        <div class="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 text-white flex items-center justify-center font-extrabold text-2xl shadow-inner shrink-0">
+                        <div class="w-16 h-16 rounded-2xl bg-brand-50 border border-brand-100 text-brand-700 flex items-center justify-center font-extrabold text-2xl shrink-0">
                             {{ substr($activeChild->name, 0, 2) }}
                         </div>
                         <div>
@@ -107,16 +106,16 @@
                                     {{ $activeChild->studentProfile?->student_status === 'active' ? 'Siswa Aktif' : ucfirst($activeChild->studentProfile?->student_status ?? 'Aktif') }}
                                 </span>
                             </div>
-                            <div class="flex items-center gap-2 sm:gap-4 text-xs text-zinc-300 mt-1 flex-wrap">
-                                <span>NIS: <strong class="text-white">{{ $activeChild->studentProfile?->nis ?? '-' }}</strong></span>
+                            <div class="flex items-center gap-2 sm:gap-4 text-xs text-zinc-500 mt-1 flex-wrap">
+                                <span>NIS: <strong class="text-zinc-800">{{ $activeChild->studentProfile?->nis ?? '-' }}</strong></span>
                                 <span>&bull;</span>
-                                <span>NISN: <strong class="text-white">{{ $activeChild->studentProfile?->nisn ?? '-' }}</strong></span>
+                                <span>NISN: <strong class="text-zinc-800">{{ $activeChild->studentProfile?->nisn ?? '-' }}</strong></span>
                                 <span>&bull;</span>
-                                <span>Kelas: <strong class="text-emerald-400">{{ $enrollment?->classroom?->name ?? 'Belum Ditentukan' }}</strong></span>
+                                <span>Kelas: <strong class="text-zinc-800">{{ $enrollment?->classroom?->name ?? 'Belum Ditentukan' }}</strong></span>
                             </div>
-                            <p class="text-[11px] text-zinc-400 mt-1">
-                                Wali Kelas: <span class="text-zinc-200 font-semibold">{{ $enrollment?->classroom?->homeroomTeacher?->name ?? 'Belum Ditugaskan' }}</span>
-                                &bull; {{ $enrollment?->classroom?->academicYear?->name ?? 'Tahun Ajaran Aktif' }}
+                            <p class="text-[11px] text-zinc-500 mt-1">
+                                Wali Kelas: <span class="text-zinc-700 font-semibold">{{ $enrollment?->classroom?->homeroomTeacher?->name ?? 'Belum Ditugaskan' }}</span>
+                                &bull; Tahun ajaran kelas: {{ $enrollment?->classroom?->academicYear?->name ?? 'Belum diatur' }}
                             </p>
                         </div>
                     </div>
@@ -153,9 +152,11 @@
                         </div>
                     </div>
                     <div>
-                        <div class="text-2xl font-extrabold text-zinc-900">
-                            {{ $attendanceSummary['percentage'] ?? 100 }}%
-                        </div>
+                        @if (($attendanceSummary['total'] ?? 0) > 0)
+                            <div class="text-2xl font-extrabold text-zinc-900">{{ $attendanceSummary['percentage'] }}%</div>
+                        @else
+                            <p class="text-sm font-semibold text-zinc-700">Belum ada presensi</p>
+                        @endif
                         <div class="text-[11px] text-zinc-500 mt-1 flex items-center gap-1.5 flex-wrap">
                             <span class="text-emerald-600 font-bold">{{ $attendanceSummary['present'] ?? 0 }} Hadir</span> &bull;
                             <span class="text-amber-600 font-bold">{{ $attendanceSummary['sick'] ?? 0 }} Sakit</span> &bull;
@@ -252,7 +253,7 @@
 
                     <!-- Card 1: Tugas & Tenggat Waktu Anak -->
                     <div class="bg-white rounded-2xl border border-zinc-200/80 p-5 sm:p-6 shadow-xs">
-                        <div class="flex items-center justify-between pb-4 border-b border-zinc-100 mb-4">
+                        <div class="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-zinc-100 mb-4">
                             <div>
                                 <h3 class="font-extrabold text-base text-zinc-900">Tugas & Evaluasi Belajar</h3>
                                 <p class="text-xs text-zinc-500">Pantau tugas dan tenggat waktu pengerjaan anak Anda</p>
@@ -311,7 +312,7 @@
 
                     <!-- Card 2: Jadwal Pelajaran Hari Ini -->
                     <div class="bg-white rounded-2xl border border-zinc-200/80 p-5 sm:p-6 shadow-xs">
-                        <div class="flex items-center justify-between pb-4 border-b border-zinc-100 mb-4">
+                        <div class="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-zinc-100 mb-4">
                             <div>
                                 <h3 class="font-extrabold text-base text-zinc-900">Jadwal Pelajaran Hari Ini</h3>
                                 <p class="text-xs text-zinc-500">{{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM Y') }}</p>
@@ -347,7 +348,7 @@
 
                     <!-- Pengumuman Sekolah -->
                     <div class="bg-white rounded-2xl border border-zinc-200/80 p-5 sm:p-6 shadow-xs">
-                        <div class="flex items-center justify-between pb-4 border-b border-zinc-100 mb-4">
+                        <div class="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-zinc-100 mb-4">
                             <div>
                                 <h3 class="font-extrabold text-base text-zinc-900">Warta & Pengumuman</h3>
                                 <p class="text-xs text-zinc-500">Informasi resmi dari pihak sekolah</p>
@@ -383,7 +384,7 @@
 
                     <!-- Percakapan Konsultasi Guru Terakhir -->
                     <div class="bg-white rounded-2xl border border-zinc-200/80 p-5 sm:p-6 shadow-xs">
-                        <div class="flex items-center justify-between pb-4 border-b border-zinc-100 mb-4">
+                        <div class="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-zinc-100 mb-4">
                             <div>
                                 <h3 class="font-extrabold text-base text-zinc-900">Konsultasi Guru</h3>
                                 <p class="text-xs text-zinc-500">Komunikasi resmi dengan tenaga pendidik</p>

@@ -222,6 +222,8 @@ class ParentPortalTest extends TestCase
         $response->assertSee('Anak Pertama');
         $response->assertSee('X-MIPA-1');
         $response->assertSee('Wali Murid Resmi');
+        $response->assertSee('Belum ada presensi');
+        $response->assertDontSee('100%');
     }
 
     #[DataProvider('academicMenus')]

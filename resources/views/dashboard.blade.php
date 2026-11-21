@@ -12,6 +12,40 @@
             default => 'Dashboard Staf',
         };
         $heroRoute = $isStudentDashboard ? 'student.schedule.index' : ($isTeacherDashboard ? 'teacher.schedule.index' : 'dashboard');
+        $workspaceTitle = match (true) {
+            $isStudentDashboard => 'Langkah belajarmu dimulai di sini.',
+            $isTeacherDashboard => 'Fokus mengajar. Dampingi setiap langkah.',
+            $isAdminDashboard => 'Sekolah tertata, potensi terjaga.',
+            default => 'Layanan sekolah dalam satu ruang.',
+        };
+        $workspaceDescription = match (true) {
+            $isStudentDashboard => 'Temukan materi, selesaikan tugas, dan ikuti perkembangan belajarmu.',
+            $isTeacherDashboard => 'Siapkan pembelajaran, kelola kelas, dan pantau perkembangan siswa Anda.',
+            $isAdminDashboard => 'Pantau aktivitas akademik dan kelola kebutuhan warga sekolah dengan lebih terarah.',
+            default => 'Tuntaskan administrasi dan dukung kegiatan sekolah melalui layanan sesuai penugasan Anda.',
+        };
+        $workspaceActions = match (true) {
+            $isStudentDashboard => [
+                ['Materi pelajaran', 'student.materials.index', 'Lanjutkan eksplorasi dan belajar'],
+                ['Tugas & evaluasi', 'student.assignments.index', 'Tinjau pekerjaan yang perlu diselesaikan'],
+                ['Jadwal pelajaran', 'student.schedule.index', 'Siapkan kegiatan belajarmu'],
+            ],
+            $isTeacherDashboard => [
+                ['Jadwal mengajar', 'teacher.schedule.index', 'Rencanakan aktivitas kelas Anda'],
+                ['Materi pembelajaran', 'learning-materials.index', 'Siapkan dan bagikan bahan ajar'],
+                ['Tugas & penilaian', 'assignments.index', 'Tinjau hasil belajar siswa'],
+            ],
+            $isAdminDashboard => [
+                ['Data siswa', 'students.index', 'Kelola informasi peserta didik'],
+                ['Presensi sekolah', 'attendance.report', 'Tinjau kehadiran dan aktivitas kelas'],
+                ['Operasional sekolah', 'operations.dashboard', 'Akses administrasi dan layanan'],
+            ],
+            default => [
+                ['Pusat operasional', 'operations.dashboard', 'Ringkasan layanan sekolah'],
+                ['Perpustakaan', 'operations.library.books.index', 'Temukan dan kelola koleksi buku'],
+                ['Persuratan', 'operations.correspondence.index', 'Kelola dokumen dan surat sekolah'],
+            ],
+        };
         $summaryStats = match (true) {
             $isStudentDashboard => [
                 ['Rombongan Belajar', $enrollment?->classroom?->name ?? 'Belum terdaftar'],
@@ -42,16 +76,25 @@
                 <a href="{{ route('dashboard') }}" aria-label="Segarkan data dashboard">Segarkan data &circlearrowright;</a>
             </div>
 
-            <section class="dashboard-hero" aria-label="Ruang akademik Eduvia">
-                <img src="{{ asset('images/edmunhigh/hero-students.jpg') }}" alt="" fetchpriority="high" />
+            <section class="dashboard-hero" aria-labelledby="workspace-title">
                 <div class="dashboard-hero-content">
-                    <p>{{ $academicYear?->name ?? 'Eduvia' }} &middot; {{ $semester?->name ?? 'Ruang Akademik' }}</p>
-                    <h2>{{ $isTeacherDashboard ? 'Mendampingi belajar, membangun masa depan.' : ($isAdminDashboard ? 'Ruang tumbuh untuk seluruh warga sekolah.' : 'Selamat belajar. Saatnya melangkah lebih jauh.') }}</h2>
+                    <p class="workspace-eyebrow">{{ $dashboardLabel }}</p>
+                    <h1 id="workspace-title">{{ $workspaceTitle }}</h1>
+                    <p class="workspace-description">{{ $workspaceDescription }}</p>
                     @if ($isAdminDashboard)
                         <a href="{{ route('school.profile') }}">Kelola Profil Sekolah <span aria-hidden="true">&nearr;</span></a>
                     @elseif ($isStudentDashboard || $isTeacherDashboard)
                         <a href="{{ route($heroRoute) }}">Lihat jadwal {{ $isTeacherDashboard ? 'mengajar' : 'pelajaran' }} <span aria-hidden="true">&nearr;</span></a>
+                    @else
+                        <a href="{{ route('operations.dashboard') }}">Buka pusat operasional</a>
                     @endif
+                </div>
+                <div class="workspace-term">
+                    <img src="{{ asset('images/brand/eduvia-icon-mark-web.webp') }}" width="48" height="48" alt="" />
+                    <span>Periode sekolah</span>
+                    <strong>{{ $academicYear?->name ?? 'Belum diatur' }}</strong>
+                    <span>{{ $semester?->name ?? 'Semester belum diatur' }}</span>
+                    <p>{{ $school?->short_name ?: $school?->name }}</p>
                 </div>
             </section>
 
@@ -62,6 +105,29 @@
                     @endforeach
                 </dl>
             @endif
+
+            <section class="workspace-action-grid" aria-label="Akses utama {{ $dashboardLabel }}">
+                @foreach ($workspaceActions as [$actionLabel, $actionRoute, $actionDescription])
+                    <a href="{{ route($actionRoute) }}" class="workspace-action">
+                        <span class="workspace-action-icon" aria-hidden="true">
+                            @php
+                                $actionIcon = match ($actionRoute) {
+                                    'student.schedule.index', 'teacher.schedule.index' => 'M8 3v4m8-4v4M4 10h16M6 5h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2m2 10h3m2 0h3',
+                                    'student.materials.index', 'learning-materials.index', 'operations.library.books.index' => 'M12 6c-3-2-6-2-9-1v14c3-1 6-1 9 1m0-14c3-2 6-2 9-1v14c-3-1-6-1-9 1V6',
+                                    'students.index' => 'M15 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2m22 0v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75M12 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0',
+                                    'attendance.report' => 'M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h11',
+                                    'operations.dashboard' => 'M3 3h7v7H3V3m11 0h7v7h-7V3M3 14h7v7H3v-7m11 0h7v7h-7v-7',
+                                    'operations.correspondence.index' => 'M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1m-1 1 9 7 9-7',
+                                    default => 'M6 3h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2m2 5h8m-8 4h8m-8 4h4',
+                                };
+                            @endphp
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="{{ $actionIcon }}" /></svg>
+                        </span>
+                        <strong>{{ $actionLabel }}</strong>
+                        <span>{{ $actionDescription }}</span>
+                    </a>
+                @endforeach
+            </section>
 
             @if ($isStudentDashboard)
                 <div class="dashboard-overview">
@@ -79,16 +145,19 @@
                             </div>
                             <p class="dashboard-donut-note">{{ ($attendanceSummary['present'] ?? 0) + ($attendanceSummary['late'] ?? 0) }} dari {{ $attendanceSummary['total'] }} sesi tercatat hadir.<br>Termasuk kehadiran terlambat.</p>
                         @else
-                            <div class="dashboard-donut" aria-hidden="true"><div><strong>&mdash;</strong><span>belum ada data</span></div></div>
-                            <p class="dashboard-donut-note">Ringkasan akan tampil setelah<br>presensi pertama Anda dicatat.</p>
+                            <div class="workspace-presence-empty">
+                                <strong>Belum ada catatan kehadiran</strong>
+                                <p>Ringkasan akan tampil setelah presensi pertama Anda dicatat.</p>
+                            </div>
                         @endif
                     </section>
                 </div>
             @elseif ($isAdminDashboard)
                 <section class="dashboard-panel">
                     <div class="dashboard-section-heading"><h2>Aktivitas Presensi Terbaru</h2><a href="{{ route('attendance-sessions.index') }}" class="dashboard-text-link">Lihat semua &nearr;</a></div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
+                    <p class="workspace-table-hint">Geser tabel untuk melihat seluruh kolom.</p>
+                    <div class="overflow-x-auto" tabindex="0" role="region" aria-label="Aktivitas presensi terbaru, tabel dapat digeser">
+                        <table class="workspace-attendance-table w-full text-left text-xs">
                             <thead><tr class="border-b border-zinc-200 text-zinc-500"><th class="pb-4 font-medium">Kelas</th><th class="pb-4 font-medium">Guru</th><th class="pb-4 font-medium">Tanggal</th><th class="pb-4 font-medium">Status</th></tr></thead>
                             <tbody>
                                 @forelse (($recentSessions ?? collect()) as $sessionItem)
@@ -142,30 +211,6 @@
 
                     <!-- Student Attendance Summary Card -->
                     <x-card title="Riwayat Presensi Belajar Terbaru" subtitle="Catatan kehadiran Anda pada pertemuan tatap muka dan pembelajaran.">
-                        <!-- 5-Metric Quick Bar -->
-                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mb-4">
-                            <div class="p-2.5 rounded-lg bg-emerald-50/80 border border-emerald-100 text-center">
-                                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 block">Hadir</span>
-                                <span class="text-base font-extrabold text-emerald-700 mt-0.5 block">{{ $attendanceSummary['present'] ?? 0 }}</span>
-                            </div>
-                            <div class="p-2.5 rounded-lg bg-amber-50/80 border border-amber-100 text-center">
-                                <span class="text-[10px] font-bold uppercase tracking-wider text-amber-600 block">Terlambat</span>
-                                <span class="text-base font-extrabold text-amber-700 mt-0.5 block">{{ $attendanceSummary['late'] ?? 0 }}</span>
-                            </div>
-                            <div class="p-2.5 rounded-lg bg-blue-50/80 border border-blue-100 text-center">
-                                <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600 block">Izin</span>
-                                <span class="text-base font-extrabold text-blue-700 mt-0.5 block">{{ $attendanceSummary['permit'] ?? 0 }}</span>
-                            </div>
-                            <div class="p-2.5 rounded-lg bg-purple-50/80 border border-purple-100 text-center">
-                                <span class="text-[10px] font-bold uppercase tracking-wider text-purple-600 block">Sakit</span>
-                                <span class="text-base font-extrabold text-purple-700 mt-0.5 block">{{ $attendanceSummary['sick'] ?? 0 }}</span>
-                            </div>
-                            <div class="p-2.5 rounded-lg bg-rose-50/80 border border-rose-100 text-center col-span-2 sm:col-span-1">
-                                <span class="text-[10px] font-bold uppercase tracking-wider text-rose-600 block">Alpa</span>
-                                <span class="text-base font-extrabold text-rose-700 mt-0.5 block">{{ $attendanceSummary['absent'] ?? 0 }}</span>
-                            </div>
-                        </div>
-
                         @if (isset($recentAttendance) && $recentAttendance->isNotEmpty())
                             <div class="overflow-x-auto rounded-lg border border-zinc-200" data-scrollable>
                                 <table class="w-full text-left text-xs text-zinc-600 min-w-[480px]">
@@ -228,6 +273,7 @@
                     <!-- Teacher Sesi Presensi Terbaru -->
                     <x-card title="Sesi Presensi Pembelajaran Terbaru" subtitle="Daftar sesi pertemuan presensi yang Anda buat pada rombongan belajar.">
                         @if (isset($recentTeacherSessions) && $recentTeacherSessions->isNotEmpty())
+                            <p class="workspace-table-hint">Geser tabel untuk melihat status dan tindakan.</p>
                             <div class="overflow-x-auto rounded-lg border border-zinc-200" data-scrollable>
                                 <table class="w-full text-left text-xs text-zinc-600 min-w-[540px]">
                                     <thead class="bg-zinc-50 text-zinc-500 font-semibold border-b border-zinc-200">
@@ -547,7 +593,7 @@
             </div>
         @else
             <x-card title="Ruang Kerja Staf">
-                <p class="text-sm text-zinc-500">Gunakan menu di samping untuk mengakses layanan sesuai penugasan Anda.</p>
+                <p class="text-sm text-zinc-500">Pilih pintasan di atas atau buka navigasi untuk mengakses layanan sesuai penugasan Anda.</p>
             </x-card>
         @endif
             </div>

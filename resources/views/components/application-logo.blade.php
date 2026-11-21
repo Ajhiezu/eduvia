@@ -9,10 +9,10 @@
 @php
     $src = match ($variant) {
         'vertical' => asset('images/brand/eduvia-logo-vertical-transparent.png'),
-        'icon' => asset('images/brand/eduvia-icon-mark-transparent.png'),
+        'icon' => asset('images/brand/eduvia-icon-mark-web.webp'),
         'app-icon' => asset('images/brand/eduvia-app-icon-light.png'),
         'app-icon-dark' => asset('images/brand/eduvia-app-icon-dark.png'),
-        default => asset('images/brand/eduvia-logo-horizontal-transparent.png'),
+        default => asset('images/brand/eduvia-logo-horizontal-web.webp'),
     };
 
     $sizeClasses = match ($variant) {

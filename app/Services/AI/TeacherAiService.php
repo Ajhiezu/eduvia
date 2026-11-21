@@ -87,7 +87,7 @@ TXT;
         $userContent = "Buatkan Draf Modul Ajar terstruktur untuk:\n".$this->shield->wrapData($userCurriculum);
 
         $result = $this->driver->generateStructured($systemPrompt, $userContent, [
-            'model' => $params['model'] ?? 'gemini-1.5-flash',
+            'model' => $params['model'] ?? config('services.gemini.model', 'gemini-3.1-flash-lite'),
             'temperature' => 0.3,
         ]);
 
@@ -164,7 +164,7 @@ TXT;
         $userContent = "Buatkan paket butir soal berjenjang lengkap dengan kunci dan pembahasan untuk:\n".$this->shield->wrapData($userCurriculum);
 
         $result = $this->driver->generateStructured($systemPrompt, $userContent, [
-            'model' => $params['model'] ?? 'gemini-1.5-flash',
+            'model' => $params['model'] ?? config('services.gemini.model', 'gemini-3.1-flash-lite'),
             'temperature' => 0.2,
         ]);
 
@@ -236,7 +236,7 @@ TXT;
         $userContent = "Buatkan rubrik penilaian autentik terukur untuk:\n".$this->shield->wrapData($userCurriculum);
 
         $result = $this->driver->generateStructured($systemPrompt, $userContent, [
-            'model' => $params['model'] ?? 'gemini-1.5-flash',
+            'model' => $params['model'] ?? config('services.gemini.model', 'gemini-3.1-flash-lite'),
             'temperature' => 0.2,
         ]);
 
@@ -306,7 +306,7 @@ TXT;
         $userContent = "Berikan analisis dan draf saran umpan balik konstruktif untuk tugas siswa berikut:\n".$this->shield->wrapData($userCurriculum);
 
         $result = $this->driver->generateStructured($systemPrompt, $userContent, [
-            'model' => $params['model'] ?? 'gemini-1.5-flash',
+            'model' => $params['model'] ?? config('services.gemini.model', 'gemini-3.1-flash-lite'),
             'temperature' => 0.3,
         ]);
 

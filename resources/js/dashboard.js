@@ -43,6 +43,77 @@ export function dashboardCalendar() {
     };
 }
 
+export function sidebarScroll(userId) {
+    return {
+        storageKey: `eduvia:sidebar-scroll:${userId}`,
+        mode: 'expanded',
+        positions: { expanded: 0, collapsed: null },
+        restoring: false,
+        restorationId: 0,
+        init() {
+            for (const mode of ['expanded', 'collapsed']) {
+                try {
+                    const key = mode === 'expanded' ? this.storageKey : `${this.storageKey}:collapsed`;
+                    const storedPosition = window.sessionStorage.getItem(key);
+                    const position = Number(storedPosition);
+
+                    if (storedPosition !== null && Number.isFinite(position) && position >= 0) {
+                        this.positions[mode] = position;
+                    }
+                } catch {
+                    // Navigation remains available when browser storage is blocked.
+                }
+            }
+
+            this.setCollapsed(Boolean(this.sidebarCollapsed));
+            this.$watch('sidebarCollapsed', (collapsed) => this.setCollapsed(collapsed));
+        },
+        setCollapsed(collapsed) {
+            const nextMode = collapsed ? 'collapsed' : 'expanded';
+
+            if (this.positions[nextMode] === null) {
+                this.positions[nextMode] = this.positions[this.mode];
+            }
+
+            this.mode = nextMode;
+            this.restoring = true;
+            const restorationId = ++this.restorationId;
+            this.$nextTick(() => {
+                const restore = () => {
+                    if (restorationId !== this.restorationId) {
+                        return;
+                    }
+
+                    this.$el.scrollTop = this.positions[this.mode];
+                    this.restoring = false;
+                };
+                const animations = this.$el.closest?.('.app-sidebar')?.getAnimations() ?? [];
+
+                if (animations.length === 0) {
+                    restore();
+                    return;
+                }
+
+                Promise.allSettled(animations.map((animation) => animation.finished)).then(restore);
+            });
+        },
+        savePosition() {
+            if (this.restoring) {
+                return;
+            }
+
+            this.positions[this.mode] = this.$el.scrollTop;
+
+            try {
+                const key = this.mode === 'expanded' ? this.storageKey : `${this.storageKey}:collapsed`;
+                window.sessionStorage.setItem(key, String(this.positions[this.mode]));
+            } catch {
+                // Navigation remains available when browser storage is blocked.
+            }
+        },
+    };
+}
+
 export function dashboardNavigationSearch() {
     return {
         query: '',

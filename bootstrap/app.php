@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AiAgentActionResponse;
 use App\Http\Middleware\EnsureSchoolTenant;
 use App\Http\Middleware\EnsureTenantAiEnabled;
 use App\Http\Middleware\EnsureUserHasRole;
@@ -22,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             SecurityHeadersMiddleware::class,
             EnsureSchoolTenant::class,
+            AiAgentActionResponse::class,
         ]);
 
         $middleware->api(append: [
@@ -38,7 +40,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->dontFlash(['two_factor_code', 'recovery_code']);
+        $exceptions->dontFlash(['two_factor_code', 'recovery_code', 'api_key']);
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );

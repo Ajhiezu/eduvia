@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\UserRole;
 use App\Models\School;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -99,6 +100,23 @@ class DashboardRoleViewTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Pengujian Otorisasi Role (Backend Security Gate)');
+    }
+
+    public function test_staff_dashboard_provides_operational_shortcuts_without_admin_management(): void
+    {
+        $staff = User::factory()->create([
+            'role' => UserRole::STAFF,
+        ]);
+
+        $response = $this->actingAs($staff)->get('/dashboard');
+
+        $response->assertStatus(200);
+        $response->assertSee('Dashboard Staf');
+        $response->assertSee('Ruang Kerja Staf');
+        $response->assertSee('href="'.route('operations.dashboard').'"', false);
+        $response->assertSee('href="'.route('operations.correspondence.index').'"', false);
+        $response->assertDontSee('Kelola Profil Sekolah');
+        $response->assertDontSee('Fondasi Sistem &amp; Konfigurasi Sekolah (Modul 1)', false);
     }
 
     public function test_parent_accessing_dashboard_redirects_to_parent_dashboard(): void

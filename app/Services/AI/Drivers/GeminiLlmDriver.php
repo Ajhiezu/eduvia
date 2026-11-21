@@ -12,10 +12,11 @@ class GeminiLlmDriver implements LlmDriverInterface
 {
     public function __construct(
         protected ?string $apiKey = null,
-        protected string $model = 'gemini-1.5-flash',
+        protected ?string $model = null,
         protected int $timeoutSeconds = 30
     ) {
-        $this->apiKey = $apiKey ?: config('services.gemini.api_key', env('GEMINI_API_KEY'));
+        $this->apiKey = $apiKey ?: config('services.gemini.api_key');
+        $this->model = $model ?: config('services.gemini.model', 'gemini-3.1-flash-lite');
     }
 
     /**
@@ -28,7 +29,10 @@ class GeminiLlmDriver implements LlmDriverInterface
         }
 
         $model = $options['model'] ?? $this->model;
-        $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$this->apiKey}";
+        if (! preg_match('/^gemini-[a-zA-Z0-9._-]+$/', $model)) {
+            throw new RuntimeException('Model Gemini pada konfigurasi server tidak valid.', 503);
+        }
+        $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent";
 
         $payload = [
             'system_instruction' => [
@@ -47,30 +51,28 @@ class GeminiLlmDriver implements LlmDriverInterface
             'generationConfig' => [
                 'temperature' => $options['temperature'] ?? 0.3,
                 'responseMimeType' => 'application/json',
+                'maxOutputTokens' => $options['max_output_tokens'] ?? 8192,
             ],
         ];
 
         try {
-            $response = Http::timeout($this->timeoutSeconds)
-                ->retry(2, 500, throw: false)
+            $response = Http::connectTimeout(5)->timeout($this->timeoutSeconds)
+                ->withHeader('x-goog-api-key', $this->apiKey)
                 ->post($url, $payload);
 
             if ($response->failed()) {
                 $status = $response->status();
-                $body = $response->json();
-                $message = $body['error']['message'] ?? $response->body();
-
-                Log::error("Gemini API call failed with status {$status}: {$message}");
+                Log::warning('Gemini API request failed.', ['status' => $status]);
 
                 if ($status === 429) {
-                    throw new RuntimeException('Layanan AI sedang sibuk (Batas laju per menit tercapai). Silakan coba 30 detik lagi.');
+                    throw new RuntimeException('Kuota atau batas laju Gemini tercapai. Coba lagi nanti atau periksa kuota di Google AI Studio.', 429);
                 }
 
-                throw new RuntimeException("Koneksi penyedia AI gagal: {$message}");
+                throw new RuntimeException('Gemini belum dapat memproses permintaan. Periksa API key, model, dan akses proyek Google AI Studio.', 502);
             }
 
             $json = $response->json();
-            $rawText = $json['candidates'][0]['content']['parts'][0]['text'] ?? '{}';
+            $rawText = $json['candidates'][0]['content']['parts'][0]['text'] ?? '';
             $parsed = json_decode($rawText, true);
 
             if (! is_array($parsed)) {
@@ -80,12 +82,12 @@ class GeminiLlmDriver implements LlmDriverInterface
             }
 
             if (! is_array($parsed)) {
-                throw new RuntimeException('Penyedia AI mengembalikan format respons yang tidak valid.');
+                throw new RuntimeException('Penyedia AI mengembalikan format respons yang tidak valid.', 502);
             }
 
             $usage = $json['usageMetadata'] ?? [];
-            $promptTokens = $usage['promptTokenCount'] ?? 250;
-            $completionTokens = $usage['candidatesTokenCount'] ?? 400;
+            $promptTokens = $usage['promptTokenCount'] ?? 0;
+            $completionTokens = $usage['candidatesTokenCount'] ?? 0;
 
             return [
                 'content' => $parsed,
@@ -96,8 +98,8 @@ class GeminiLlmDriver implements LlmDriverInterface
                 'provider' => 'gemini',
             ];
         } catch (ConnectionException $e) {
-            Log::error('Gemini connection timeout: '.$e->getMessage());
-            throw new RuntimeException('Koneksi ke penyedia AI mengalami batas waktu (timeout). Silakan periksa jaringan server Anda.');
+            Log::warning('Gemini connection failed.');
+            throw new RuntimeException('Koneksi Gemini belum berhasil. Periksa jaringan server lalu coba lagi.', 503);
         }
     }
 }

@@ -12,9 +12,11 @@
     <title>{{ $pageTitle }} — {{ config('app.name', 'Eduvia') }}</title>
 
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="{{ asset('fonts/plus-jakarta-sans-400_800-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <style>
+        @font-face { font-family: 'Plus Jakarta Sans'; src: url('{{ asset('fonts/plus-jakarta-sans-400_800-normal.woff2') }}') format('woff2'); font-weight: 400 800; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'Inter'; src: url('{{ asset('fonts/inter-400_700-normal.woff2') }}') format('woff2'); font-weight: 400 700; font-style: normal; font-display: swap; }
+    </style>
 
     <!-- Favicon & Brand Icons -->
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
@@ -27,9 +29,27 @@
     x-data="{
         sidebarOpen: false,
         sidebarCollapsed: false,
+        viewportIsMobile: window.innerWidth < 1024,
         userDropdownOpen: false,
         notificationsOpen: false,
         isFullscreen: false,
+        focusWithinSidebar(event) {
+            const drawer = document.querySelector('.app-sidebar');
+            const controls = Array.from(drawer.querySelectorAll('a[href], button:not([disabled]), input, select, summary, [tabindex=\'0\']'))
+                .filter(element => element.getClientRects().length > 0 && getComputedStyle(element).visibility !== 'hidden');
+            const firstControl = controls[0];
+            const lastControl = controls[controls.length - 1];
+
+            if (!firstControl) return;
+
+            if (event.shiftKey && (document.activeElement === firstControl || !drawer.contains(document.activeElement))) {
+                event.preventDefault();
+                lastControl.focus();
+            } else if (!event.shiftKey && document.activeElement === lastControl) {
+                event.preventDefault();
+                firstControl.focus();
+            }
+        },
         toggleFullscreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().then(() => this.isFullscreen = true).catch(() => {});
@@ -41,8 +61,11 @@
     class="eduvia-app min-h-full flex flex-col font-sans text-zinc-900 bg-white antialiased selection:bg-brand-600 selection:text-white {{ $isReferenceDashboard ? 'dashboard-reference' : '' }}"
     :data-sidebar-collapsed="sidebarCollapsed ? 'true' : 'false'"
     x-init="$watch('sidebarOpen', val => document.body.classList.toggle('overflow-hidden', val))"
-    @keydown.escape="userDropdownOpen = false; notificationsOpen = false; sidebarOpen = false"
+    @resize.window.debounce.150ms="viewportIsMobile = window.innerWidth < 1024; if (!viewportIsMobile) sidebarOpen = false"
+    @keydown.escape="userDropdownOpen = false; notificationsOpen = false; if (sidebarOpen) { sidebarOpen = false; $nextTick(() => $refs.sidebarToggle.focus()); }"
+    @keydown.tab="if (viewportIsMobile && sidebarOpen) focusWithinSidebar($event)"
 >
+    <a href="#workspace-content" class="workspace-skip-link" :inert="viewportIsMobile && sidebarOpen">Langsung ke ruang kerja</a>
     <!-- Global Notification Toasts -->
     <x-toast />
     <x-confirm-dialog />
@@ -56,13 +79,14 @@
     <!-- ====================================================================== -->
     <!-- METIS MASTER TOP HEADER (Fixed Across Entire Screen)                  -->
     <!-- ====================================================================== -->
-    <header class="app-header fixed top-0 inset-x-0 z-40 h-16 bg-white border-b border-zinc-200/90 px-4 sm:px-6 flex items-center justify-between gap-4">
+    <header :inert="viewportIsMobile && sidebarOpen" class="app-header fixed top-0 inset-x-0 z-40 h-16 bg-white border-b border-zinc-200/90 px-4 sm:px-6 flex items-center justify-between gap-4">
         <!-- Left: Brand Logo + Sidebar Toggle -->
         <div class="app-brand flex items-center gap-3 shrink-0">
             <!-- Mobile Drawer Toggle -->
             <button
                 type="button"
-                @click="sidebarOpen = !sidebarOpen; if (sidebarOpen) sidebarCollapsed = false"
+                x-ref="sidebarToggle"
+                @click="sidebarOpen = !sidebarOpen; if (sidebarOpen) { sidebarCollapsed = false; $nextTick(() => $refs.sidebarClose.focus()); }"
                 class="p-2 rounded-lg text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100 lg:hidden focus:outline-none"
                 aria-label="Buka navigasi"
                 aria-controls="application-navigation"
@@ -91,10 +115,16 @@
             </button>
         </div>
 
+        @if (\App\Services\AI\AiAgentSettings::canUse(auth()->user()))
+            <button type="button" class="ai-agent-launcher" @click="$dispatch('open-ai-agent', {})" aria-label="Buka AI Agent">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m12 3 2.6 6.4L21 12l-6.4 2.6L12 21l-2.6-6.4L3 12l6.4-2.6Z"/></svg><span>AI Agent</span>
+            </button>
+        @endif
         <!-- Center: Metis Omnibox Global Search -->
         <div class="dashboard-header-greeting">
             @if ($isReferenceDashboard)
-                <h1>Selamat datang, {{ explode(' ', trim(auth()->user()->name))[0] }}!</h1>
+                <p class="app-header-eyebrow">Ruang kerja {{ auth()->user()->role->label() }}</p>
+                <h2>{{ auth()->user()->hasRole(\App\Enums\UserRole::PARENT) ? 'Mendampingi tumbuh kembang anak' : 'Selamat datang, '.explode(' ', trim(auth()->user()->name))[0].'!' }}</h2>
             @else
                 <p class="app-header-eyebrow">Ruang kerja {{ auth()->user()->role->label() }}</p>
                 <h2>{{ $pageTitle }}</h2>
@@ -383,7 +413,7 @@
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         class="fixed inset-0 z-50 bg-zinc-900/60 backdrop-blur-xs lg:hidden"
-        @click="sidebarOpen = false"
+        @click="sidebarOpen = false; $nextTick(() => $refs.sidebarToggle.focus())"
         style="display: none;"
     ></div>
 
@@ -391,6 +421,11 @@
     <!-- METIS SIDEBAR NAVIGATION (Fixed Full Height on Mobile, Beneath Top Header on Desktop) -->
     <!-- ====================================================================== -->
     <aside
+        :inert="viewportIsMobile && !sidebarOpen"
+        :aria-hidden="(viewportIsMobile && !sidebarOpen).toString()"
+        :role="viewportIsMobile && sidebarOpen ? 'dialog' : 'complementary'"
+        :aria-modal="viewportIsMobile && sidebarOpen ? 'true' : null"
+        aria-label="Navigasi Eduvia"
         :class="{
             'translate-x-0': sidebarOpen,
             '-translate-x-full lg:translate-x-0': !sidebarOpen,
@@ -410,7 +445,8 @@
             <x-application-logo size="sm" />
             <button
                 type="button"
-                @click="sidebarOpen = false"
+                x-ref="sidebarClose"
+                @click="sidebarOpen = false; $nextTick(() => $refs.sidebarToggle.focus())"
                 class="p-2 rounded-lg text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100 focus:outline-none"
                 aria-label="Tutup navigasi"
             >
@@ -423,7 +459,7 @@
         <!-- Sidebar School Context Summary -->
         <div class="dashboard-sidebar-context p-3 border-b border-zinc-100 bg-zinc-50/50" x-show="!sidebarCollapsed">
             <div class="flex items-center gap-3 mb-5">
-                <img src="{{ asset('images/brand/eduvia-icon-mark-transparent.png') }}" alt="" class="h-9 w-9 object-contain" />
+                <img src="{{ asset('images/brand/eduvia-icon-mark-web.webp') }}" alt="" class="h-9 w-9 object-contain" width="36" height="36" />
                 <div><p class="text-[10px] text-zinc-500 mb-1">Ruang kerja Anda</p><p class="text-sm font-semibold text-zinc-900">{{ auth()->user()->role->label() }}</p></div>
             </div>
             <div class="flex items-center justify-between text-zinc-500 mb-1">
@@ -440,8 +476,11 @@
 
         <!-- Navigation Scrollable Links -->
         <nav id="application-navigation" aria-label="Navigasi utama"
+            x-data="sidebarScroll('{{ auth()->id() }}')"
             class="flex-1 px-3 py-3 space-y-1 overflow-y-auto"
-            @click="if (window.innerWidth < 1024 && $event.target.closest('a')) sidebarOpen = false"
+            @scroll.passive="savePosition()"
+            @pagehide.window="savePosition()"
+            @click="savePosition(); if (window.innerWidth < 1024 && $event.target.closest('a')) sidebarOpen = false"
         >
             <!-- Section: Menu Utama -->
             <div class="pt-1 pb-1 px-2" x-show="!sidebarCollapsed">
@@ -460,9 +499,15 @@
             </a>
 
             <!-- Section: Modul 1 (Konfigurasi Sekolah & Sistem) -->
+            @if (\App\Services\AI\AiAgentSettings::canUse(auth()->user()))
+                <a href="{{ route('ai-agent.index') }}" class="metis-nav-item {{ request()->routeIs('ai-agent.*') ? 'active' : '' }}" title="AI Agent">
+                    <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m12 3 2.6 6.4L21 12l-6.4 2.6L12 21l-2.6-6.4L3 12l6.4-2.6Z"/></svg>
+                    <span x-show="!sidebarCollapsed">AI Agent</span>
+                </a>
+            @endif
             @if (auth()->check() && auth()->user()->hasRole(\App\Enums\UserRole::SUPER_ADMIN, \App\Enums\UserRole::SCHOOL_ADMIN))
                 <div class="pt-4 pb-1 px-2" x-show="!sidebarCollapsed">
-                    <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Modul 1: Sekolah & Sistem</span>
+                    <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Sekolah & Sistem</span>
                 </div>
 
                 <a
@@ -1239,6 +1284,7 @@
             'lg:pl-20': sidebarCollapsed,
             'lg:pl-64': !sidebarCollapsed
         }"
+        :inert="viewportIsMobile && sidebarOpen"
         class="app-viewport flex-1 flex flex-col min-w-0 pt-16 transition-all duration-200"
     >
         <!-- Top Sub-Bar (Breadcrumbs & Actions) -->
@@ -1263,7 +1309,7 @@
         </div>
 
         <!-- Main Slot Body -->
-        <main class="app-main {{ $isReferenceDashboard ? '' : 'app-page' }} flex-1 p-3 sm:p-6 lg:p-8 w-full mx-auto min-w-0">
+        <main id="workspace-content" tabindex="-1" class="app-main {{ $isReferenceDashboard ? '' : 'app-page' }} flex-1 p-3 sm:p-6 lg:p-8 w-full mx-auto min-w-0">
             @isset($slot)
                 {{ $slot }}
             @else
@@ -1277,5 +1323,8 @@
             <p class="mt-1 sm:mt-0 text-[11px] text-zinc-400">SD &middot; SMP &middot; SMA &middot; SMK</p>
         </footer>
     </div>
+    @if (\App\Services\AI\AiAgentSettings::canUse(auth()->user()))
+        <x-ai-agent-panel />
+    @endif
 </body>
 </html>

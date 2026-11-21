@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "./dashboard.css";
 @import "./app-pages.css";
+@import "./school-public.css";
+@import "./ai-agent.css";
 
 @source "../../resources/views/**/*.blade.php";
 @source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";

@@ -6,6 +6,7 @@ use App\Http\Controllers\AdmissionApplicantController;
 use App\Http\Controllers\AdmissionDashboardController;
 use App\Http\Controllers\AdmissionPeriodController;
 use App\Http\Controllers\AdmissionPublicController;
+use App\Http\Controllers\AiAgentController;
 use App\Http\Controllers\AssessmentWeightController;
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\AssignmentGradingController;
@@ -115,6 +116,17 @@ Route::middleware('auth')->group(function () {
     Route::post('/account/two-factor/confirm', [TwoFactorAuthenticationController::class, 'confirm'])->middleware('throttle:5,1')->name('account.two-factor.confirm');
     Route::delete('/account/two-factor', [TwoFactorAuthenticationController::class, 'destroy'])->middleware('throttle:5,1')->name('account.two-factor.destroy');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::middleware('role:super_admin,school_admin,teacher,staff')->prefix('ai-agent')->name('ai-agent.')->group(function () {
+        Route::get('/', [AiAgentController::class, 'index'])->name('index');
+        Route::get('/status', [AiAgentController::class, 'status'])->name('status');
+        Route::post('/generate', [AiAgentController::class, 'generate'])->middleware('throttle:5,1')->name('generate');
+        Route::post('/run', [AiAgentController::class, 'run'])->middleware('throttle:12,1')->name('run');
+        Route::middleware('role:super_admin,school_admin')->group(function () {
+            Route::get('/settings', [AiAgentController::class, 'settings'])->name('settings');
+            Route::put('/settings', [AiAgentController::class, 'updateSettings'])->middleware('throttle:5,1')->name('settings.update');
+        });
+    });
 
     // Foundation Verification Endpoint: Restricted to Administrative roles
     Route::get('/restricted-admin-demo', function () {

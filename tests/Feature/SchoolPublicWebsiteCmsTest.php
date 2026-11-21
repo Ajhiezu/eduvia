@@ -88,6 +88,40 @@ class SchoolPublicWebsiteCmsTest extends TestCase
         $response->assertSee('Situs Resmi');
     }
 
+    public function test_hero_profile_link_opens_the_school_profile_instead_of_a_missing_anchor(): void
+    {
+        SchoolWebsiteSetting::create([
+            'school_id' => $this->schoolA->id,
+            'hero_cta_text' => 'Jelajahi Profil Sekolah',
+            'hero_cta_url' => '#profil',
+            'is_published' => true,
+        ]);
+
+        $response = $this->get(route('school.public.home', ['school' => $this->schoolA->slug]));
+
+        $response->assertStatus(200);
+        $response->assertDontSee('href="#profil"', false);
+        $response->assertSee('href="'.route('school.public.profile', ['school' => $this->schoolA->slug]).'"', false);
+        $this->get(route('school.public.profile', ['school' => $this->schoolA->slug]))
+            ->assertStatus(200)
+            ->assertSee('Profil & Identitas SMA Eduvia Jakarta', false);
+    }
+
+    public function test_hero_custom_link_is_preserved(): void
+    {
+        SchoolWebsiteSetting::create([
+            'school_id' => $this->schoolA->id,
+            'hero_cta_text' => 'Hubungi sekolah',
+            'hero_cta_url' => route('school.public.contact', ['school' => $this->schoolA->slug]).'#pesan',
+            'is_published' => true,
+        ]);
+
+        $response = $this->get(route('school.public.home', ['school' => $this->schoolA->slug]));
+
+        $response->assertStatus(200);
+        $response->assertSee('href="'.route('school.public.contact', ['school' => $this->schoolA->slug]).'#pesan"', false);
+    }
+
     public function test_public_visitor_cannot_access_disabled_school_website(): void
     {
         $this->schoolA->update(['public_website_enabled' => false]);

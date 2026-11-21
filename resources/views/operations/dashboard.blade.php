@@ -199,9 +199,9 @@
         </div>
 
         <!-- Operational Modules Quick Navigation Grid -->
-        <div class="bg-gradient-to-br from-zinc-900 to-zinc-800 text-white rounded-3xl p-6 sm:p-8">
+        <div class="workspace-operations-links bg-white text-zinc-800 border border-zinc-200 rounded-2xl p-6 sm:p-8">
             <h3 class="text-lg font-bold">Akses Navigasi Cepat Modul Operasional</h3>
-            <p class="text-xs text-zinc-400 mt-1">Pilih modul kerja untuk mengelola aset, perpustakaan, reservasi lab, atau persuratan resmi sekolah.</p>
+            <p class="text-sm text-zinc-500 mt-1">Kelola aset, perpustakaan, reservasi lab, dan persuratan resmi sekolah.</p>
 
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-6">
                 <a href="{{ route('operations.library.books.index') }}" class="p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-colors flex flex-col items-center text-center group">

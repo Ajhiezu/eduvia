@@ -35,11 +35,16 @@
             ['Presensi Sekolah', 'attendance.report', 'Tinjau kehadiran rombongan belajar'],
             ['Profil Sekolah', 'school.profile', 'Lengkapi informasi sekolah'],
         ],
-        default => [],
+        default => [
+            ['Pusat Operasional', 'operations.dashboard', 'Ringkasan layanan sekolah'],
+            ['Perpustakaan', 'operations.library.books.index', 'Akses koleksi dan layanan buku'],
+            ['Persuratan', 'operations.correspondence.index', 'Kelola dokumen sekolah'],
+        ],
     };
 @endphp
 
 <aside class="dashboard-rail" aria-label="Profil dan agenda">
+    <section class="workspace-profile-card">
     <div class="dashboard-section-heading">
         <h2>Profil Saya</h2>
         <a href="{{ route('account.security') }}" class="dashboard-icon-button" aria-label="Pengaturan keamanan akun">
@@ -59,7 +64,7 @@
     </div>
 
     <dl class="dashboard-profile-details">
-        <div><dt>Tahun ajaran</dt><dd>{{ $academicYear?->name ?? 'Belum diatur' }}</dd></div>
+        <div><dt>Periode sekolah</dt><dd>{{ $academicYear?->name ?? 'Belum diatur' }}</dd></div>
         <div><dt>Semester</dt><dd>{{ $semester?->name ?? 'Belum diatur' }}</dd></div>
         @if ($enrollment?->classroom)
             <div><dt>Kelas</dt><dd>{{ $enrollment->classroom->name }}</dd></div>
@@ -69,6 +74,7 @@
         @endif
         <div><dt>Sekolah</dt><dd>{{ $school?->name ?? 'Belum ditentukan' }}</dd></div>
     </dl>
+    </section>
 
     <x-dashboard-calendar />
 

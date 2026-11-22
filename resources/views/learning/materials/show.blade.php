@@ -33,9 +33,9 @@
                     @endif
                 </div>
                 <div class="text-xs text-zinc-500 mt-1 flex items-center gap-2 flex-wrap">
-                    <span class="font-medium text-zinc-800">{{ $material->teachingAssignment?->subject?->name }}</span>
+                    <span class="font-medium text-zinc-800">{{ $material->subject?->name }}</span>
                     <span>•</span>
-                    <span>Kelas {{ $material->teachingAssignment?->classroom?->name }}</span>
+                    <span>Kelas {{ $material->classroom?->name }}</span>
                     <span>•</span>
                     <span>Pengampu: {{ $material->teacher?->name }}</span>
                     @if ($material->topic)
@@ -178,16 +178,16 @@
                         </div>
                         <div class="flex items-baseline justify-between">
                             <div class="text-2xl font-extrabold text-zinc-900">
-                                {{ $completedCount }} <span class="text-sm font-normal text-zinc-400">/ {{ $totalStudentsCount }} Siswa</span>
+                                {{ $completedCount }} <span class="text-sm font-normal text-zinc-400">/ {{ $totalStudents }} Siswa</span>
                             </div>
                             <div class="text-xs font-bold text-emerald-600">
-                                {{ $completionPercentage }}%
+                                {{ $completionRate }}%
                             </div>
                         </div>
 
                         <!-- Progress Bar -->
                         <div class="w-full bg-zinc-200 rounded-full h-2 overflow-hidden">
-                            <div class="bg-emerald-500 h-2 rounded-full transition-all duration-500" style="width: {{ $completionPercentage }}%"></div>
+                            <div class="bg-emerald-500 h-2 rounded-full transition-all duration-500" style="width: {{ $completionRate }}%"></div>
                         </div>
 
                         <p class="text-[11px] text-zinc-400">
@@ -199,20 +199,20 @@
                 <!-- Students Progress List -->
                 <x-card padding="none" class="overflow-hidden">
                     <div class="p-3 bg-zinc-50 border-b border-zinc-200 flex items-center justify-between">
-                        <h3 class="text-xs font-bold text-zinc-800">Daftar Siswa Kelas {{ $material->teachingAssignment?->classroom?->name }}</h3>
+                        <h3 class="text-xs font-bold text-zinc-800">Daftar Siswa Kelas {{ $material->classroom?->name }}</h3>
                         <span class="text-[11px] text-zinc-500">{{ $classroomStudents->count() }} Terdaftar</span>
                     </div>
 
                     <div class="divide-y divide-zinc-100 max-h-96 overflow-y-auto">
-                        @forelse ($classroomStudents as $student)
+                        @forelse ($classroomStudents as $enrollment)
                             @php
-                                $prog = $progressMap->get($student->id);
-                                $isCompleted = $prog && $prog->is_completed;
+                                $prog = $progressMap->get($enrollment->student_id);
+                                $isCompleted = $prog?->isCompleted() ?? false;
                             @endphp
                             <div class="p-3 flex items-center justify-between text-xs hover:bg-zinc-50">
                                 <div>
-                                    <div class="font-medium text-zinc-900">{{ $student->user?->name ?? 'Siswa' }}</div>
-                                    <div class="text-[10px] text-zinc-400">NISN: {{ $student->nisn ?? '-' }}</div>
+                                    <div class="font-medium text-zinc-900">{{ $enrollment->student?->name ?? 'Siswa' }}</div>
+                                    <div class="text-[10px] text-zinc-400">NISN: {{ $enrollment->student?->studentProfile?->nisn ?? '-' }}</div>
                                 </div>
                                 <div class="text-right">
                                     @if ($isCompleted)

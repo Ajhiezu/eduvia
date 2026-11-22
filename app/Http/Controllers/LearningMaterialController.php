@@ -160,14 +160,17 @@ class LearningMaterialController extends Controller
             abort(403, 'Anda tidak berwenang melihat materi dari guru lain.');
         }
 
-        $material->load(['classroom.activeStudents', 'subject', 'teacher', 'attachments', 'progressRecords.student']);
+        $material->load(['classroom.activeStudents.student.studentProfile', 'subject', 'teacher', 'attachments', 'progressRecords.student']);
+
+        $classroomStudents = $material->classroom?->activeStudents ?? collect();
+        $progressMap = $material->progressRecords->keyBy('student_id');
 
         // Calculate class progress
         $totalStudents = $material->classroom?->activeStudents()->count() ?? 0;
         $completedCount = $material->progressRecords()->where('status', 'completed')->count();
         $completionRate = $totalStudents > 0 ? round(($completedCount / $totalStudents) * 100, 1) : 0;
 
-        return view('learning.materials.show', compact('material', 'totalStudents', 'completedCount', 'completionRate'));
+        return view('learning.materials.show', compact('material', 'totalStudents', 'completedCount', 'completionRate', 'classroomStudents', 'progressMap'));
     }
 
     /**

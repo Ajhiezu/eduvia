@@ -10,6 +10,7 @@ use App\Models\Classroom;
 use App\Models\GradeLevel;
 use App\Models\LearningMaterial;
 use App\Models\LearningMaterialAttachment;
+use App\Models\LearningMaterialProgress;
 use App\Models\School;
 use App\Models\Semester;
 use App\Models\StudentProfile;
@@ -197,6 +198,139 @@ class CoreLearningFlowTest extends TestCase
         ]);
 
         $response->assertForbidden();
+    }
+
+    public function test_teacher_can_view_material_details_with_completed_and_pending_students(): void
+    {
+        $pendingStudent = User::factory()->create([
+            'school_id' => $this->school->id,
+            'role' => UserRole::STUDENT,
+        ]);
+        $this->classroom->addStudent($pendingStudent);
+        $material = LearningMaterial::create([
+            'school_id' => $this->school->id,
+            'teaching_assignment_id' => $this->assignment->id,
+            'classroom_id' => $this->classroom->id,
+            'subject_id' => $this->subject->id,
+            'teacher_id' => $this->teacher->id,
+            'title' => 'Materi Progres Belajar',
+            'content' => 'Materi dengan siswa yang sudah dan belum selesai.',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+        LearningMaterialProgress::create([
+            'learning_material_id' => $material->id,
+            'student_id' => $this->student1->id,
+            'status' => 'completed',
+            'completed_at' => now(),
+        ]);
+
+        $response = $this->actingAs($this->teacher)->get(route('learning-materials.show', $material));
+
+        $response->assertOk();
+        $response->assertSeeText('Materi Progres Belajar');
+        $response->assertSeeText('50%');
+        $response->assertSeeText($this->student1->name);
+        $response->assertSeeText($pendingStudent->name);
+        $response->assertSeeText('1234567890');
+        $response->assertSeeText('Belum Selesai');
+        $response->assertDontSeeText($this->student2->name);
+        $visibleText = preg_replace('/\s+/u', ' ', html_entity_decode(strip_tags($response->getContent()), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $this->assertStringContainsString($this->student1->name.' NISN: 1234567890 Selesai', $visibleText);
+        $this->assertStringContainsString($pendingStudent->name.' NISN: - Belum Selesai', $visibleText);
+        $this->assertSame(2, $response->viewData('totalStudents'));
+        $this->assertSame(1, $response->viewData('completedCount'));
+        $this->assertSame(50.0, $response->viewData('completionRate'));
+    }
+
+    public function test_teacher_can_view_material_details_for_a_classroom_without_students(): void
+    {
+        $this->classroom->students()->delete();
+        $material = LearningMaterial::create([
+            'school_id' => $this->school->id,
+            'teaching_assignment_id' => $this->assignment->id,
+            'classroom_id' => $this->classroom->id,
+            'subject_id' => $this->subject->id,
+            'teacher_id' => $this->teacher->id,
+            'title' => 'Materi Kelas Kosong',
+            'content' => 'Materi untuk kelas tanpa siswa.',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        $response = $this->actingAs($this->teacher)->get(route('learning-materials.show', $material));
+
+        $response->assertOk();
+        $response->assertSeeText('0%');
+        $response->assertSeeText('Belum ada siswa yang terdaftar di kelas ini.');
+        $this->assertSame(0, $response->viewData('totalStudents'));
+        $this->assertSame(0, $response->viewData('completedCount'));
+    }
+
+    public function test_teacher_can_edit_and_update_material_without_changing_its_teaching_assignment(): void
+    {
+        $material = LearningMaterial::create([
+            'school_id' => $this->school->id,
+            'teaching_assignment_id' => $this->assignment->id,
+            'classroom_id' => $this->classroom->id,
+            'subject_id' => $this->subject->id,
+            'teacher_id' => $this->teacher->id,
+            'title' => 'Materi Sebelum Diperbarui',
+            'content' => 'Isi materi awal.',
+            'status' => 'draft',
+        ]);
+
+        $response = $this->actingAs($this->teacher)->get(route('learning-materials.edit', $material));
+
+        $response->assertOk();
+        $response->assertSeeText('Edit Materi Pembelajaran');
+        $response->assertSeeText('Fisika — VII-A');
+        $response->assertSee('Materi Sebelum Diperbarui');
+        $response->assertSeeText('Kelas dan mata pelajaran ditetapkan saat materi dibuat.');
+
+        $updateResponse = $this->put(route('learning-materials.update', $material), [
+            'title' => 'Materi Setelah Diperbarui',
+            'content' => 'Isi materi yang telah diperbarui.',
+            'status' => 'published',
+        ]);
+
+        $updateResponse->assertRedirect(route('learning-materials.show', $material));
+        $this->assertDatabaseHas('learning_materials', [
+            'id' => $material->id,
+            'title' => 'Materi Setelah Diperbarui',
+            'content' => 'Isi materi yang telah diperbarui.',
+            'status' => 'published',
+            'teaching_assignment_id' => $this->assignment->id,
+            'classroom_id' => $this->classroom->id,
+            'subject_id' => $this->subject->id,
+        ]);
+        $this->get(route('learning-materials.show', $material))
+            ->assertOk()
+            ->assertSeeText('Materi Setelah Diperbarui');
+    }
+
+    public function test_teacher_can_open_material_edit_when_the_original_assignment_is_inactive(): void
+    {
+        $this->assignment->update(['is_active' => false]);
+        $material = LearningMaterial::create([
+            'school_id' => $this->school->id,
+            'teaching_assignment_id' => $this->assignment->id,
+            'classroom_id' => $this->classroom->id,
+            'subject_id' => $this->subject->id,
+            'teacher_id' => $this->teacher->id,
+            'title' => 'Materi Penugasan Sebelumnya',
+            'content' => 'Materi yang masih dapat diperbarui.',
+            'status' => 'draft',
+        ]);
+
+        $response = $this->actingAs($this->teacher)->get(route('learning-materials.edit', $material));
+
+        $response->assertOk();
+        $response->assertSeeText('Fisika — VII-A');
+        $response->assertSee('Materi Penugasan Sebelumnya');
+        $this->actingAs($this->otherTeacher)
+            ->get(route('learning-materials.edit', $material))
+            ->assertForbidden();
     }
 
     public function test_student_can_view_published_material_and_complete_progress(): void

@@ -68,6 +68,10 @@ class GeminiLlmDriver implements LlmDriverInterface
                     throw new RuntimeException('Kuota atau batas laju Gemini tercapai. Coba lagi nanti atau periksa kuota di Google AI Studio.', 429);
                 }
 
+                if ($response->serverError()) {
+                    throw new RuntimeException('Layanan Gemini sedang sibuk atau mengalami gangguan sementara. Coba lagi beberapa saat.', 503);
+                }
+
                 throw new RuntimeException('Gemini belum dapat memproses permintaan. Periksa API key, model, dan akses proyek Google AI Studio.', 502);
             }
 

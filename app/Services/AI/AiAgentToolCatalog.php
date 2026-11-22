@@ -24,13 +24,13 @@ class AiAgentToolCatalog
             }
             $resource = Str::beforeLast($name, '.index');
             $routes = [];
-            foreach (['index', 'create', 'edit', 'store', 'update', 'destroy'] as $operation) {
+            foreach (['index', 'create', 'show', 'edit', 'store', 'update', 'destroy'] as $operation) {
                 $candidate = Route::getRoutes()->getByName($resource.'.'.$operation);
                 if (! $candidate || ! $this->isAvailable($candidate, $user)) {
                     continue;
                 }
                 $parameters = $candidate->parameterNames();
-                if (count($parameters) !== (in_array($operation, ['edit', 'update', 'destroy'], true) ? 1 : 0)) {
+                if (count($parameters) !== (in_array($operation, ['show', 'edit', 'update', 'destroy'], true) ? 1 : 0)) {
                     continue;
                 }
                 $routes[$operation] = '/'.preg_replace('/\{[^}]+\}/', '__ID__', $candidate->uri());

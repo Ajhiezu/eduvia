@@ -19,5 +19,6 @@ class SecurityHeadersTest extends TestCase
         $response->assertHeader('X-XSS-Protection', '1; mode=block');
         $response->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->assertHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+        $this->assertFalse($response->headers->hasCacheControlDirective('no-store'));
     }
 }

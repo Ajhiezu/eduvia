@@ -146,7 +146,7 @@
             <!-- Section 3: Status Kesiswaan & Penempatan Rombel -->
             <x-card title="3. Status Kesiswaan & Penempatan Kelas" padding>
                 <div class="space-y-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:[&>div>label]:min-h-10">
                         <x-select
                             label="Status Kesiswaan"
                             name="student_status"

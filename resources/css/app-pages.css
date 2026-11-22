@@ -234,3 +234,43 @@ form[aria-busy="true"] :is(button, input[type="submit"])[aria-disabled="true"] {
 @media (prefers-reduced-motion: reduce) {
     .app-button-spinner, .is-submitting::before { animation: none; }
 }
+
+.live-search-feedback {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: .625rem;
+    width: max-content;
+    max-width: min(28rem, calc(100vw - 2rem));
+    padding: .75rem 1rem;
+    border: 1px solid var(--color-surface-border);
+    border-radius: .75rem;
+    background: #fff;
+    color: var(--color-dark-text);
+    font-size: .875rem;
+    box-shadow: 0 4px 16px rgb(0 0 0 / .08);
+}
+
+.live-search-feedback[hidden] {
+    display: none;
+}
+
+.live-search-feedback[data-state="loading"]::before {
+    content: "";
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--color-surface-border);
+    border-top-color: var(--color-brand-600);
+    border-radius: 50%;
+    animation: app-spin .7s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .live-search-feedback::before {
+        animation: none;
+    }
+}

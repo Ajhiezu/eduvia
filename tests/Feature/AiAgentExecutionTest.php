@@ -63,6 +63,30 @@ class AiAgentExecutionTest extends TestCase
         Http::assertSentCount(1);
     }
 
+    public function test_student_search_catalog_includes_the_authorized_profile_route(): void
+    {
+        $user = $this->readyUser('school_admin');
+        $this->fakeStep(['name' => 'browse', 'resource' => 'students', 'query' => 'naruto uzumaki']);
+
+        $response = $this->actingAs($user)->postJson(route('ai-agent.run'), $this->conversation('cari siswa yang namanya naruto uzumaki'));
+
+        $response->assertOk()->assertJsonPath('catalog.students.routes.show', '/students/__ID__');
+        Http::assertSentCount(1);
+    }
+
+    public function test_provider_unavailable_reports_a_temporary_error_without_leaking_the_key(): void
+    {
+        $user = $this->readyUser('school_admin');
+        Http::fake(['generativelanguage.googleapis.com/*' => Http::response([
+            'error' => ['message' => 'Provider error containing test-key-school-1234567890'],
+        ], 503)]);
+
+        $response = $this->actingAs($user)->postJson(route('ai-agent.run'), $this->conversation('Buat ringkasan pembelajaran'));
+
+        $response->assertStatus(503)->assertSee('gangguan sementara')->assertDontSee('test-key-school-1234567890');
+        Http::assertSentCount(1);
+    }
+
     public function test_follow_up_answer_preserves_user_and_tool_context_for_gemini(): void
     {
         $user = $this->readyUser('school_admin');

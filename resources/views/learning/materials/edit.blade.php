@@ -41,21 +41,19 @@
 
                     <!-- Teaching Assignment -->
                     <div>
-                        <x-label for="teaching_assignment_id" required>
+                        <x-label for="teaching_assignment_id">
                             Mata Pelajaran & Kelas Rombel
                         </x-label>
                         <select
                             id="teaching_assignment_id"
-                            name="teaching_assignment_id"
-                            required
+                            disabled
                             class="w-full rounded-lg border border-zinc-300 text-zinc-900 text-xs py-2 px-3 focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
                         >
-                            @foreach ($teachingAssignments as $ta)
-                                <option value="{{ $ta->id }}" {{ old('teaching_assignment_id', $material->teaching_assignment_id) == $ta->id ? 'selected' : '' }}>
-                                    {{ $ta->subject?->name }} — {{ $ta->classroom?->name }} ({{ $ta->academicYear?->name ?? 'Aktif' }})
-                                </option>
-                            @endforeach
+                            <option value="{{ $material->teaching_assignment_id }}" selected>
+                                {{ $material->subject?->name ?? '-' }} — {{ $material->classroom?->name ?? '-' }}
+                            </option>
                         </select>
+                        <p class="form-hint">Kelas dan mata pelajaran ditetapkan saat materi dibuat.</p>
                     </div>
 
                     <!-- Topic & Title -->

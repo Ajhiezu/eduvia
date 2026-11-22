@@ -39,7 +39,16 @@ class AiAgentTest extends TestCase
     public function test_school_team_can_open_agent_and_read_status(string $role): void
     {
         $user = $this->user($role);
-        $this->actingAs($user)->get(route('ai-agent.index'))->assertOk()->assertSee('AI Agent')->assertSee('data-ai-agent', false);
+        $page = $this->actingAs($user)->get(route('ai-agent.index'));
+        $page->assertOk()->assertSee('AI Agent')->assertSee('data-ai-agent', false);
+        if (in_array($role, ['super_admin', 'school_admin', 'teacher'], true)) {
+            $page->assertSee('Tambah Materi pembelajaran', false);
+        } else {
+            $page->assertDontSee('Tambah Materi pembelajaran', false);
+        }
+        if ($role === 'teacher') {
+            $page->assertDontSee('Tambah Data siswa', false);
+        }
         $this->getJson(route('ai-agent.status'))->assertOk()->assertExactJson(['school_id' => $user->school_id, 'enabled' => false, 'configured' => false, 'model' => 'gemini-3.1-flash-lite']);
         if (in_array($role, ['teacher', 'staff'], true)) {
             $this->get(route('ai-agent.settings'))->assertForbidden();

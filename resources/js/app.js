@@ -4,6 +4,9 @@ import { dashboardCalendar, dashboardNavigationSearch, sidebarScroll } from './d
 import { childSwitcher, initializeFormFeedback, toastNotifications } from './ui';
 import { aiAgentSettingsForm } from './ai-agent';
 import { aiAgentChat } from './ai-agent-actions';
+import { initializeSearchableSelects } from './searchable-select';
+import { initializeLiveSearch } from './live-search';
+import { initializeSessionHistoryGuard } from './session-history';
 
 window.Alpine = Alpine;
 
@@ -22,5 +25,8 @@ Alpine.data('childSwitcher', childSwitcher);
 Alpine.data('aiAgentChat', aiAgentChat);
 Alpine.data('aiAgentSettingsForm', aiAgentSettingsForm);
 
+initializeSessionHistoryGuard();
 Alpine.start();
 initializeFormFeedback();
+initializeSearchableSelects();
+initializeLiveSearch();

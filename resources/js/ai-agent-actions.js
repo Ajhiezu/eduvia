@@ -1,4 +1,7 @@
 import { isSafeAgentField } from './ai-agent.js';
+import { conversationContext, conversationStorageKey, parseConversation } from './ai-agent-conversation.js';
+import { navigationRequest, resolveNavigation } from './ai-agent-navigation.js';
+import { studentSearchRequest } from './ai-agent-search.js';
 
 const allowedTypes = new Set(['text', 'textarea', 'number', 'date', 'datetime-local', 'time', 'email', 'tel', 'url', 'select', 'radio', 'checkbox']);
 const relationNames = new Set(['teacher_id', 'student_id', 'parent_id']);
@@ -100,10 +103,12 @@ export function modulePath(module, operation, recordId = null) {
     return url;
 }
 
-function recordIdFromPath(template, href) {
+export function recordIdFromPath(template, href) {
     if (!template) return null;
     const parts = template.split('__ID__');
-    const path = new URL(href, window.location.origin).pathname;
+    const url = new URL(href, window.location.origin);
+    if (url.origin !== window.location.origin) return null;
+    const path = url.pathname;
     if (!path.startsWith(parts[0]) || !path.endsWith(parts[1] || '')) return null;
     const id = path.slice(parts[0].length, parts[1] ? -parts[1].length : undefined);
     return /^[1-9][0-9]*$/.test(id) ? Number(id) : null;
@@ -183,7 +188,8 @@ export class AgentWorkspace {
         const doc = await getPage(url, this.schoolId);
         const records = new Map();
         for (const link of doc.querySelectorAll('main a[href]')) {
-            const id = recordIdFromPath(module.routes.edit, link.getAttribute('href'));
+            const id = recordIdFromPath(module.routes.edit, link.getAttribute('href'))
+                || recordIdFromPath(module.routes.show, link.getAttribute('href'));
             if (!id || records.has(id)) continue;
             const row = link.closest('tr') || link.closest('article') || link.parentElement.parentElement;
             const cells = Array.from(row.querySelectorAll('td')).slice(0, 4);
@@ -309,16 +315,62 @@ export class AgentWorkspace {
     }
 }
 
-export function aiAgentChat(runUrl, statusUrl) {
-    let workspace = new AgentWorkspace();
+export function aiAgentChat(runUrl, statusUrl, userId = null, schoolId = null, navigationPages = [], agentModules = {}) {
+    let workspace = new AgentWorkspace(schoolId);
+    let storageKey = null;
+    let restored = false;
     return {
         prompt: '', messages: [], history: [], status: null, checking: false, busy: false, error: '', progress: '', stopRequested: false, changed: false, lastUrl: '', returnFocus: null,
+        storageError: '', conversationNotice: '', writePending: false,
+        init() {
+            this.restoreConversation(schoolId);
+            this.$watch('prompt', () => this.persistConversation());
+        },
+        restoreConversation(activeSchoolId) {
+            const nextKey = conversationStorageKey(userId, activeSchoolId);
+            if (restored && storageKey === nextKey) return;
+            if (!nextKey && !storageKey) { restored = true; return; }
+            const initialPrompt = storageKey === null ? this.prompt : '';
+            if (restored) this.persistConversation();
+            workspace.destroy(); workspace = new AgentWorkspace(activeSchoolId);
+            storageKey = nextKey; restored = true;
+            this.messages = []; this.history = []; this.prompt = initialPrompt; this.changed = false; this.lastUrl = '';
+            this.progress = ''; this.conversationNotice = ''; this.storageError = ''; this.writePending = false;
+            if (!storageKey) return;
+            try {
+                const data = parseConversation(window.localStorage.getItem(storageKey));
+                if (!data) return;
+                this.messages = data.messages; this.history = data.history; this.prompt = initialPrompt || data.prompt;
+                this.changed = data.changed; this.lastUrl = data.lastUrl;
+                workspace.uncertain = data.interrupted;
+                if (data.interrupted) this.conversationNotice = 'Riwayat dipulihkan. Periksa status tindakan terakhir pada daftar data sebelum mengulangi perintah.';
+            } catch {
+                this.storageError = 'Riwayat percakapan belum dapat dibaca dari browser ini.';
+            }
+        },
+        persistConversation() {
+            if (!storageKey) return;
+            try {
+                if (!this.messages.length && !this.history.length && !this.prompt && !this.writePending && !workspace.uncertain) {
+                    window.localStorage.removeItem(storageKey);
+                } else {
+                    window.localStorage.setItem(storageKey, JSON.stringify({
+                        version: 1, messages: this.messages, history: this.history, prompt: this.prompt,
+                        changed: this.changed, lastUrl: this.lastUrl, interrupted: this.writePending || workspace.uncertain,
+                    }));
+                }
+                this.storageError = '';
+            } catch {
+                this.storageError = 'Riwayat belum dapat disimpan di browser ini. Percakapan dapat hilang saat halaman ditutup atau di-refresh.';
+            }
+        },
         async openPanel(detail = {}) {
             this.returnFocus = document.activeElement;
-            if (detail.prompt) this.prompt = detail.prompt;
             if (!this.$refs.dialog.open) this.$refs.dialog.showModal();
             this.$nextTick(() => this.$refs.prompt.focus({ preventScroll: true }));
             await this.checkStatus();
+            if (detail.prompt) { this.prompt = detail.prompt; this.persistConversation(); }
+            this.scrollConversation();
         },
         async checkStatus() {
             if (this.checking) return false;
@@ -329,7 +381,9 @@ export function aiAgentChat(runUrl, statusUrl) {
                 if ([401, 419].includes(response.status) || response.redirected || !data) throw new Error('Sesi Anda berakhir. Masuk kembali untuk menggunakan AI Agent.');
                 if (!response.ok) throw new Error(response.status === 403 ? data.message || 'Akun ini belum memiliki akses ke AI Agent.' : 'Server belum dapat membaca konfigurasi AI. Tekan Coba lagi.');
                 if (typeof data.enabled !== 'boolean' || typeof data.configured !== 'boolean') throw new Error('Respons konfigurasi belum valid. Tekan Coba lagi.');
+                if (this.busy && workspace.schoolId !== (data.school_id ?? null)) throw new Error('Sekolah aktif berubah. Muat ulang halaman sebelum melanjutkan percakapan.');
                 this.status = data;
+                this.restoreConversation(data.school_id ?? null);
                 workspace.schoolId = data.school_id ?? null;
                 return true;
             } catch (error) { this.status = null; this.error = error.message === 'Failed to fetch' ? 'Koneksi terputus. Tekan Coba lagi untuk memeriksa konfigurasi.' : error.message; return false; }
@@ -344,20 +398,74 @@ export function aiAgentChat(runUrl, statusUrl) {
         newConversation() {
             if (this.busy) return;
             workspace.destroy(); workspace = new AgentWorkspace(this.status?.school_id); this.messages = []; this.history = []; this.error = ''; this.prompt = ''; this.progress = ''; this.lastUrl = ''; this.changed = false;
+            this.writePending = false; this.conversationNotice = ''; this.persistConversation();
+            this.$nextTick?.(() => this.$refs.prompt.focus({ preventScroll: true }));
         },
         scrollConversation() { this.$nextTick(() => { const body = this.$refs.conversation; body.scrollTop = body.scrollHeight; }); },
+        navigateToPage(text) {
+            if (!navigationRequest(text)) return false;
+            const items = Array.from(document.querySelectorAll?.('.metis-nav-item[href]') ?? [])
+                .filter((link) => link.getAttribute('href') && !link.getAttribute('href').startsWith('#'))
+                .map((link) => ({ label: link.textContent, url: link.href }))
+                .concat(navigationPages);
+            const result = resolveNavigation(text, items, window.location.href);
+            if (!result.matches.length && !/\b(?:halaman|menu|modul|page)\b/i.test(text)) return false;
+            let reply;
+            if (result.matches.length === 1) {
+                reply = `Membuka halaman ${result.matches[0].label}.`;
+            } else if (result.matches.length > 1) {
+                reply = `Ada beberapa halaman yang cocok: ${result.matches.map((page) => page.label).join(', ')}. Ketik “buka halaman” diikuti nama menu yang lebih spesifik.`;
+            } else {
+                reply = `Halaman “${result.query}” tidak ditemukan pada menu akun Anda. Gunakan nama halaman yang tersedia di menu.`;
+            }
+            this.prompt = ''; this.error = ''; this.progress = '';
+            this.messages.push({ role: 'user', text }, { role: 'assistant', text: reply });
+            this.history.push({ role: 'user', text }, { role: 'assistant', text: reply });
+            this.persistConversation(); this.scrollConversation();
+            if (result.matches.length === 1) window.location.assign(result.matches[0].url);
+            return true;
+        },
+        async searchStudent(text, request) {
+            this.prompt = ''; this.busy = true; this.error = ''; this.progress = 'Mencari data siswa…';
+            this.lastUrl = ''; this.changed = false; this.stopRequested = false;
+            this.messages.push({ role: 'user', text }); this.history.push({ role: 'user', text });
+            this.persistConversation(); this.scrollConversation();
+            try {
+                const module = agentModules[request.resource];
+                if (!module?.routes?.index) {
+                    const reply = 'Menu data siswa tidak tersedia untuk akun Anda. Pencarian tetap mengikuti hak akses sekolah.';
+                    this.messages.push({ role: 'assistant', text: reply }); this.history.push({ role: 'assistant', text: reply });
+                    return;
+                }
+                const result = await workspace.browse(module, { name: 'browse', ...request, page: 1 });
+                const reply = result.records.length
+                    ? `Hasil pencarian siswa untuk “${request.query}”:\n${result.records.map((record, index) => `${index + 1}. ${record.summary}`).join('\n')}\n\nBuka hasil pencarian untuk melihat detail dan halaman berikutnya bila tersedia.`
+                    : `Tidak ditemukan siswa yang cocok dengan “${request.query}” pada data yang dapat diakses akun Anda.`;
+                this.messages.push({ role: 'assistant', text: reply });
+                this.history.push({ role: 'tool', text: toolResultText({ name: 'browse', resource: request.resource }, result) }, { role: 'assistant', text: reply });
+                this.lastUrl = result.url; this.changed = false;
+            } catch (error) {
+                this.error = error.message;
+            } finally {
+                this.busy = false; this.progress = ''; this.persistConversation(); this.scrollConversation();
+            }
+        },
         async send() {
             if (this.busy || this.checking || !this.prompt.trim()) return;
             if (!this.status && !await this.checkStatus()) return;
             if (!this.status.enabled || !this.status.configured) { this.error = 'Gemini belum aktif. Periksa pengaturan AI Agent sekolah.'; return; }
+            if (this.navigateToPage(this.prompt.trim())) return;
+            const searchRequest = studentSearchRequest(this.prompt.trim());
+            if (searchRequest && userId !== null) return this.searchStudent(this.prompt.trim(), searchRequest);
             const text = this.prompt.trim();
             this.prompt = ''; this.busy = true; this.error = ''; this.stopRequested = false; workspace.executed.clear();
             this.messages.push({ role: 'user', text }); this.history.push({ role: 'user', text }); this.scrollConversation();
+            this.persistConversation();
             try {
                 for (let step = 0; step < 10; step++) {
                     if (this.stopRequested) { this.progress = 'Dihentikan setelah langkah terakhir selesai.'; break; }
                     this.progress = 'Memahami perintah dan menentukan langkah…';
-                    const response = await fetch(runUrl, { method: 'POST', credentials: 'same-origin', headers: { Accept: 'application/json', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf(), ...contextHeaders(this.status.school_id) }, body: JSON.stringify({ messages: this.history, page: window.location.pathname }) });
+                    const response = await fetch(runUrl, { method: 'POST', credentials: 'same-origin', headers: { Accept: 'application/json', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf(), ...contextHeaders(this.status.school_id) }, body: JSON.stringify({ messages: conversationContext(this.history), page: window.location.pathname }) });
                     const data = await response.json().catch(() => ({}));
                     if (!response.ok) throw new Error(response.status === 429 ? 'Batas permintaan tercapai. Tunggu sebentar, lalu lanjutkan percakapan.' : Object.values(data.errors || {}).flat()[0] || data.message || 'Permintaan belum berhasil.');
                     if (typeof data.reply !== 'string' || !Object.hasOwn(data, 'tool')) throw new Error('Respons agen belum sesuai format.');
@@ -367,21 +475,25 @@ export function aiAgentChat(runUrl, statusUrl) {
                     if (this.stopRequested) { this.progress = 'Dihentikan sebelum tindakan berikutnya.'; break; }
                     this.progress = data.reply;
                     this.history.push({ role: 'assistant', text: JSON.stringify({ reply: data.reply, tool: data.tool }) });
+                    this.writePending = ['save_form', 'delete_record'].includes(data.tool.name);
+                    this.persistConversation();
                     let result;
                     try { result = await workspace.execute(data.catalog, data.tool, text); }
                     catch (error) { result = { ok: false, message: error.message }; }
+                    this.writePending = false;
                     this.history.push({ role: 'tool', text: toolResultText(data.tool, result) });
                     if (['save_form', 'delete_record'].includes(data.tool.name)) {
                         this.messages.push({ role: 'action', ok: result.ok, text: result.message || 'Tindakan belum selesai.' });
                         if (result.ok) this.changed = true;
                         if (result.redirect) { const target = new URL(result.redirect, window.location.origin); if (target.origin === window.location.origin) this.lastUrl = target.pathname + target.search; }
                     }
+                    this.persistConversation();
                     this.scrollConversation();
                     if (result.uncertain) { this.error = result.message; this.progress = ''; break; }
                     if (step === 9) this.progress = 'Batas 10 langkah per pesan tercapai. Ketik “lanjutkan” untuk meneruskan dari hasil terakhir.';
                 }
             } catch (error) { this.error = error.message; this.progress = ''; }
-            finally { this.busy = false; this.scrollConversation(); }
+            finally { this.busy = false; this.persistConversation(); this.scrollConversation(); }
         },
         stop() { this.stopRequested = true; this.progress = 'Menghentikan setelah langkah yang sedang berjalan selesai…'; },
     };

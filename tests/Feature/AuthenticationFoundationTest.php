@@ -23,6 +23,7 @@ class AuthenticationFoundationTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Masuk ke Akun Anda');
+        $response->assertHeaderContains('Cache-Control', 'no-store');
     }
 
     public function test_user_can_authenticate_with_valid_credentials(): void
@@ -81,7 +82,25 @@ class AuthenticationFoundationTest extends TestCase
         $response = $this->actingAs($user)->post('/logout');
 
         $response->assertRedirect(route('login'));
+        $response->assertHeaderContains('Cache-Control', 'no-store');
         $this->assertGuest();
+
+        $this->get(route('dashboard'))->assertRedirect(route('login'));
+        $this->get(route('students.index'))->assertRedirect(route('login'));
+    }
+
+    public function test_authenticated_pages_cannot_be_cached_and_revalidate_browser_history(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('dashboard'));
+
+        $response->assertOk();
+        $response->assertHeaderContains('Cache-Control', 'no-store');
+        $response->assertHeaderContains('Cache-Control', 'private');
+        $response->assertHeader('Pragma', 'no-cache');
+        $response->assertHeader('Expires', '0');
+        $response->assertSee('data-authenticated-page', false);
     }
 
     public function test_login_request_is_throttled_after_consecutive_failed_attempts(): void

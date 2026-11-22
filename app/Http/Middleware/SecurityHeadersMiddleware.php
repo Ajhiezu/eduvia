@@ -21,9 +21,16 @@ class SecurityHeadersMiddleware
         $request->headers->set('X-Request-ID', $requestId);
         Log::shareContext(['request_id' => $requestId]);
 
+        $wasAuthenticated = $request->user() !== null;
         $response = $next($request);
 
         $response->headers->set('X-Request-ID', $requestId);
+
+        if ($wasAuthenticated || $request->user() !== null || $request->routeIs('login', 'logout')) {
+            $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, private, max-age=0');
+            $response->headers->set('Pragma', 'no-cache');
+            $response->headers->set('Expires', '0');
+        }
 
         // Clickjacking defense
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');

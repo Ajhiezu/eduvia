@@ -26,6 +26,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body
+    @auth data-authenticated-page @endauth
     x-data="{
         sidebarOpen: false,
         sidebarCollapsed: false,
